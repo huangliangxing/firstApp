@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" id="mev" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/revise.css"/>
+		<script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+		<script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub c-gra ub-ver ">
+       
+    	<div class="ub t-gra ub-ac ulev0" style="display: none" onClick="get_adress_refrsh();" style="background:url(css/images/refresh.png) right center no-repeat; margin-right:1em; padding-right:2.5em; background-size:auto 1.2em;"><div class="ulev0 ub-f1" id="addr"></div></div>
+        <div class="ub ub-f1 ub-pc ub-ac uhide" id="noresult">
+            <div class="ub ub-pc ub-ac ub-ver">
+                <div class="logo-notuan"></div>
+                <div class="ulev-1 t-gra6 pt2">暂无此信息</div>
+            </div>
+        </div>
+        <div id="tuanlistdiv" class="umar-bb c-wh"></div>      
+		<input type="hidden" name="tuanoffset" id="tuanoffset" value="1" />
+        <input type="hidden" name="newtuan" id="newtuan" value="0" />
+        <input type="hidden" name="fid" id="fid" value="0" />
+        <input type="hidden" name="sid" id="sid" value="0" />
+        <input type="hidden" name="areaid" id="areaid" value="0" />
+        <input type="hidden" name="orderid" id="orderid" value="0" />
+    </body>
+<script>
+	zy_init();
+	var devicetoken=window.localStorage.getItem("devicetoken");
+	var origiurl=weburl+'index.php';
+	window.uexOnload=function(type){
+		var lat1,log1;
+		var ishandrefresh=0;///1表示手动刷新坐标时,获取完地址后刷新列表
+		//startlocation();
+		var fid=0;
+		var sid=0;
+		var newtuan=0;
+		var orderid=0;
+		var areaid=0;
+		if(window.localStorage.getItem("fid")){
+			fid=window.localStorage.getItem("fid");
+			$("#fid").val(fid);
+		}
+		if(window.localStorage.getItem("sid")){
+			sid=window.localStorage.getItem("sid");
+			$("#sid").val(sid);
+		}
+		if(window.localStorage.getItem("newtuan")){
+			newtuan=window.localStorage.getItem("newtuan");
+			$("#newtuan").val(newtuan);
+		}
+		if(window.localStorage.getItem("orderid")){
+			orderid=window.localStorage.getItem("orderid");
+			$("#orderid").val(orderid);
+		}
+		if(window.localStorage.getItem("areaid")){
+			areaid=window.localStorage.getItem("areaid");
+			$("#areaid").val(areaid);
+		}
+		//$("#tuanoffset").val(0);
+		
+		positionname=window.localStorage.getItem("iwhpositionname");
+		$("#addr").html(positionname);
+		
+		if(!type){
+			uexWindow.onBounceStateChange=function(t,s){
+				if(t==1){
+                    if(s==0){
+                        getmorelist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("1");
+                    }
+                }
+                if(t==0){
+                    if(s==0){
+                        refreshlist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("0");
+                    }
+                }
+			}
+			
+			uexWindow.setBounce("1");
+			uexWindow.showBounceView("0","#FFF","0");
+			uexWindow.showBounceView("1","#FFF","0");
+			
+	　　　　	uexWindow.notifyBounceEvent("0","1");
+			uexWindow.notifyBounceEvent("1","1");
+			str='{"loadingText":"刷新中"}';
+			uexWindow.setBounceParams('0',str);
+			str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+			uexWindow.setBounceParams('1', str);
+			loadtuanlist();
+			
+			newtopcatename=window.localStorage.getItem("newtopcatename");
+			if(newtopcatename!="" && newtopcatename!="undefined" && newtopcatename!=null && orderid==1){
+				uexWindow.evaluateScript("alltuan_head","0","changeindextopname('catenamedes','"+newtopcatename+"')");
+				uexWindow.evaluateScript("alltuan_head","0","changeindextopname('ordernamedes','离我最近')");
+			}
+		}
+			
+	}	
+	 var tmpstr='<div class="goodsList" onclick="openSellerGoods(${tid})">'+
+                '<div class="ub img">'+
+                    '<div class="img myImg" style="background-image:url(${thumb}); background-repeat: no-repeat; background-color: #fff; background-size:100% 100%;"></div><div class="needyuyue_${yuyue} ub ub-img"></div>'+
+                '</div>'+
+                '<div class="ub ub-f1 ub-ver">'+
+                    '<div class="goodTitle">${subject}</div>'+
+                    '<div class="ub t-gra ub-ae ub-f1">'+
+                        '<div class="ub ub-f1 ub-ae" >'+
+                            '<div class="ub ub-ae ub-f1 goodsName">'+
+                                '<div class="ut-s ulev0n companyneedhide">${name}</div>'+
+                                '<span class="ub">${extratext}</span>'+
+                            '</div>'+
+                            '<div class="t-green ub ub-ae"><span class="ulev-1">&yen;</span>${price}</div>'+
+                        '</div>'+
+                    '</div>'+
+            '</div>'+
+            '</div>';
+	var tmpstr='<div class="goodsList" onclick="gonow(${tid});">'+
+                        '<div class="sel-img img" style="background:url(${thumb}) center center no-repeat #fff; -webkit-background-size:100% 100%; background-size:100% 100%; margin-right:0.5em;"></div>'+
+                             '<div class="ub ub-f1 ub-ver">'+
+                                 '<div class="goodTitle">${subject}</div>'+
+                                 '<div class="ub t-gra ub-ae ub-f1">'+
+                                 '<div class="ub ub-ae ub-f1">'+
+                                    '<div class="ub ub-f1 ub-ae goodsName">'+
+                                        '<div class="ulev0">${name}</div>'+
+                                        '<span class="ub">${sale}人已买</span>'+
+                                     '</div>'+
+                                     '<div class="ub ub-ae t-green"><span class="ulev1">&yen;</span>${price}</div>'+
+                                 '</div>'+
+                                 '</div>'+
+                             '</div>'+
+                        '</div>';
+	function refreshlist(){
+		$("#tuanoffset").val(1);
+		$("#tuanlistdiv").html("");
+		getmorelist();	
+	}				
+	function loadtuanlist(){
+		uexWindow.toast(1,5,"加载中",0);
+		tuanmoreoffset=$("#tuanoffset").val();
+		fid=$("#fid").val();
+		sid=$("#sid").val();
+		newtuan=$("#newtuan").val();
+		orderid=$("#orderid").val();
+		areaid=$("#areaid").val();
+		//此处IOS取Divicetoken
+		if (devicetoken != "" && devicetoken != null){
+			devicetoken = devicetoken.replace(/\s/ig,'IWEIHAI');
+		}
+		lat=window.localStorage.getItem("iwhtuanlat");
+        lng=window.localStorage.getItem("iwhtuanlng");
+      //  alert(areaid);
+		//url=origiurl+"?fid="+fid+"&sid="+sid+"&newtuan="+newtuan+"&tuanmoreoffset="+tuanmoreoffset+"&areaid="+areaid+"&orderid="+orderid+"&lat="+lat+"&lng="+lng+"&devicetoken="+devicetoken;
+		url=origiurl+"?fid="+fid+"&sid="+sid+"&newtuan="+newtuan+"&tuanmoreoffset="+tuanmoreoffset+"&orderid="+orderid+"&lat="+lat+"&lng="+lng+"&devicetoken="+devicetoken;
+		$zy.getJSON(
+			url,
+			function(data){
+				tuanno=data.tuanno;
+				offset=parseInt($("#tuanoffset").val());
+				uexWindow.closeToast();
+				if(tuanno>0){
+					$("#tuanoffset").val(offset+1);
+					var s=zy_tmpl(tmpstr,data.tuandata,zy_tmpl_count(data.tuandata));
+					$("#tuanlistdiv").append(s);
+				}else{
+					if(offset==1){
+						$("#noresult").removeClass("uhide");
+					}else{
+						uexWindow.toast(0,5,"已经是最后记录了",3000);
+					}
+				}
+				$(".lipp").height($(".lipp").eq(0).width()*11/13);
+				$(".myImg").height($(".myImg").eq(0).width()*11/16);
+				$(".sel-img").height($(".sel-img").eq(0).width()*11/16);
+				if(window.localStorage.getItem("iwhpositionname_isshow")==1){///显示用户的位置
+					window.localStorage.setItem("iwhpositionname_isshow",0);
+				}
+				
+			}
+		);
+	}
+
+	function getmorelist(){
+		tuanmoreoffset=parseInt($("#tuanoffset").val());
+		url=origiurl+'?tuanmoreoffset='+tuanmoreoffset;
+		loadtuanlist();	
+	}
+	
+	function buyagain(tid){
+		uexWindow.open('ord_shell','0','ord_shell.html?tid='+tid,'2','','','0');
+	}
+	////坐标
+	function startlocation(){
+		uexLocation.openLocation();//打开地图
+		uexLocation.onChange=locationCallback;//获得用户经纬度
+		uexLocation.cbGetAddress = LocationSuccess;///获得用户位置名称
+	}
+	
+	function locationCallback(lat,log){
+		window.localStorage.setItem("iwhtuanlat",lat);
+		window.localStorage.setItem("iwhtuanlng",log);
+		lat1 = lat;
+		log1 = log;
+		uexLocation.getAddress(lat,log);
+	}
+	
+	function get_adress_refrsh(){
+		uexWindow.toast(1,5,"刷新中",0);
+		ishandrefresh=1;
+		startlocation();
+		//uexLocation.getAddress(lat1,log1);
+		
+	}	
+	
+	function LocationSuccess(opCode,dataType,data){
+		window.localStorage.setItem("iwhpositionname",data);
+		$("#addr").html(data);
+		uexLocation.closeLocation();
+		uexWindow.closeToast();
+		if(ishandrefresh==1){
+			ishandrefresh=0;
+			refreshlist();
+		}
+	}
+	////坐标
+    function compare(propertyName) {
+            return function(object1, object2) {
+                var value1 = object1[propertyName];
+                var value2 = object2[propertyName];
+                if (value2 > value1) {
+                    return -1;
+                } else if (value2 < value1) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+    }
+    function gonow(tid){
+        uexWindow.open('p_desc'+tid,0,'pdesc_shell.html?tid='+tid,2,'','',0);
+    }
+</script>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <link rel="stylesheet" type="text/css" href="css/login.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <style type="text/css">
+            .fanhui{width: 100%;}
+            .goback{position: absolute;left: 1em;top:1em;}
+        </style>
+    </head>
+    <body class="um-vp c-f7 ub-ver" ontouchstart>
+    	<div class="ub-ac up ub ub-ver" tabindex="0" id="login">
+    	         <div class="fanhui"  ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+                    <div class="ub goback" style="position: relative;z-index: 2"></div>
+                </div>
+    	        <div class="touxiang">
+    	            <img src="css/images/logo2.png"/>
+				</div>
+                <div id="nlogg" class="">
+                    <div class="umar1 uinn b-gra2">
+                        <div class="ub ulev0 uinn8  b-gra2">
+                             <div class="ub ub-f1 username">
+                                 <input type="text" name="username" class="ubn0" id="username" placeholder="请输入用户名" value=""/>
+                             </div>
+                        </div>
+                        <div class="ub ulev0 uinn8  b-gra2">
+                             <div class="ub ub-f1 password">
+                                 <input type="password" name="password" class="ubn0" id="password" placeholder="请输入密码" value="" />
+                             </div>   
+                        </div>
+                    </div>
+                    <div class="refound" style="color: #fff" onclick="foundpwd()">忘记密码?</div>
+                   <div class="btn" ontouchstart="zy_touch()" onclick="nlogin()">立即登录</div>
+                   <div class="register" ontouchstart="zy_touch()" onclick="reg()">没有账号？立即注册</div>
+             </div>
+      </div>
+    </body>
+    <script>
+        zy_init();
+		var returnurl,miao=60;
+        window.uexOnload = function(type){						
+			var params=zy_parse();
+            if(params.returnurl){
+                returnurl=params.returnurl;
+            }
+            if (!type) {
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+            }	
+        }
+        function foundpwd(){
+            uexWindow.open('smsnew_shell','0','smsnew_shell.html','1','','','0');
+        }
+		function loadmlog(){
+		    $("#nav2").removeClass("t-green");
+		    $("#nav1").addClass("t-green");
+		    $("#nlogg").addClass("uhide");
+		    $("#mlogg").removeClass("uhide");
+		}
+	
+		function loadnlog(){
+		    $("#nav1").removeClass("t-green");
+            $("#nav2").addClass("t-green");
+            $("#mlogg").addClass("uhide");
+            $("#nlogg").removeClass("uhide");
+        }
+        function sendcode(){
+            var mobile = $.trim($('#mobile').val());
+            url=weburl+"mlogin.php?mobile="+mobile+"&rnd="+Math.random();
+            if (mobile == '') {
+                uexWindow.alert('温馨提示','手机号不能为空','确定');
+                $('#mobile').focus();
+            } else {
+                checkbtn();
+                $zy.getJSON(
+                    url,
+                    function(data){
+                        if(data.smsok == 1){
+                            uexWindow.toast(0,5,"成功发送",3000);
+                        }else{
+                            uexWindow.toast(0,5,data.error,3000);
+                        }
+                    }
+                )
+                
+            }
+        }
+        function mlogin(){
+            tel=$.trim($("#mobile").val());
+            vercode=$.trim($("#vercode").val());
+            url = weburl + "mlogg.php?tel="+tel+"&vercode="+vercode;
+            if(tel=="" || vercode==""){
+                uexWindow.toast(0,5,"手机号,验证码一个都不能少喔！",2000);
+            }else{
+                uexWindow.toast(1,5,"正在登录",0);
+                $zy.getJSON(
+                    url,
+                    function(data){
+                        uexWindow.closeToast();
+                        if(data.islogin==1){//注册成功
+                            window.localStorage.setItem('iwhtuanlogin',1);
+                            window.localStorage.setItem('login_userid',data.userid);
+                            
+                            if(returnurl=='myorders'){
+                                uexWindow.evaluateScript('root','0','loadmyorders()');
+                            }else if(returnurl){
+                                uexWindow.open('return','0',returnurl,'1','','','0');
+                            }
+                            else{
+                                uexWindow.evaluateScript('root','0','loadmycontent()');
+                            }
+                            uexWindow.close(-1);
+                        }else{
+                            uexWindow.toast(0,5,data.error,3000);
+                        }
+                    }
+                );
+            }
+        }
+        function nlogin(){
+            username=$.trim($("#username").val());
+            password=$.trim($("#password").val());
+            if(username=="" || password==""){
+                uexWindow.toast(0,5,"请输入用户名和密码",2000);
+            }else{
+                var jdata =[{"key":"pwuser","type":"0","value":username},{"key":"pwpwd","type":"0","value":password}];
+                url=weburl+"login.php";
+                uexWindow.toast(1,5,"正在登录",0);
+                $zy.getJSON(
+                    url,
+                    function(data){
+                        uexWindow.closeToast();
+                        if(data.islogin==1){//登录成功
+                            window.localStorage.setItem('iwhtuanlogin',1);
+                            window.localStorage.setItem('login_userid',data.userid);
+                            //alert(data.user_id);
+                            if(returnurl=='myorders'){
+                                uexWindow.evaluateScript('root','0','loadmyorders()');
+                            }else if(returnurl){
+                                uexWindow.open('return','0',returnurl,'1','','','0');
+                            }
+                            else{
+                                uexWindow.evaluateScript('root','0','loadmycontent()');
+                            }
+                            uexWindow.close(-1);
+                            
+                        }else{
+                            uexWindow.alert('温馨提示',"登录失败,请检查用户名和密码输入是否有错.",'确定');
+                        }
+                    },
+                    'json',
+                    function(){
+                        uexWindow.alert('温馨提示',"登录失败,请检查用户名和密码输入是否有错.",'确定');
+                        uexWindow.closeToast();
+                    },
+                    'POST',
+                    jdata
+                );
+            }
+        }
+        function reg(){
+            uexWindow.open('reg','0','reg.html','1','','','0');
+        }
+        function trim(str) {
+            return str.replace(/^\s*(.*?)[\s\n]*$/g, '$1')
+        }
+        function checkbtn(){
+            $("#codebtn").removeClass("obutton");
+            $("#codebtn").addClass("gbutton");
+            $("#codebtn").attr("disabled","disabled");
+            miao--;
+            text=(miao)+"秒重新发送";
+            $("#codebtn").val(text);
+            if(miao<=0){
+                $("#codebtn").removeClass("gbutton");
+                $("#codebtn").addClass("obutton");
+                $("#codebtn").val('获取验证码');
+                $("#codebtn").removeAttr("disabled");
+            }else{
+                setTimeout("checkbtn()",1000);
+            }
+        }
+        document.addEventListener('DOMContentLoaded',function(){
+           var Login=document.getElementById("login");
+           var Body=document.getElementsByTagName("body")[0];
+           Login.style.height=(window.outerHeight||window.innerHeight)+'px';
+           Login.style.minHeight=(window.outerHeight||window.innerHeight)+'px';
+           Body.style.minHeight=(window.outerHeight||window.innerHeight)+'px';
+           
+        });
+    </script>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+    </head>
+    <body class="um-vp ub c-f7 ub-ver">
+    	<div id="header" class="ub c-green t-wh h-pd">
+			<div class="ub ub-ac ub-pc" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+				<div class="ub goback ub-ac"></div>
+			</div>
+			<div class="ub ub-f1 ub-ac ub-pc ulev1">订单支付</div>
+			<div class="ub ub-ac ub-pc" style="visibility:hidden;">
+				<div class="h-sear"></div>
+			</div>
+        </div>
+		<div id="allcontentcont">
+		<div class="ub ub-ver">
+			<div class="ulev-3 uinn6 c-wh umar-bb1 ubb b-gra2" id="subject">...</div>
+			<div class="ub t-gra6 ubb b-gra2 ub-ver c-wh umar-bb1">
+				<div class="ubb ub b-gra2 uinn6 ub-ac">
+					<div class="ub ub-f1">单价：</div><div class="ub"><span id="danprice">0</span>元</div>
+				</div>
+				<div class="ub uinn6 ub-ac">
+					<div class="ub ub-f1">数量：</div><div class="ub"><span id="num">0</span></div>
+				</div>
+			</div>
+			<div class="ub ulev0 t-gra uinn">结算信息</div>
+			<div class="ubb t-gra6 ub b-gra2 umar-bb1 ub-ver c-wh">
+				<div class="ubb ub b-gra2 uinn6 ub-ac">
+					<div class="ub ub-f1">总价</div><div class="ub t-bzt"><span id="price">99</span>元</div>
+				</div>
+                <div id="yuediv" style="display: none;">
+                    <div class="ubb ub b-gra2 uinn6 ub-ac">
+                        <div class="ub ub-f1">我的余额</div>
+                        <div class="ub ub-ac umar-r">
+                            <span id="rmb">0</span>元
+                        </div>
+                        <input name="tuanuseyuepay" id="tuanuseyuepay" type="checkbox" value="yes" class="def_sele" />
+                    </div>
+                </div>
+           		<div class="ub uinn6 ub-ac">
+					<div class="ub ub-f1">还需支付</div><div class="ub t-bzt"><span id="haixurmb">0</span>元</div>
+				</div>
+			</div>
+		
+			
+            <div id="zhifufangshi" class="umar-bb1" style="display: none;">
+                <div class="ub t-gra ulev-3 uinn">请选择支付方式</div>
+                <div class="ub b-gra2 ub-f1 ub-ver c-wh">
+    				<div id="daijinquandiv" style="display: none;">
+        				<div class="ubt b-gra2 ub uinn6 ub-f1 ub-ac hdfk">
+                            <label class="ub ub-f1 ub-ac" for="hdfk">
+                                <div class="ub ub-f1 ub-ver">
+                                	<div class="ub">货到付款</div>
+    								<div class="ub ulev-1 t-gra">免在线支付，货到付款。</div>
+    							</div>
+                                <div class="ub ub-ac">
+                                    <input name="payment_name" type="radio" id="hdfk"   value="hdfk" class="def_sele" />
+                                </div>
+                            </label>
+                        </div> 
+					</div> 
+					
+				               
+                    <div class="ubb b-gra2 ub uinn6 ub-f1 ub-ac webpay">
+                        <label class="ub ub-f1 ub-ac" for="alipay">
+                            <div class="ub ub-f1 ub-ver umar-l">
+                            	<div class="ulev0">支付宝支付</div>
+								<div class="ulev-1 t-gra pt2">支付宝余额和各个银行卡快捷支付</div>
+							</div>
+                            <div class="ub ub-ac">
+                                <input name="payment_name" type="radio" id="alipay" checked value="alipay" class="def_sele ubn0" />
+                            </div>
+                        </label>
+                    </div>
+                    <div class="ubb b-gra2 ub uinn6 ub-f1 ub-ac webpay">
+                        <label class="ub ub-f1 ub-ac" for="alipay_wap">
+                            <div class="ub ub-f1 ub-ver umar-l">
+                                <div class="ulev0">支付宝wap支付</div>
+                                <div class="ulev-1 t-gra pt2">手机上没有安装支付宝APP可在线使用支付宝账户支付</div>
+                            </div>
+                            <div class="ub ub-ac">
+                                <input name="payment_name" type="radio" id="alipay_wap" value="alipay_wap" class="def_sele ubn0" />
+                            </div>
+                        </label>
+                    </div>
+                    <!-- <div class="ubb b-gra2 ub uinn6 ub-f1 ub-ac weixinpayicon">
+                        <label class="ub ub-f1 ub-ac" for="wxpay">
+                            <div class="ub ub-f1 ub-ver umar-l">
+                                <div class="ulev0">微信支付</div>
+                                <div class="ulev-1 t-gra pt2">手机已安装微信APP</div>
+                            </div>
+                            <div class="ub ub-ac">
+                                <input name="payment_name" type="radio" id="wxpay" value="wxpay" class="def_sele ubn0" />
+                            </div>
+                        </label>
+                    </div>  -->
+                </div>  
+            </div> 
+			<div id="gotopay" class="ub ub-pc bra0 mlr b-org2 uinn6 c-org2 t-wh ulev1n">确认支付</div>
+		</div>
+		<!--content结束-->
+    </div>
+    </body>
+<script>
+	zy_init();
+	var url=weburl+"pay.php";
+	var oid,userrmb,price,haixurmb,subject;
+	var quanmoneyarray=new Array();
+	var prepayId;
+	window.uexOnload = function(type){
+		uexWindow.toast(1,5,"加载中",0);
+		var para=zy_parse();
+		oid=para.oid;		
+        if (!type) {
+            uexWindow.setBounce("0");
+			getpayinfo(oid);		
+        }
+		uexAliPay.onStatus = paySuccess;
+		uexWidgetOne.cbError = payFailed;
+		uexWeiXin.cbGetPrepayId = cbGetPrepayId;
+        uexWeiXin.cbStartPay = cbStartPay;
+        uexWeiXin.cbRegisterApp=function(opCode,dataType,data){
+            if(data==0){
+                alert('微信注册成功！');
+                uexWeiXin.isWXAppInstalled();
+            }else if(data==1){
+                alert('微信注册失败！');
+                return;
+            }
+        }
+        uexWeiXin.cbIsWXAppInstalled=function(opCode,dataType,data){
+             if(data==0){
+                alert('已安装微信！');
+                uexWeiXin.isSupportPay();
+            }else if(data==1){
+                alert('请安装微信APP后再使用微信支付功能！');
+                return;
+            }
+        }
+        uexWeiXin.cbIsSupportPay = function (opCode,dataType,data) {
+            if(data==0){
+                uexWindow.openToast(1,5,'支持微信支付，正在加载支付信息...',3000);
+            }else if(data==1){
+                alert('该商户暂时不支持微信支付！');
+                return;
+            }
+        }
+    }
+	function getpayinfo(){
+		$zy.getJSON(
+			url+'?oid='+oid,
+			function(data){	
+            	if (data.canbuy == 0) {
+            			uexWindow.toast(1,5,"已成功支付，进入订单详情",2000);
+            		uexWindow.open('quan','0','quan_shell.html?oid='+oid,'1','','','0',0);
+            		uexWindow.evaluateScript("notpay_shell",0,"uexWindow.close('')");
+            		uexWindow.close('');
+            	}			
+				subject=data.subject;			
+				$("#subject").html(subject);
+				$("#num").html(data.num);				
+				$("#danprice").html(data.danprice);
+				price=data.price;
+				hdfk=data.hdfk;
+				$("#price").html(price);
+				userrmb=data.rmb;
+				$("#rmb").html(userrmb);
+				if(userrmb>0){
+					$("#yuediv").show();
+					$("#tuanuseyuepay").attr("checked","checked");
+				}
+				daijinquanstr=data.daijinquan;
+				if(daijinquanstr!=0){
+					$("#daijinquandiv").show();
+					$.each(daijinquanstr,function(k,v){
+							$("#daijinquan").append("<option value='"+v.quanid+"'>"+v.quanname+"</option>");
+							quanmoneyarray[v.quanid]=v.quanjine;
+						})
+				}
+				if(price>userrmb){
+					$("#zhifufangshi").show();
+				}
+				tongjiprice();
+				$("#gotopay").click(function(){
+					pay();
+				});
+				$("#yuediv").click(function(){
+					tongjiprice();
+				});
+				$("#daijinquan").change(function(){
+					tongjiprice();
+				});
+				$("#allcontentcont").show();
+				uexWindow.closeToast();
+			}
+		);
+	}
+	
+	function tongjiprice(){
+		if($("#tuanuseyuepay").prop("checked")==true){
+			haixurmb=(price*10000-userrmb*10000)/10000;
+		}else{
+			haixurmb=price;
+		}
+		quanidval=$("#daijinquan").val();
+		if(quanidval>0){
+			haixurmb=(haixurmb*10000-quanmoneyarray[quanidval]*10000)/10000;
+		}
+		if(haixurmb<0){
+			haixurmb=0;
+			$("#zhifufangshi").hide();
+		}
+		if(haixurmb>0){
+			$("#zhifufangshi").show();
+		}
+		$("#haixurmb").html(haixurmb);
+	}
+	
+	function setpayinfo(){
+	    uexWindow.toast(1,5,"跳转中...",5000);
+	    $zy.getJSON(
+            weburl+"get_alipayconfig.php",
+            function(info){
+                partner = info.partner;
+                seller = info.seller;
+                rsaPrivate = info.rsaPrivate;
+                rsaPublic = info.rsaPublic;
+                notifyUrl=info.notifyUrl;
+                uexAliPay.setPayInfo(partner, seller, rsaPrivate, rsaPublic, notifyUrl);
+            }
+        );
+	}
+	
+	function pay(){
+		uexWindow.toast(1,5,"正在支付",5000);
+		payment_name=$("#zhifufangshi input:checked").val();
+		tuanuseyuepay="no";
+		if($("#tuanuseyuepay").prop("checked")==true){
+			tuanuseyuepay="yes";
+		}
+		serviced = "credit";
+		payment = "";
+	    paytype = "";	
+		if (haixurmb > 0) {	
+    		if (payment_name == 'alipay_wap' || payment_name == 'alipay' ||payment_name == 'wxpay') {
+    			payment = "redirect";
+                serviced = "";
+    			paytype = "";			
+    		}	
+    	    if (payment_name == 'hdfk') {
+    			payment = "";
+    			serviced = "";
+    	        paytype = "hdfk";
+    		}		
+		}
+		quanquan=$("#daijinquan").val();
+		postdata=[{"key":"daijinquan","type":"0","value":quanquan},
+		{"key":"paytype","type":"0","value":paytype},
+		{"key":"action","type":"0","value":payment},
+		{"key":"yuepay","type":"0","value":tuanuseyuepay},
+		{"key":"service","type":"0","value":serviced},
+		{"key":"oid","type":"0","value":oid}];
+		$zy.getJSON(
+			url,
+			function(data){
+				if(data.canbuy==1){
+				    uexWindow.closeToast();
+					if(haixurmb>0){
+						if(payment_name=='alipay'){
+						    setpayinfo();
+							uexAliPay.pay(data.trade_no, data.subject,'商品',haixurmb);
+						}
+						if(payment_name=='wxpay'){
+						    uexWeiXin.registerApp("wx7362653d6ff8c809");
+                            alert(data.trade_no+data.subject+haixurmb);
+                            getPrepayId(data.trade_no, data.subject,haixurmb);
+                            startPay();
+                        }
+						if(payment_name=='alipay_wap'){
+						    payurl="pay_alipay_wap_shell.html?oid="+data.trade_no+"&subject="+data.subject+"&fee="+haixurmb;
+                            uexWindow.open('pay_alipay_wap','0',payurl,'2','','','0');
+						}
+						if(payment_name=='hdfk'){
+							uexWindow.toast(0,5,"购买成功",5000);
+							gomyorder();
+						}												
+					}else{
+						uexWindow.toast(0,5,"购买成功",5000);
+						gomyorder();
+					}
+				}else{
+					alert(data.error);
+					uexWindow.close('-1');
+				}
+				
+			},
+			'json',
+			function(){alert(data.error);},
+			'POST',
+			postdata
+		);
+		
+	}
+	
+	function paySuccess(status,des){
+		//alert(status+'-'+des+' -success');
+		if(status==0){
+			//payok();
+		}else if(status==1){
+			uexWindow.toast(1,5,"正在支付",2000);
+		}else if(status==2){
+			///if(des=="支付插件不完整"){
+				//if(window.confirm("您还没有安装支付宝插件,单击确定开始安装")){
+					//path="res://alipay.apk";
+					//uexWidget.installApp(path);
+				//}
+			//}
+		}else{
+			alert(des);
+			uexWindow.close('-1');
+		}		
+	}
+	function gomyorder(){      
+        uexWindow.open('quan','0','quan_shell.html?oid='+oid,'1','','','0',0);
+    }
+	function payFailed(opCode, errorCode, des){
+		alert(opCode+'opCode'+errorCode+'-'+des+'-failed');
+	}
+	
+	function payok(){
+		uexWindow.open('pay_ok','0','pay_ok.html?oid='+oid,'2','','','0',0);
+		uexWindow.evaluateScript("nouse_shell",0,"uexWindow.close('')");
+		uexWindow.evaluateScript("ord_shell",0,"uexWindow.close('')");
+		uexWindow.evaluateScript("notpay_shell",0,"uexWindow.close('')");
+		uexWindow.close('');
+	}
+	function getPrepayId(trade_no,subject,total_fee,sign){
+        var params = {
+            appid:"wxb085ba17d9c81529",//(必选)
+            mch_id:"10053755",//(必选)
+            nonce_str:"weradfdgdvccfexs1",//(必选)
+            body:subject,//(必选)
+            out_trade_no:trade_no,//(必选)
+            fee_type:"CNY",//(可选)
+            total_fee:total_fee,//(必选)
+            spbill_create_ip:"127.0.0.1",//(必选)
+            notify_url:"http://mt2016.jzphp.com/wap/wxpay/demo/notify_url.php",//(必选)
+            trade_type:"APP",//(必选)
+            sign:sign//(必选)
+        };
+        var data = JSON.stringify(params);
+        uexWeiXin.getPrepayId(data);
+    }
+    function startPay(){
+        var params = {
+            appid:"wxb085ba17d9c81529",//(必选) 微信分配的AppID
+            partnerid:"10053755",//(必选) 微信支付分配的商户号
+            prepayid:prepayId,//(必选)
+            package:"Sign=WXPay",//(必选)
+            noncestr:"weradfdgdvccfexs",//(必选)
+            timestamp:"1412000000",//(必选)
+            sign:"137AE3E0FA57EF7401774049DFE999EE"//(必选)
+        };
+        var data = JSON.stringify(params);
+        uexWeiXin.startPay(data);
+    }
+    function cbGetPrepayId(info){
+        alert(info);
+        prepayId = JSON.parse(info).prepay_id;
+        alert(prepayId);
+    }
+    function cbStartPay(info){
+        alert(info);
+        var errcode = JSON.parse(info).errCode;
+        if(errcode==0){
+            //payok();
+        }else if(errcode==-2){
+            uexWindow.toast(0,5,"用户已取消支付",2000);
+        }else{
+            alert(info);
+            uexWindow.close('-1');
+        }
+    }
+</script>
+</html>

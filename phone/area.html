@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script>
+        function Int(s){
+            return int(s);
+        }
+        var menuh= 3.25;
+        var menuNum= 7;
+        var h;
+        var cath;
+        var s;
+        window.uexOnload = function(){
+            var params = zy_parse();
+            s = params.s;
+            getarealist();
+        }
+        
+        function closepop(){
+            $("#subMenu").hide();
+            $("#cate").hide();
+            $("hitarea").css("display","block");
+            uexWindow.close('-1');
+        }
+        
+        function showsecond(areaid){
+            $("#subMenu").show();
+            $("hitarea").css("display","none");
+            $("#subMenu .catesecondcomcom").hide();
+            $(".catesecond"+areaid).show();
+        }
+        
+        function getarealist(){
+            url=weburl+"area.php";
+            if(s=='miaosha') url=url+'?type=seconds';
+            $zy.getJSON(
+                url,
+                function(data){
+                    $("#catediv").html(data);
+                    $("#cate").show();
+                    setMenuHeight();
+                    var cityscroll=new iScroll("cate",{hScrollbar:false,vScrollbar:false,bounce:false,momentum:false,hScroll:false});
+                },
+                'text',
+                function(){},
+                'get',
+                '',
+                false
+            );
+        }
+        
+        function getarea(areaid,name){
+            if(s=='miaosha'){
+                window.localStorage.setItem("areaid_m",areaid);
+                uexWindow.evaluateScript("allmiaosha_head","0","changeindextopname('areaname_m','"+name+"')");
+                uexWindow.evaluateScript("allmiaosha_head","0","loadindexcontent()");
+            }else{
+                window.localStorage.setItem("areaid",areaid);
+                uexWindow.evaluateScript("alltuan_head","0","changeindextopname('areanamedes','"+name+"')");
+                uexWindow.evaluateScript("alltuan_head","0","loadindexcontent()");
+            }
+            
+            uexWindow.close('-1');
+        }
+        
+        function setMenuHeight(){
+            var s=window.getComputedStyle($$('catediv'),null);
+            var em = Int(s.fontSize);
+            var temph4 = Int(window.innerHeight/2);
+            var temph3 = menuh*menuNum*em;
+            var temph5 = Int(window.innerHeight-5*em);
+            if(temph3 > temph5){
+                h=temph5;
+            }else{
+                h=temph3;
+            }
+            $('#catediv').css('height',Int(h));
+            $('#cate').css('height',Int(h));
+        }
+    </script>
+    </head>
+    <body class="um-vp2 ub ub-f1 ub-ver c-pop" ontouchstart>     
+        <!-- <div class="ub head_pop" onclick="closepop()"></div> -->
+		<div id="catediv" class="ub"></div>
+		<div class="ub ub-f1" onclick="closepop()"></div>
+    </body>
+
+</html>

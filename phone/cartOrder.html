@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/ui-bazhuatuan.css"/>
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="ub c-green t-wh h-pd">
+                <div class="ub ub-ac ub-pc" style="margin-top: 0.5em;width: 0;" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+                    <div class="ub goback ub-ac" style="position: relative;z-index: 2;"></div>
+                </div>
+                <div class="ub ub-f1 ub-ac ub-pc ulev1n" style="margin-top: 0.5em;">提交订单</div> 
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+            </div>
+            <!--content结束-->
+            <div id="footer" class="ub ub-ac b-gra3 fukuan c-green" style="font-size: 0.9em">
+                <p id="" class="ub-f1 ub">
+                                                                   应付金额:<span>&yen;</span><span id="allPrice"></span><span id="zhekou"></span>
+                </p>
+                <div class="ub ub-ac ub-pc" ontouchstart="zy_touch()" id="postorderbtn">提交订单</div> 
+            </div>
+
+        </div>
+    </body>
+    <script>
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "cartOrder_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        function getPrice(allPrice){
+            $("#allPrice").html(allPrice);
+        }
+        function getPrice1(remark_grade){
+           var html="("+remark_grade*10+"折优惠)";
+           $("#zhekou").html(html);
+        }
+        $("#postorderbtn").click(function(){
+           uexWindow.evaluatePopoverScript("cartOrder","content","gotopay()"); 
+        });
+
+    </script>
+</html>

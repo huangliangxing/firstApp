@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/zy_json.js"></script>
+        
+    </head>
+    <body class="um-vp ub c-f7 ub-ver">
+    <div id="allcontentcont">
+    	    <div id="orderlistdiv"></div>
+    	    <div style="display:none;" id="notlogin">
+                <div class="ub-ac account" style="padding-top: 2em;">
+                    <div class="logo-user"></div>
+                    <div class="userlog">您还没有登录，请登录后查看订单</div>              
+                </div>
+            </div>
+            
+            <div style="display:none;" id="noorder">
+                <div class="ub-ac noorder">
+                    <div class="logo-order"></div>
+                    <div class="log">您现在还没有订单，赶紧点一份吧</div>
+                    <div class="ub ub-f1 uinn ub-ac ub-pc t-wh btn-lig go" ontouchstart="zy_touch('btn-act')" onclick="go()">立即点餐</div>              
+                </div>
+            </div>
+            
+    	
+		<div id="footreglogin" style="display:none;">
+                <div class="ub uinn6 ub-ac ub-pc">
+                    <div id="loginfoot" class="ub uc-a4 uinn15 c-wh t-green uba">登录/注册</div>
+                    <!-- <div class="ub ub-f1 uc-a4 uinn ub-ac ub-pc t-wh btn-lig" ontouchstart="zy_touch('btn-act')" onclick="reg()">注册</div> -->
+                </div>
+    
+            </div>
+		
+        <input type="hidden" name="page" id="page" value="1" />
+		
+        
+        </div>
+    </body>
+    <script>
+        zy_init();
+		var devicetoken=window.localStorage.getItem("devicetoken");
+		var origiurl=weburl+'orderlist.php';
+		if (devicetoken != "" && devicetoken != null){
+				devicetoken = devicetoken.replace(/\s/ig,'IWEIHAI');
+		}else{
+			devicetoken="";
+		}
+        window.uexOnload = function(type){
+            $("#allcontentcont").show();
+            if (!type) {
+                uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            getmorelist();                  
+                        }
+                    }
+                    if(t==0){
+                        if(s==0){
+                            refreshlist();                  
+                        }
+                    }
+                    uexWindow.resetBounceView("0");
+                    uexWindow.resetBounceView("1");
+                }
+                
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0","#FFF","0");
+                uexWindow.showBounceView("1","#FFF","0");
+                
+        　　　　    uexWindow.notifyBounceEvent("0","1");
+                uexWindow.notifyBounceEvent("1","1");
+                str='{"loadingText":"刷新中"}';
+                uexWindow.setBounceParams('0',str);
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+				getorderlist();
+            }
+        }
+        var tmpstr='<div class="c-wh umar-bb umar-bb" id="order${order_id}">'+
+                '<div class="ub ub-ac c-wh ubb ubt b-gra3" onclick="uexWindow.open(\'seller_head\',\'0\',\'seller_header.html?sid=${sid}\',\'2\',\'\',\'\',\'0\',0);">'+
+                    '<div class="simg" style="background:url(${thumb}) center center no-repeat #fff;"></div>'+
+                    '<div class="price uinn0 ub-f1">${sname}</div>'+
+                    '<div class="rarr1 umar-r"></div>'+
+                '</div>'+
+                '<div  onclick="uexWindow.open(\'quan\',0,\'quan_shell.html?oid=${order_id}\',2,\'\',\'\',0);">'+
+                    '<div class="ub ub-ac uinn21">'+
+                        '<div class="ub-f1">${t_title}</div>'+
+                        '<div class="tx-r t-gra">${origin}</div>'+
+                    '</div>'+
+                    '<div class="ub ub-ac uinn22 ubb b-gra3">'+
+                        '<div class="ulev-3n t-gra9 ub-f1">${ctime}</div>'+
+                        '<div class="tx-r ulev-3n t-gra9 ub-pe">${ostate}</div>'+
+                    '</div>'+
+                '</div>'+
+                '<div class="ub ub-ac ubb b-gra2">'+
+                    '<div class="tx-c ubr ub-f1 uinn ulev-3n t-gra9 b-gra3" onclick="uexWindow.open(\'seller_head\',\'0\',\'seller_header.html?sid=${sid}&sname=${sname}\',\'2\',\'\',\'\',\'0\',0);">再来一单</div>'+
+                    '<div class="tx-c uinn ulev-3n ub-f1 t-gra9" onclick="${state}(${order_id})">${opt}</div>'+
+                '</div>'+
+            '</div>';
+        
+        function refreshlist(){
+            $("#page").val(1);
+            $("#orderlistdiv").html("");
+            getmorelist();  
+        }
+		function getorderlist(){
+		    uexWindow.toast(1,5,"加载中",0);
+		    page=$("#page").val();
+		    userid=window.localStorage.getItem("login_userid");
+			url=origiurl+'?userid='+userid+'&page='+page+'&devicetoken='+devicetoken+'&rnd='+Math.random();
+			$zy.getJSON(
+				url,
+				function(data){	
+				    $("#allcontentcont").show();
+				    listno=zy_tmpl_count(data.list);
+				    offset=parseInt($("#page").val());
+                    uexWindow.closeToast();
+					if(data.islogin==1){
+						if(listno>0){
+						    $("#page").val(offset+1);
+						    var s=zy_tmpl(tmpstr,data.list,zy_tmpl_count(data.list));
+                            $("#orderlistdiv").append(s);
+                            $("#noorder").remove();
+						}else{
+						    if(offset==1){
+                                $("#noorder").show();
+                            }else{
+                                uexWindow.toast(0,5,"已经是最后记录了",3000);
+                            }
+						}
+						$("#notlogin,#footreglogin").remove();
+					
+					}else{
+						$("#notlogin,#footreglogin").show();
+						$("#notlogin,#loginfoot").click(function(){uexWindow.open('login','0','login.html?returnurl=myorders','2','','','0');})
+					}
+				}
+			);
+		}
+		function getmorelist(){
+            page=parseInt($("#page").val());
+            url=origiurl+'?page='+page;
+            getorderlist();   
+        }
+        function com(oid){
+            uexWindow.open('post','0','post_pingjia.html?p_type=0&fid=0&tid='+oid,'2','','','0');
+        }
+        function unpay(oid){
+            uexWindow.open('pay','0','pay.html?oid='+oid,'2','','','0');
+        }
+        function cancle(oid){
+            delorder(oid);
+        }
+        function see(oid){
+            uexWindow.open('ord_shell','0','votes_shell.html','2','','','0');
+        }
+        
+        function delorder(oid){
+            if(window.confirm("确定删除该订单吗?")){
+                delurl=weburl+"cancelorder.php?oid="+oid+"&type=0&rnd="+Math.random();
+                $zy.getJSON(
+                    delurl,
+                    function(data){
+                        if(data.ok==1){
+                            uexWindow.toast(0,5,"删除订单成功",3000);
+                            $("#order"+oid).remove();
+                        }
+                        uexWindow.closeToast();
+                    }
+                );
+            }
+        }
+		function reg(){
+		    window.localStorage.setItem("returnurl","myorders");
+			uexWindow.open('reg','0','reg.html','1','','','0');
+		}
+		function go(){
+		    uexWindow.evaluateScript('root','0','loadtuan()');
+		}
+		
+    </script>
+</html>

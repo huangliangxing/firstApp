@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/ui-bazhuatuan.css"/>
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-f1 ub-pc ub-ac uhide" id="noorder">
+            <div class="ub ub-pc ub-ac ub-ver" style="margin-top: 5em;">
+                <div class="logo-noorder"></div>
+                <div class="ulev0 pt2">您还没有相关订单</div>
+                <div class="ulev-1 pt2 t-gra">去下单试试吧</div>
+                <div class="ulev-3 t-green uba uinn25 bra0 mt" onclick="goindex()">随便逛逛</div>
+            </div>
+        </div>
+      <ul class="shoppingCart">
+      </ul>
+      <div id="jiesuan" class="ub uhide">
+         <p class="ub-f1 uhide">总计:<span>&yen;</span><span class="allPrice">0</span></p>
+         <div id="myJiesuan" ontouchstart="zy_touch()" onclick="jiesuan()" class="uhide">
+                                      结算
+         </div>
+      </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+           getData();
+        });
+        var price=0;
+        var allId=[];
+        var allNum=[];
+        var objs=new Object();
+        /*
+        var objs = new Object();
+       var goods=window.localStorage.getItem("goods");
+       goods=JSON.parse(goods);
+       if(goods!=null){
+           objs=goods;
+           //alert(objs);
+       }
+        if(objs.length>0){
+            $("#noorder").addClass("uhide");
+            $("#jiesuan").removeClass("uhide");
+            $("#jiesuan p").removeClass('uhide');
+            $("#myJiesuan").removeClass("uhide");
+        }
+        
+        //alert(sessionStorage.good);
+        function getData(){
+            for(var i=0;i<objs.length;i++){
+             //tid=allId[i];
+                 uid=objs[i].id;
+                 num=objs[i].num;
+                 compisitionData(uid,num);
+                 uexWindow.toast(1,5,"加载中",0);
+             }
+        }
+        */
+       function getData(){
+            user_id=window.localStorage.getItem("login_userid");
+            $zy.getJSON(
+                weburl+"getCartList.php?user_id="+user_id,
+                function(data){
+                   console.log(data);
+                   if(data.length){
+                       $("#jiesuan").removeClass("uhide");
+                       $("#jiesuan p").removeClass('uhide');
+                       $("#myJiesuan").removeClass("uhide");
+                       objs=data;
+                   }
+                   else{
+                       $("#noorder").removeClass("uhide");
+                   }
+                    for(var i=0;i<data.length;i++){
+                         uid=data[i].team_id;
+                         num=data[i].team_num;
+                         compisitionData(uid,num);
+                         uexWindow.toast(1,5,"加载中",0);
+                     }
+                }
+            )
+       }
+        function compisitionData(uid,num){
+             var url="http://www.tastingbutler.com/m/molie/gettuandetail.php?tid="+uid;
+             var imgUrl="http://www.tastingbutler.com/static/";
+             $zy.getJSON(
+                url,
+                function(data){
+                    uexWindow.closeToast();
+                    subject=data.subject;
+                    var team='<li class="ub" uid="'+uid+'">'+
+                      '<img src="'+data.picbig+'" class="img"/>'+
+                      '<div id="" class="ub-f1">'+
+                          '<p class="p1">'+subject+'</p>'+
+                          '<p class="p2">&yen;<span style="color:#2C5C36" class="price1">'+data.price+'</span>元/斤</p>'+
+                      '</div>'+
+                      '<div class="number">'+
+                          '<div id="">'+
+                                '<img src="css/images/delete.png" class="delete" ontouchstart="zy_touch()"/>'+
+                          '</div>'+
+                          '<div id="">'+
+                              '<span class="jian" ontouchstart="zy_touch()" style="font-size:1em">-</span>'+
+                              '<span class="num">'+num+'</span>'+
+                              '<span class="jia" ontouchstart="zy_touch()">+</span>'+
+                          '</div>'+
+                      '</div>'+
+                  '</li>';
+                  //alert(team);
+                 $("ul").append(team);
+                 if(objs.length==$("ul li").length){
+                    //alert(objs.length);
+                    zongjiage();
+                    changejian(uid);
+                 }
+                }
+             );                  
+            }
+        //}
+        var text=0;
+        function zongjiage(){
+            //alert(1);
+          price=0;
+          for(var i=0;i<$("ul li").length;i++){
+              a=parseFloat($("ul li:eq("+i+") .price1").text());
+              b=parseInt($("ul li:eq("+i+") .num").text());
+              price+=(a*b*1000)/1000;
+          }
+          $(".allPrice").html(price);
+        }
+        function changejian(uid){
+             $(".jian").click(function(){
+                 
+                 var index=$(this).parent().parent().parent().index();
+                if(parseInt($(this).parent().find(".num").text())>1){
+                    var num=parseInt($(this).parent().find(".num").text())-1;
+                    var uid=$(this).parent().parent().parent().attr("uid");
+                     var gdata =[{"key":"user_id","type":"0","value":user_id},{"key":"t_id","type":"0","value":uid},{"key":"action","type":"0","value":-1}];
+                    $zy.getJSON(
+                        weburl+"editCart.php",
+                        function(data){
+                        },
+                        'json',
+                        function(){
+                        },
+                        'POST',
+                        gdata
+                    );
+                    $(this).parent().find(".num").text(num);
+                   zongjiage();              
+                }
+            });
+             $(".jia").click(function(){
+                 var index=$(this).parent().parent().parent().index();
+                 var num=parseInt($(this).parent().find(".num").text())+1;
+                 $(this).parent().find(".num").text(num);
+                 var uid=$(this).parent().parent().parent().attr("uid");
+                   var gdata =[{"key":"user_id","type":"0","value":user_id},{"key":"t_id","type":"0","value":uid},{"key":"action","type":"0","value":1}];
+                    $zy.getJSON(
+                        weburl+"editCart.php",
+                        function(data){
+                        },
+                        'json',
+                        function(){
+                        },
+                        'POST',
+                        gdata
+                    );
+                 zongjiage();
+            });
+            
+            $(".delete").click(function(){
+                var index=$(this).parent().parent().parent().index();
+                var uid=$(this).parent().parent().parent().attr("uid");
+                var btnList=new Array();
+                    btnList[0]="确定";
+                    btnList[1]="取消";
+                appcan.window.alert({
+                    title:"提示",
+                    content:"确认要删除吗?",
+                    buttons:btnList,
+                    callback:function(err,data,dataType,optId){
+                        if(data==0){
+                              $("ul li:eq("+index+")").remove();
+                              zongjiage();
+                              deleteGoods(uid);
+                        }
+                    }
+                });
+              function deleteGoods(uid){
+                  var gdata =[{"key":"user_id","type":"0","value":user_id},{"key":"t_id","type":"0","value":uid}];
+                    $zy.getJSON(
+                        weburl+"deleteCart.php",
+                        function(data){
+                        },
+                        'json',
+                        function(){
+                        },
+                        'POST',
+                        gdata
+                    )
+            }
+            });   
+        }
+        function jiesuan(){
+            //alert(localStorage.getItem("goods"));
+            //alert(JSON.stringify(objs));
+            if(JSON.stringify(objs)){
+                uexWindow.open("cartOrder",'0','cartOrder.html','2','','','0');
+            }
+            else{
+                
+            }
+        }
+        function goindex(){         //返回首页
+            uexWindow.evaluateScript('shoppingCart','0','loadindex()');
+            uexWindow.close(-1);
+        }
+    </script>
+</html>

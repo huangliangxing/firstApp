@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+       
+    </head>
+    <body class="um-vp c-gra" style="background: #fff">
+    <div>	    
+         <ul class="shoppingCart" style="padding-top: 1em;">
+                <p class="shangjia">我的订单</p>
+                <li class="ub">
+                     <img src="" id="image"/>
+                       <div id="" class="ub-f1">
+                          <p id="title"></p>
+                       </div>
+                       <div class="ub ub-ver">
+                           <p style="color: #2C5C36">&yen;<span class="price"></span></p>
+                           <p class="ub-pc" style="margin-top: 1em;text-align: right;">&nbsp;&nbsp;X1</p>
+                     </div>
+              </li>
+          </ul>
+          <div class="ubb ub b-gra2 ub-ac" style="padding: 0.85em;font-size: 0.9em">
+                    <div>数量</div>
+                    <div class="ub ub-f1 ub-pe">
+                        <div id="buybtn1" class="ub uc-a4 c-green t-wh ulev2 ub-ac ub-pc uinl umar-r" style="width:1.5em; height:1.5em;">-</div>
+                        <input type="number" id="num" value="1" class="ub ubn uc-a4 tx-c umar-r" onKeyUp="tongjiprice()" style="width:3em; font-size:1em;" />
+                        <div id="buybtn2" class="ub uc-a4 c-green t-wh ulev2 ub-ac ub-pc uinl" style="width:1.5em; height:1.5em;">+</div>
+                    </div>
+         </div>
+        <div class="kuaidi" id="expinfo" style="font-size: 0.9em">
+            <p>配送方式:<span class="xiaozi"></span></span></p>
+        </div>	
+        <div id="beizhu" class="ub">
+            <div id=""> 备注:&nbsp;&nbsp;&nbsp;</div>
+           <input size="30" placeholder="选填(建议与卖家商量好的)" class='remark ub-f1' style="font-size: 0.9em;"></input>
+        </div>
+       <div class="ub myNumber" style="font-size: 0.9em;">
+            <div class="umar-r">手机号:&nbsp;</div>
+            <input value="" type="number" size="11" placeholder="填写你的手机号码" class="ub-f1" id="mobile" style="font-size: 0.9em;"/>
+        </div>
+        <!--地址开始-->
+        <div id="daijinquandiv" style="display: block;" style="font-size: 0.9em">
+            <div class="ub people" style="padding-left: 1em;font-size: 0.9em">
+                <div class="umar-r">收件人:&nbsp;</div>
+                <input value="" size="20" type="text" placeholder="请填写收件人姓名" class="ub-f1" id="realname" style="font-size: 0.9em;"/>
+            </div>
+            <div class="ub myAddress" style="padding-left: 1em;font-size: 0.9em">
+                <div class="umar-r">收货地址:</div>
+                <input value="" type="text" size="30" placeholder="请填写详细地址" class="ub-f1" id="address" style="font-size: 0.9em;"/>  
+            </div>
+        </div>
+        <!--
+       <div id="fukuan" class="fukuan ub">
+            <p id="" class="ub-f1" style="font-size: 0.9em">
+                                        应付金额:<span>&yen;</span><span id="allPrice"><span>
+            </p>
+            <div class="" ontouchstart="zy_touch()" id="postorderbtn">提交订单</div> 
+        </div>
+        -->
+    </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script>
+        zy_init();
+		var url=weburl+'buy.php';
+		var myUrl="http://www.tastingbutler.com/static/";
+		var tid=0;
+		var oid=0;
+		var exparray;
+		var maxbuyno=0;
+		var remark_grade=1,remark_name;
+        window.uexOnload = function(type){
+			uexWindow.toast(1,5,"加载中",0);
+			var params = zy_parse();
+			if(params.tid){
+	    		tid = params.tid;
+			}
+			if(params.oid){
+				oid=params.oid;
+			}
+            if (!type) {
+                remark_price();
+                getinfo();
+                getUser();   
+            }
+        }
+        function getUser(){
+            $zy.getJSON(
+                weburl+'settings.php',
+                function(data){
+                    //alert(data);
+                    $("#mobile").val(data.mobile);
+                    $("#realname").val(data.realname);
+                    $("#address").val(data.address);
+                }
+            );
+        }
+		function getinfo(){
+			if(window.localStorage.getItem("iwhtuanlogin")==1){
+				if(oid>0){
+					geturl=url+"?oid="+oid;
+				}else{
+					geturl=url+"?tid="+tid;
+				}
+				$zy.getJSON(
+					geturl,
+					function(data){
+					    if(data.canbuy==1){  
+					       uexWindow.closeToast();
+					       $(".shangjia").html(data.info.partner_title);
+					       $(".price").html(data.info.team_price); 
+					       $("#image").attr("src",myUrl+data.info.image);
+					       $("#title").html(data.info.title);
+					       //$("#expinfo p:eq(2)").html(data.info.express);
+					       $.each(data.info.express,function(i,item){
+                              $("#expinfo").append(
+                                   '<p><span class="ub-f1">'+item.name+'</span><input name="kuaidi" type="radio" onclick ="tongjiprice()" expid="'+item.id+'" value="'+item.price+'"/>&yen;'+item.price+'</p>'    
+                              );
+                           $("#expinfo input:eq(0)").attr("checked","true");
+                           tongjiprice();     
+                       });
+                       
+                       /*
+                       $("#postorderbtn").click(function(){
+                           gotopay();
+                       });
+                       */
+					    }
+					}
+				);
+			}
+		}
+		
+		function tongjiprice(){//统计总价
+			a=parseFloat($(".price").text());
+			changebuynum(0);
+			b=parseInt($("#num").val());
+			exp_price=parseInt($("input:checked").val());
+			allprice=(a*1000*b)/1000+exp_price;
+			allprice=allprice;
+			//$("#allPrice").html(allprice);
+			//利用浮动窗口调用主窗口
+			uexWindow.evaluateScript("ord_shell",0,"getPrice('"+allprice+"')");
+			
+		}
+		
+		var payagain=function(){
+			gotopay();
+		}
+		
+		function gotopay(){
+		    allPrice=allprice;
+			mobile=$.trim($("#mobile").val());
+			num=parseInt($("#num").val());
+			dizhiid=parseInt($("#dizhiid").val());
+			expressid=$("input:checked").attr("expid");
+			fare=$("input:checked").val();
+			addresslist=$.trim($("#addresslist").val());
+			realname=$.trim($("#realname").val());
+			address=$.trim($("#address").val());
+		    remark=$(".remark").val();
+		    s_user_id=window.localStorage.getItem("login_userid");
+		    //alert(s_user_id);
+			if(num=="" || num<1 || isNaN(num)){
+				uexWindow.toast(0,5,"请输入正确的购买数量",2000);
+				return false;
+			}
+			if(mobile==""){
+				uexWindow.toast(0,5,"请输入手机号码",2000);
+				return false;
+			}
+			if (realname == "" || address == "") {
+                uexWindow.toast(0, 5, "请输入收货人姓名和地址", 2000);
+                return false;   
+            }
+			uexWindow.toast(1,5,"提交中...",0);
+			$("#postorderbtn").unbind("click");
+			var postdata=[{"key":"mobile","type":"0","value":mobile},
+			{"key":"express_id","type":"0","value":expressid},
+			{"key":"fare","type":"0","value":fare},
+			{"key":"addresslist","type":"0","value":addresslist},
+			{"key":"realname","type":"0","value":realname},
+			{"key":"address","type":"0","value":address},
+			{"key":"quantity","type":"0","value":num},
+			{"key":"oid","type":"0","value":oid},
+			{"key":"id","type":"0","value":tid},
+			{"key":"remark","type":"0","value":remark},
+			{"key":"user_id","type":"0","value":s_user_id},
+			{"key":"remark_grade","type":"0","value":remark_grade}];
+			$zy.getJSON(
+				url,
+				function(data){
+				    uexWindow.closeToast();
+					if(data.canbuy==1){
+						$("#postorderbtn").bind("click",payagain);
+						oid=data.oid;
+						uexWindow.evaluateScript('ord_shell',0,"uexWindow.close('-1');");
+						if(window.localStorage.getItem("rengouTrue")==1){
+						    addToMyRengou();
+						}
+						uexWindow.open('pay','0','pay.html?oid='+oid,'2','','','0');
+					}
+					else{///不能购买
+					   appcan.window.alert({
+                            title:'提示',
+                            content:data.error,
+                            buttons:'确定',
+                            callback:function(err,data,dataType,optId){
+                                if(err){
+                                    //如果出错了
+                                    return;
+                                }else{
+                                    uexWindow.evaluateScript('ord_shell','0',"uexWindow.close('')");
+                                }
+                            }
+                        });
+					   //uexWindow.close(-1);					
+					   return false;
+				    }
+				},
+				'json',
+				function(){},
+				'POST',
+				postdata
+			);			
+		}
+		
+		$(function(){
+			$("#buybtn1").click(function(){
+				changebuynum(1);
+				tongjiprice();
+			})
+			$("#buybtn2").click(function(){
+				changebuynum(2);
+				tongjiprice();
+			})
+		})
+		
+		function changebuynum(t){
+			num=parseInt($("#num").val());
+			if(t==1){
+				if(num>1){
+					num=num-1;
+					$("#num").val(num);
+				}
+			}
+			if(t==2){
+				//if(num<maxbuyno){
+					num=num+1;
+					$("#num").val(num);
+				//}
+			}
+		}
+	  function addToMyRengou(){
+            var myRengou=window.localStorage.getItem("myRengou");
+            if(myRengou){
+                myRengou=JSON.parse(myRengou);
+                myRengou.push(oid);
+                localStorage.setItem("myRengou",JSON.stringify(myRengou));
+            }
+            else{
+                 myRengou=new Array();
+                 myRengou.push(oid);
+                 myRengou=JSON.stringify(myRengou);
+                 localStorage.setItem("myRengou",myRengou);
+            } 
+        }
+    function remark_price(){
+        var userid=window.localStorage.getItem("login_userid");
+        $zy.getJSON(
+            weburl+"remark_grade.php?userid="+userid,
+            function(data){
+                remark_grade=data.relate_data;
+                if(remark_grade<1 && remark_grade>0){
+                    remark_name=data.name;
+                    uexWindow.evaluateScript("ord_shell",0,"getPrice1('"+remark_grade+"')");
+                }
+            }
+        );
+       
+    }
+    </script>
+</html>

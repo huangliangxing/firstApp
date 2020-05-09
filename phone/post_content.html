@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <style>
+            select {
+                border: 1px solid #e8e8e8;
+                background: #fff;
+                width: 100%;
+                height: 3em;
+                line-height: 3em;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp">
+        <div id="postalldiv" style="display:none;">
+            <div class="ub ub-ver">
+                <div id="allcontentcont">
+                    <div class="c-gra" id="type">
+                        <div class="ubb uinn16 b-gra2">
+                            <div class="ub-f1" id="ptypediv"></div>
+                        </div>
+                    </div>
+                    <div class="ub ub-pc uinn16" id="sub">
+                        <input placeholder="添加标题（限40字）" type="text" class="ub uba b-gra2 uc-a4 uinn" style="width:97%; background:#f8f8f8; font-size:1em;" id="subject">
+                    </div>
+                </div>
+                <div class="ub ub-pc ub-ver c-wh">
+                    <div class="ub uinn16">
+                        <textarea placeholder="添加内容" class="ub uba b-gra2 uc-a4 uinn" style="width:97%; min-height:4em; max-height:12em; background:#f8f8f8; font-size:1em;" id="content"></textarea>
+                    </div>
+                    <div class="ub uinn ubb ubt b-gra2 t-wh umar-t">
+                        <div onclick="selectimg(1);" class="ub-f1 ub gallery"></div>
+                        <div onclick="selectimg(2);" class="ub-f1 ub cam"></div>
+                        <div onclick="selectface();" class="ub-f1 ub face"></div>
+                    </div>
+                </div>
+                <div class="uinn3" id="imgs_club"></div>
+            </div>
+            <div class="uinn6 ub ub-ac">
+                    <div class="ulev-33"><input type="checkbox" id="agree" name="agree" /></div>
+                    <div class="ub-f1 ulev-33 t-green" onclick="openrule();">同意社区条款</div>
+                </div>
+        </div>
+    </body>
+    <script>
+        zy_init();
+        function Int(s) {
+            return int(s);
+        }
+        var fid = tid = 0;
+        var o_p_type = 0;
+        var file = '', opId = 100;
+        var chushihua = 0;
+        window.uexOnload = function(type) {
+            var params = zy_parse();
+            fid = params.fid;
+            tid = params.tid;
+            o_p_type = params.p_type;
+            if (o_p_type == "" || o_p_type == null || o_p_type == "undefined") {
+                o_p_type = 0;
+            }
+            if (!type) {
+                uexWindow.toast(1, 5, "发帖初始化中", 0);
+                checkinit();
+                uexWindow.setBounce("0");
+            }
+        }
+        function openrule(){
+            uexWindow.open('hotartical_shell','0','hotartical_shell.html','2','','','0');
+        }
+        function checkinit() {
+            if (tid == 0) {
+                $("#allcontentcont").show();
+            } else {
+                $("#subject").val("Re:");
+            }
+            urldd = weburl + "topictype.php?fid=64564";
+            $zy.getJSON(urldd, function(data) {
+                $("#ptypediv").html(data);
+                if ($.trim(data) == '<input id="p_type" name="p_type" value="0" />' || o_p_type > 0) {
+                    $("#type").hide();
+                }
+                $("#postalldiv").show();
+                uexWindow.closeToast();
+            }, 'text');
+        }
+        function postarticle() {
+            p = window.localStorage.getItem("platform");
+            if (p != "undefined" && p != "") {
+                platform = p;
+            } else {
+                platform = "";
+            }
+            subject = $.trim($("#subject").val());
+            content = $.trim($("#content").val());
+            p_type = $("#p_type").val();
+            agree=$("#agree").attr('checked');
+            if(agree!='checked'){
+                uexWindow.toast(0, 5, "发帖必须同意条款", 2000);
+                return false;
+            }
+            if (o_p_type != 0) {
+                p_type = o_p_type;
+            }
+            if (p_type < 0) {
+                uexWindow.toast(0, 5, "请选择主题分类", 2000);
+                return false;
+            }
+            if (subject == "") {
+                uexWindow.toast(0, 5, "请输入标题", 2000);
+                return false;
+            }
+            if (subject.length < 3) {
+                uexWindow.toast(0, 5, "标题内容过短", 2000);
+                return false;
+            }
+            if (content == "") {
+                uexWindow.toast(0, 5, "请输入帖子内容", 2000);
+                return false;
+            }
+
+            var jdata = [{
+                "key" : "subject",
+                "type" : "0",
+                "value" : subject
+            }, {
+                "key" : "content",
+                "type" : "0",
+                "value" : content
+            }, {
+                "key" : "fid",
+                "type" : "0",
+                "value" : fid
+            }, {
+                "key" : "tid",
+                "type" : "0",
+                "value" : tid
+            }, {
+                "key" : "platform",
+                "type" : "0",
+                "value" : platform
+            }, {
+                "key" : "p_type",
+                "type" : "0",
+                "value" : p_type
+            }];
+            attno = $("#imgs_club div").size();
+            if (attno > 0) {
+                $("#imgs_club div").each(function() {
+                    id = $(this).attr("id");
+                    val = {
+                        "key" : "flashatt[" + id + "][desc]",
+                        "type" : "0",
+                        "value" : ""
+                    };
+                    jdata.push(val);
+                })
+            }
+            url = weburl + "post.php";
+            uexWindow.toast(1, 5, "正在发表", 0);
+            $zy.getJSON(url, function(data) {
+                uexWindow.closeToast();
+                result = data.result;
+                resulttext = data.resulttext;
+                uexWindow.toast(0, 5, resulttext, 2000);
+                if (result > 10000000) {///成功
+                    uexWindow.evaluatePopoverScript("forumlilts_shell", "content", "refreshlist()");
+                    setTimeout("postok()", 2000);
+                }
+            }, 'json', function() {
+                uexWindow.alert("温馨提示","发表失败,请重试.",'确定');
+                uexWindow.closeToast();
+            }, 'POST', jdata);
+        }
+        function postok() {
+            uexWindow.evaluateScript("post", "0", "uexWindow.close('-1');");
+        }
+        //传照片
+        function selectimg(which){
+					if(which==1){
+						var data={
+					    min:1,
+					    max:1,
+					    quality:0.8,
+					    detailedInfo:false
+						}
+						var json=JSON.stringify(data);
+						uexImage.openPicker(json);
+						uexImage.onPickerClosed=function(info){
+							var jsonimage=$.parseJSON(info);
+							file=jsonimage.data;
+							uploadimg();
+						}
+					}else{
+						var comtextareass = '0';
+						var quality = '10';
+			    	uexCamera.open(comtextareass, quality, function(data) {
+			    		file=data;
+			    		uploadimg();
+			    	});
+					}
+				}
+				function uploadimg() {
+					var upUrl = weburl+'bbsupfile.php?fid='+fid+'&tid='+tid;
+					var param = {
+						url: upUrl,
+						type: 1
+					};
+					var uploader = uexUploaderMgr.create(param);
+					if (uploader) {
+						uexUploaderMgr.uploadFile(uploader, file, "fileName", 0, 800,
+						function(packageSize, percent, responseString, status) {
+							switch (status) {
+							case 0:
+								uexWindow.toast("1", "5", "上传中..." + percent + "%", 0);
+								break;
+							case 1:
+								uexWindow.closeToast();
+								uexWindow.toast(0, 5, "上传成功", 2000);
+								var j = eval('(' + responseString + ')');
+								insertimg(j.aid, j.attachurl, 0);
+								uexImage.clearOutputImages();
+								uexUploaderMgr.closeUploader(uploader);
+								break;
+							case 2:
+								uexWindow.closeToast();
+								uexWindow.toast(0, 5, "上传失败", 2000);
+								uexUploaderMgr.closeUploader(uploader);
+								break;
+							}
+						});
+					} else {
+						uexWindow.toast(0, 5, "上传创建失败", 2000);
+					}
+				}
+//      function selectimg(which) {
+//          if (which == 1) {
+//              uexImageBrowser.cbPick = function(opCode, dataType, data) {
+//                  file = data;
+//                  uploadimg();
+//              }
+//              uexImageBrowser.pick();
+//          } else {
+//              uexCamera.cbOpen = function(opCode, dataType, data) {
+//                  file = data;
+//                  uploadimg();
+//              }
+//              uexCamera.open();
+//          }
+//      }
+//
+//      function uploadimg() {
+//          uexUploaderMgr.cbCreateUploader = cbCreateUploader;
+//          uexUploaderMgr.onStatus = onStatus;
+//          uexWindow.toast('1', '5', '正在上传...', 0);
+//          uexUploaderMgr.createUploader(opId, weburl + 'bbsupfile.php?fid=' + fid + '&tid=' + tid);
+//      }
+//
+//      //创建上传对象回调
+//      function cbCreateUploader(opId, dataType, data) {
+//          if (dataType == 2 && data == 0) {
+//              //上传文件到服务器
+//              uexUploaderMgr.uploadFile(opId, file, 'fileName', 3);
+//          }
+//      }
+//
+//      //上传文件回调函数
+//      function onStatus(opId, fileSize, percent, serverPath, status) {
+//          switch(status) {
+//          case 0:
+//              uexWindow.toast('1', '5', '正在上传...', 0);
+//              break;
+//          case 1:
+//              uexWindow.closeToast();
+//              uexWindow.toast(0, 5, "上传成功", 2000);
+//              var j = eval('(' + serverPath + ')');
+//
+//              ////成功后的处理
+//              insertimg(j.aid, j.attachurl, 0);
+//              ////成功后的处理
+//
+//              uexUploaderMgr.closeUploader(opId);
+//              break;
+//          case 2:
+//              uexWindow.alert("温馨提示","上传失败!",'确定');
+//              uexUploaderMgr.closeUploader(opId);
+//              break;
+//          default:
+//              break;
+//          }
+//      }
+				//传照片
+        function selectface() {
+            uexWindow.evaluateScript("post", 0, "openface()");
+        }
+        function insertimg(aid, imgurl, type) {///type 0增加图片  1是删除图片
+            content = $("#content").val();
+            html = '<div onclick="imgoperate(' + aid + ')" id="' + aid + '" src="' + imgurl + '" style="background-image:url(' + imgurl + ')"></div>';
+            if (type == 0) {
+                content += '[' + aid + ']\r';
+                $("#imgs_club").append(html);
+            }
+            if (type == 1) {
+                content = content.replace('[' + aid + ']', '');
+                $("#imgs_club #" + aid).remove();
+            }
+            $("#content").val(content);
+        }
+        function imgoperate(aid) {
+	        imgurl = $("#" + aid).attr("src");
+	        uexWindow.cbActionSheet = function(opId, dataType, data) {
+		        if (data == "0") {
+		            insertimg(aid, imgurl, 1);
+		        } else if (data == "1") {
+		            var array = [];
+		            array[0] = imgurl;
+		            uexImageBrowser.open(array);
+		        }
+	        }
+	        var value = ["删除", "预览"];
+	        uexWindow.actionSheet('', '取消', value);
+        }
+        function faceincont(faceid) {
+	        content = $("#content").val();
+	        content += '[' + faceid + '.gif]';
+	        $("#content").val(content);
+        }
+    </script>
+</html>

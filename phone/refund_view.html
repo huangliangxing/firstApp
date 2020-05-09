@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        
+    </head>
+    <body class="um-vp ub ub-ver c-f7" ontouchstart>
+        <div class="ub ub-ver c-wh ubb b-gra2 umar-bb ulev0n">       
+            <div class="ub uinn18">
+                <div class="umar-rn">退款金额</div>
+                <div class="ub-f1 t-org4" id="money"></div>
+            </div>
+            <div class="ub uinn18">
+                <div class="umar-rn">退回账户</div>
+                <div class="ub-f1" id="account">账户余额</div>
+                </div>
+            <div class="ub uinn18">
+                <div class="umar-rn">到账时间</div>
+                <div class="ub-f1" id="deadline"></div>
+            </div>
+        </div>
+        <div class="ub ub-ver ubb b-gra2 c-wh uinn18">
+            <div class="ubb b-gra2 uinn8 ulev0n">退款流程</div>
+            <div class="ub ub-ver uhide" id="askrefund">
+                <div class="ub ub-ver uinn">
+                    <div class="t-org4">管理员审核中</div>
+                    <div class="uinn18 ulev-3n">退款申请已受理，管理员会在1天内审核，少部分商品需要2天。</div>
+                    <div class="uinn18 ulev-3n" id="start_time"></div>
+                </div>
+                <div class="ub ub-ver uinn">
+                    <div class="t-gra9">到账处理</div>
+                </div>
+            </div>
+            <div class="ub ub-ver uhide" id="berefund">
+                <div class="ub ub-ver uinn">
+                    <div class="t-green">管理员审核通过</div>
+                    <div class="uinn18 ulev-3n">退款申请已通过。</div>
+                    <div class="uinn18 ulev-3n" id="start_time"></div>
+                </div>
+                <div class="ub ub-ver uinn">
+                    <div class="t-green">已到账</div>
+                    <div class="uinn18 ulev-3n">已将<span id="rmoney"></span>元返还至您的账户余额，请注意查收。</div>
+                    <div class="uinn18 ulev-3n" id="end_time"></div>
+                </div>
+            </div>
+            <div class="ub ub-ver uhide" id="norefund">
+                <div class="ub ub-ver uinn">
+                    <div class="t-green">申请被拒绝</div>
+                    <div class="uinn18 ulev-3n">您的退款申请因不符合可退款条件被管理员拒绝。(已消费的团购券不能退款)</div>
+                    <div class="uinn18 ulev-3n" id="start_time"></div>
+                </div>
+                <div class="ub ub-ver uinn">
+                    <div class="t-green">退款失败</div>
+                    <div class="uinn18 ulev-3n" id="end_time"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        zy_init();
+        var oid;
+        window.uexOnload = function(type){
+			var params = zy_parse();
+	    	oid = params.oid;
+            if (!type) {
+                uexWindow.setBounce("0");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+                getinfo(oid); 
+            }	
+			
+        }
+        
+        function getinfo(oid){
+            url=weburl+'refundview.php?oid='+oid;
+            $zy.getJSON(
+                url,
+                function(data){
+                    if(data.res==1){
+                        $("#money").html(data.money+'元');
+                        state=data.state;
+                        $("#start_time").html(data.start_time);
+                        if(state=='askrefund'){
+                            $("#askrefund").removeClass("uhide");
+                            $("#deadline").html('预计'+data.deadline+'前');
+                        }else if(state=='berefund'){
+                            $("#berefund").removeClass("uhide");
+                            $("#rmoney").html(data.money);
+                            $("#deadline").html(data.deadline);
+                            $("#end_time").html(data.end_time);
+                        }else if(state=='norefund'){
+                            $("#norefund").removeClass("uhide");
+                            $("#deadline").html(data.deadline);
+                            $("#end_time").html(data.end_time);
+                        }
+                        
+                    }else{
+                        uexWindow.toast(0,5,data.error,3000);
+                    }
+                    
+                    
+                }
+            );
+        }
+       
+    </script>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=yes, minimum-scale=1.0, maximum-scale=3.0">
+      <link rel="stylesheet" href="css/ui-input.css">
+    <link rel="stylesheet" href="css/ui-res.css">
+    <link rel="stylesheet" href="css/ui-btn.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+        <script src="../js/zy_control.js">
+        </script>
+        <script src="../js/zy_click.js">
+        </script>
+        <script src="../js/zy_tmpl.js">
+        </script>
+        <script src="../js/main.js">
+        </script>
+        <script src='../js/zy_slide.js'>
+        </script>
+    </head>
+    <body class="um-vp" ontouchstart>
+            我是窗口4的,向下向上刷新<br/>测试主窗口和浮动窗口同时支持缩放，打开浮动窗口zy_control1必须加上128才能支持缩放；open主窗口inFlag=128换成4//标记被open的window无论是否已存在都将强行刷新页面。/8//标记被open的window当中的任何url都将调用系统浏览打开。<br/>
+                                        <div ontouchstart="zy_touch('btn-act')" onclick="openwind();" class="btn uba b-bla uinn5 c-blu c-m1 uc-a t-wh">打开窗口6:淡入淡出效果</div>
+                        
+        
+    </body>
+
+    <script>
+        zy_init();
+        window.uexOnload = function(){
+                        if (!type) {
+                                initBounce(function(){
+                                        // 顶端向下滑动
+                                        dorpDownUpdate();
+                                }, function(){
+                                        // 底部向上滑动
+                                        pullUpUpdate();
+                                });
+                        }
+            //传感器的实时变化值
+            //setPageBounce(dorpDownUpdate, pullUpUpdate);
+        }
+        function dorpDownUpdate(){
+           // alert('drop down update success');
+           // uexWindow.resetBounceView('0');
+                    setTimeout(function(){
+                        uexWindow.resetBounceView(0);
+                }, 800);
+        }
+
+        function pullUpUpdate(){
+            alert('pull up update success');
+            uexWindow.resetBounceView('1');
+        }
+
+        function initBounce(downcb, upcb){
+                                var top = 0,btm = 1;
+        if(!funcTop && !funcBottom){
+            uexWindow.notifyBounceEvent(btm,0);
+            uexWindow.notifyBounceEvent(top,0);        
+            uexWindow.hiddenBounceView(0);
+            uexWindow.hiddenBounceView(1);
+            return;
+        }
+            uexWindow.setBounce("1");
+            //var s = ['0', '0'];
+            uexWindow.onBounceStateChange = function(type, status){
+                if (downcb && type == 0 && status == 2) 
+                    downcb();
+                if (upcb && type == 1 && status == 2) 
+                    upcb();
+            }
+                
+            if (downcb) {
+                             uexWindow.showBounceView(top,"rgba(255,255,255,0)",1);
+            uexWindow.notifyBounceEvent(top,1);        
+            var json="{'pullToReloadText':'拖动刷新','releaseToReloadText':'释放刷新','loadingText':'刷新中，请稍等'}"
+           //     s[0] = '1';
+                uexWindow.setBounceParams("0",  json);
+              //  uexWindow.notifyBounceEvent("0", "1");
+            }
+            if (upcb) {
+                s[1] = '1';
+                uexWindow.setBounceParams("1", {
+                    "imagePath": "res://loading.png",
+                    "textColor": "#000",
+                    "levelText": "**",
+                    "pullToReloadText": "上拉刷新",
+                    "releaseToReloadText": "释放刷新",
+                    "loadingText": "加载中，请稍等"
+                });
+                uexWindow.notifyBounceEvent("1", "1");
+            }
+            uexWindow.showBounceView("0", "#FFF", s[0]);
+            uexWindow.showBounceView("1", "#FFF", s[1]);
+        }
+                         function openwind(){
+         uexWindow.open("qqshare",0,"qqshare.html",5,"","",0,3600);
+         uex.cWiondowFlagEnableScale= 128;
+         
+}
+    </script>
+</html>

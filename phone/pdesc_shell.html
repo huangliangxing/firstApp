@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/appcan1.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </head>
+    <body class="um-vp c-wh" ontouchstart>
+        <div id="page_0" class="up ub ub-ver" tabindex="0">
+			<div id="header" class="ub c-green t-wh h-pd">
+	            <div class="ub ub-ac ub-pc" style="margin-top: 0.5em; " ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+	                <div class="ub goback ub-ac"></div>
+	            </div>
+	            <div class="ub ub-f1 ub-ac ub-pc ulev1n" style="margin-top: 0.5em;">商品详情</div> 
+                <div id="favor" class="ub ub-ac ub-pc" style="margin-top: 0.5em;" ontouchstart="zy_touch()" title="">
+                    <div class="ub favor_off ub-ac" id="ico_favor1" ontouchstart="zy_touch()"></div>
+                </div>
+        	</div>
+            <div id="content" class="ub-f1"></div>
+			<div id="footer" class=" uinn18 ubt ub-ac b-gra3 shangpinfooter">	
+			    			
+				<div id="addTo" ontouchstart="zy_touch()" class="uc-a4  t-wh pdesc-pn ulev-3n" style="display:block">加入购物车</div>
+				
+				<div id="buynow" ontouchstart="zy_touch()" class="uc-a4   t-wh pdesc-pn ulev-3n" style="display:block">立即购买</div>
+				
+				<div id="buynow2" ontouchstart="zy_touch()" class="uc-a4   t-wh pdesc-pn ulev-3n" style="display:none">我要认购</div>
+			</div>
+        </div>
+    </body>
+    <script>
+    	zy_init();
+    	var tid;
+    	var title;
+    	var price;
+    	var img;
+    	var time
+        window.uexOnload = function(type){
+			var params = zy_parse();
+	    	tid = params.tid;
+	    	loadfavor();
+			$("#buynow").click(function(){
+				mpval=0;
+				if($("#mpcheckbox").prop("checked")==true){
+					mpval=$("#mpcheckbox").val();
+				}
+				buyurl='ord_shell.html?tid='+tid+'&mp='+mpval;
+				uexWindow.open('ord_shell','0',buyurl,'2','','','0');
+			});
+			$("#ico_favor1").click(function(){
+			   uexWindow.open("shoppingCart",'0',"shoppingCart.html",'2','','','0'); 
+			});
+			
+            if (!type) {
+                isIPhoneX()
+				uexWindow.setBounce("0");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+                zy_con("content", "product_desc.html?tid="+tid,0,$$("header").offsetHeight);
+            }
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+			myrengou();
+        }
+		function isIPhoneX(fn){
+              var u = navigator.userAgent;
+              var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+              // alert(isIOS)
+              // // iPhone X、iPhone XS
+              var isIPhoneX = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 375 && window.screen.height === 812;
+              console.log(isIPhoneX)
+      
+              // iPhone XS Max
+              var isIPhoneXSMax = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 414 && window.screen.height === 896;
+              console.log(isIPhoneXSMax)
+              // iPhone XR
+              var isIPhoneXR = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 2 && window.screen.width === 414 && window.screen.height === 896-88;
+              console.log(isIPhoneXR)
+              
+              if (isIOS) {        
+                    // alert(window.screen.height)
+                  if (window.screen.height >=812){
+                  // if (isIPhoneX || isIPhoneXSMax || isIPhoneXR){
+                      //是iphoneX
+                      //alert('是iphoneX')
+                     $("#header").css({'height':'5em','padding-top':'2em'});
+      //            
+                  }else{
+                      $("#header").css({'height':'4em','padding-top':'1em'});
+                    // // alert('不是iphoneX')
+                  }
+              }else{
+                  $("#header").css({'height':'3em','padding-top':'0em'})
+                // alert('不是ios')
+              }
+          }
+		function changtxt(price,market_price,canbuy,fanmoney,mallusepoint){
+			$("#price").html(price);
+			$("#myPrice").html(price);
+			$("#market_price").html(market_price);
+			if(canbuy==0){
+				$("#buynow").unbind("click");
+				$("#buynow").html("团购已结束");
+				$("#buynow").addClass("b-gra2 c-gra-ddd");
+			}
+			if(fanmoney>0){
+				$("#fanmoneydiv").html('<div class="ub ufl ub-ae">-'+fanmoney+'</div><div class="ub ufl ulev-2 uc-a1 c-org2 uinn3 t-wh" style="margin-bottom:0.3em;">返现</div>');
+			}
+			if(mallusepoint>0){
+				$("#jiage").html(price-mallusepoint/100);
+				$("#jifen").html(mallusepoint);
+				$("#mpcheckbox").val(mallusepoint);
+				$("#usemp").show();
+				$('#ifhavejifen').removeClass('ulev1');
+			}else{
+				$('#ifhavejifen').addClass('ulev1');
+			}
+			
+		}
+		
+		//$("myPrice")text(window.sessionStorage.getItem("price"));
+		function share(){
+		    appcan.window.openPopover({
+                         name:'share',
+                         dataType:0,
+                         url:"share.html",
+                         top:0,
+                         left:0,
+                         width:0,
+                         height:0,
+                    });
+             appcan.locStorage.setVal("share",0);
+		}
+		/*进入购物车页面*/
+		$("#favor").click(function(){
+		    if(window.localStorage.getItem("iwhtuanlogin")==1){
+                          uexWindow.open('shoppingCart','0','shoppingCart.html?tid='+tid,'2','','','0');
+                     }
+                     else{
+                        returnurl=escape("pdesc_shell.html?tid="+tid);
+                        uexWindow.open('login','0','login.html?returnurl='+returnurl,'2','','','0');
+                        uexWindow.close(-1);
+                        return false;
+                    }
+		});
+		/*加入购物车*/
+		$("#addTo").click(function(){
+		      if(window.localStorage.getItem("iwhtuanlogin")==1){
+		          user_id=window.localStorage.getItem("login_userid");
+                  addToShoppingCart(user_id,tid,1);
+               }
+               else{
+                   returnurl=escape("pdesc_shell.html?tid="+tid);
+                   uexWindow.open('login','0','login.html?returnurl='+returnurl,'2','','','0');
+                   uexWindow.close(-1);
+                   return false;
+              }  
+        });
+		function loadfavor(){
+            $zy.getJSON(
+                weburl+"favor.php?tid="+tid,
+                function(data){
+                    if(data.result==1){
+                        $("#ico_favor").removeClass("favor_off");
+                        $("#ico_favor").addClass("favor_on");
+                    }else{
+                       $("#ico_favor").removeClass("favor_on");
+                       $("#ico_favor").addClass("favor_off");
+                    }
+                }
+            );
+        }
+		function favor(){
+		    if(window.localStorage.getItem("iwhtuanlogin")==1){
+		        uexWindow.toast(1,5,"操作中...",0);
+                $zy.getJSON(
+                    weburl+"myfavor.php?tid="+tid,
+                    function(data){ 
+                        uexWindow.closeToast();
+                        if(data.islogin==1){
+                            if(data.result==1){
+                                $("#ico_favor").removeClass("favor_off");
+                                $("#ico_favor").addClass("favor_on");
+                                uexWindow.toast(0,5,"收藏成功",3000);
+                            }else if(data.result==2){
+                                $("#ico_favor").removeClass("favor_on");
+                                $("#ico_favor").addClass("favor_off");
+                                uexWindow.toast(0,5,"取消收藏成功",3000);
+                            }else{
+                                uexWindow.toast(0,5,"操作失败",3000);
+                            }
+                        }else{
+                            uexWindow.toast(0,5,"请先登录",3000);
+                        }
+                    }
+                );
+		    }else{
+		        uexWindow.toast(0,5,"请先登录",3000);
+		    }
+        }
+        $("#buynow").click(function(){
+                mpval=0;
+                if($("#mpcheckbox").prop("checked")==true){
+                    mpval=$("#mpcheckbox").val();
+                }
+                buyurl='ord_shell.html?tid='+tid+'&mp='+mpval;
+                window.localStorage.setItem("rengouTrue",0);
+                uexWindow.open('ord_shell','0',buyurl,'2','','','0');
+        });  
+        $("#buynow2").click(function(){
+            var btnList=new Array();
+                    btnList[0]="确定";
+                    btnList[1]="取消";
+                appcan.window.alert({
+                    title:"提示",
+                    content:"该商品在预售期以后才会发货，确定购买吗?",
+                    buttons:btnList,
+                    callback:function(err,data,dataType,optId){
+                        if(data==0){
+                             mpval=0;
+                            if($("#mpcheckbox").prop("checked")==true){
+                                 mpval=$("#mpcheckbox").val();
+                             }
+                           buyurl='ord_shell.html?tid='+tid+'&mp='+mpval;
+                           window.localStorage.setItem("rengouTrue",1);
+                           uexWindow.open('ord_shell','0',buyurl,'2','','','0');
+                        }
+                    }
+                }); 
+        });           
+        function myrengou(){
+            url1=url=weburl+'gettuandetail.php?tid='+tid;
+            $zy.getJSON(
+                url1,
+                function(data){
+                    title=data.subject;
+                    price=data.price;
+                    img=data.picbig;
+                    time=data.bendanxiangqing;
+                    var date=new Date();
+                    var nowTime=parseInt(date.getTime()/1000);
+                    var bendantime=data.bendantime;
+                    if(bendantime<nowTime){
+                         goumai();
+                    }
+                    else{
+                        rengou();  
+                    }
+                }
+            )
+        }
+       function goumai(){
+            $("#buynow2").css("display","none");
+            $("#buynow").css("display","block");
+            $("#addTo").css('display',"block");
+        }
+        function rengou(){
+            $("#buynow2").css("display","block");
+            $("#buynow").css("display","none");
+            $("#addTo").css('display',"none");
+        }
+        function addToMyRengou(){
+            var myRengou=window.localStorage.getItem("myRengou");
+            myRengou=JSON.parse(myRengou);
+            if(myRengou!=null && myRengou!="undefined"){
+                var objs=myRengou.my;
+                objs[objs.length]={id:tid,price:price,name:title,pricture:img};
+                localStorage.setItem("myRengou",JSON.stringify(myRengou));
+            }
+            else{
+                 myRengou={my:[{id:tid,price:price,name:title,pricture:img}]};
+                 objs=myRengou;
+                 myRengou=JSON.stringify(myRengou);
+                 localStorage.setItem("myRengou",myRengou);
+            } 
+        }
+        //这个是利用本地存储进行存储的，现在要修改为存在数据库的表里面
+        /*
+       function addToShoppingCart(uid,id,num) {//在界面渲染的时候已经把商品信息参数整合到自己的函数中了
+         var isSave=false;
+         var goods=localStorage.getItem("goods");
+         goods=JSON.parse(goods);
+         if(goods!=null && goods!="undefined"){
+             var objs=goods;
+             for(var i=0;i<objs.length;i++){
+                 if(objs[i].id==id){
+                     objs[i].num+=1;
+                     isSave=true;
+                     break;
+                 }
+             }
+             if(!isSave){
+                 objs[objs.length]={id:id,num:num}
+             }
+         }
+         else{
+              var goods=[{id:id,num:num}];
+          }
+        goods=JSON.stringify(goods);
+        window.localStorage.setItem("goods",goods);    
+        uexWindow.toast(0,5,"成功加入购物车",3000);
+        alert(window.localStorage.getItem("goods"));
+     }
+     */
+     
+    
+    function addToShoppingCart(uid,id,num){
+        var gdata =[{"key":"user_id","type":"0","value":uid},{"key":"t_id","type":"0","value":tid}];
+        $zy.getJSON(
+            weburl+"addCart.php",
+            function(data){
+                if(data==1){
+                    uexWindow.toast(0,5,"成功加入购物车",3000);
+                }
+                else{
+                    uexWindow.toast(0,5,"加入购物车失败",3000);
+                }
+            },
+            'json',
+            function(){
+            },
+            'POST',
+            gdata
+        )
+    }        
+    </script>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/zy_json.js"></script>
+        <script src="js/smart-2.9.min.js"></script>
+    </head>
+    <body class="um-vp c-f1" ontouchstart>
+        <div class="up ub ub-pc ub-ac uhide" id="noresult">
+            <div class="ub ub-pc ub-ac ub-ver">
+                <div class="logo-nofavor"></div>
+                <div class="ulev-1 t-gra6 pt2">暂时没有记录</div>
+            </div>
+        </div>
+        <div class="up ub ub-ver umar-t" id="list">
+        </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script id="infotemplate" type="text/x-jsmart-tmpl">
+        {section name=m loop=$record}
+        <div class="ub ub-pc ub-ac uinn ubb b-gra2 c-wh umar-bb">
+            <div class="ub ub-ver ub-f1">
+                <div class="ulev-33">{$record[m].desc}</div>
+                <div class="pt2 ulev-3n t-r">{$record[m].flag}&nbsp;{$record[m].amount}</div>
+                <div class="pt2 ulev-3n t-gra6">{$record[m].create_time}</div>
+            </div>
+            <div class="ulev-33 t-r">{$record[m].flag_desc}</div>
+        </div>
+        {/section}
+    </script>
+    <script>
+        var page=1;
+        appcan.ready(function() {
+            uexWindow.onBounceStateChange=function(t,s){
+                if(t==1){
+                    if(s==0){
+                        getmorelist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("1");
+                    }
+                }
+                if(t==0){
+                    if(s==0){
+                        refreshlist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("0");
+                    }
+                }
+            }
+            
+            uexWindow.setBounce("1");
+            uexWindow.showBounceView("0","#FFF","0");
+            uexWindow.showBounceView("1","#FFF","0");
+            
+    　　　　    uexWindow.notifyBounceEvent("0","1");
+            uexWindow.notifyBounceEvent("1","1");
+            str='{"loadingText":"刷新中"}';
+            uexWindow.setBounceParams('0',str);
+            str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+            uexWindow.setBounceParams('1', str);
+            refreshlist();
+        });
+        function refreshlist(){
+            page=1;
+            $('#list').html('');
+            dataload();  
+        }
+        function getmorelist(){
+            page++;
+            dataload();  
+        }
+        function dataload(){
+            if(window.localStorage.getItem("iwhtuanlogin")==1){
+                appcan.window.openToast('加载中...','0','5','1');            
+                userid=window.localStorage.getItem("login_userid");
+                url=weburl+'getflowrecord.php';
+                appcan.request.ajax({
+                   url:url,
+                    type:'GET',
+                    data:{
+                        page:page,
+                        user_id:userid,
+                    },
+                    dataType:'json',
+                   success:function(data){
+                       appcan.window.closeToast();
+                       uexWindow.evaluateScript('flow','0','setMoney('+data.money+')');
+                       if(data.ps==0){
+                            if(page==1){
+                                $("#noresult").removeClass("uhide");
+                            }else{
+                                appcan.window.openToast('已经是最后记录了','3000','5','0');
+                            }
+                        }else{
+                            $("#noresult").addClass("uhide");
+                            var tpl = new jSmart($("#infotemplate").html());
+                            var res = tpl.fetch(data);
+                            $('#list').append(res);
+                        }
+                   },error:function(e){
+                       uexWindow.alert("温馨提示",'网络不稳定，请稍后再试', "确定");
+                   }
+                });
+            }
+        }
+    </script>
+</html>

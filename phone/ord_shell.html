@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp c-wh" ontouchstart>
+        <div id="page_0" class="up ub ub-ver" tabindex="0">
+        	<div id="header" class="ub c-green t-wh h-pd">
+	            <div class="ub ub-ac ub-pc" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');" style="margin-top: 0.5em">
+	                <div class="ub goback ub-ac"></div>
+	            </div>
+	            <div class="ub ub-f1 ub-ac ub-pc ulev1n" style="margin-top: 0.5em">提交订单</div>
+	            <div class="ub ub-ac ub-pc" style="visibility:hidden;">
+	                <div class="h-sear"></div>
+	            </div>
+        	</div>
+        	
+            <div id="content" class="ub-f1"></div>
+            <div id="footer" class="ub ub-ac b-gra3 fukuan c-green"> 
+                <p id="" class="ub ub-f1" style="font-size: 0.9em">
+                                                           应付金额:<span>&yen;</span><span id="allPrice"></span><span id="zhekou"></span>
+                </p>
+                <div class="ub ub-ac ub-pc" ontouchstart="zy_touch()" id="postorderbtn">提交订单</div> 
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+    	zy_init();
+		var oid=tid=0;		
+        window.uexOnload = function(type){
+			var params = zy_parse();
+	    	if(params.tid){
+	    		tid = params.tid;
+			}
+			if(params.oid){
+				oid=params.oid;
+			}
+			if(oid>0){
+				pageurl="order.html?oid="+oid;
+			}else{
+				pageurl="order.html?tid="+tid;
+			}
+			if(window.localStorage.getItem("iwhtuanlogin")!=1){
+				returnurl=escape("ord_shell.html?tid="+tid);
+				uexWindow.open('login','0','login.html?returnurl='+returnurl,'2','','','0');
+				uexWindow.close(-1);
+				return false;
+			}
+            if (!type) {
+                uexWindow.setBounce("0");
+                zy_con("content", pageurl,0,$$("header").offsetHeight);
+            }
+			window.onorientationchange=window.onresize=function()
+			{
+				zy_resize("content",0,$$("header").offsetHeight);				
+			}
+        }
+        function getPrice(allPrice){
+            $("#allPrice").html(allPrice);
+        }
+        function getPrice1(remark_grade){
+           var html="("+remark_grade*10+"折优惠)";
+           $("#zhekou").html(html);
+        }
+        $("#postorderbtn").click(function(){
+            uexWindow.evaluatePopoverScript("ord_shell","content","gotopay()");
+        });
+    </script>
+</html>

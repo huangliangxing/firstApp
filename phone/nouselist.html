@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+		<script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+    </head>
+    <body class="um-vp ub ub-ver c-tic" ontouchstart>
+    	<div class="ub ub-ver uinn" id="allnplst"></div>
+    </body>
+<script>
+	zy_init();
+	
+	window.uexOnload = function(type){
+	    var params = zy_parse();
+        var oid = params.oid;
+        if (!type) {
+            uexWindow.setBounce("0");
+			loadtuanlist(oid);
+        }
+    }
+	
+    var str='<div class="ub ub-f1 ub-ver">'+
+                    '<div class="ub tikettop"></div>'+
+                    '<div class="ub ub-f1 ub-pc c-wh uinn6">'+
+                        '<div class="ub tiketbody ub-f1 uc-a b-gra3 ub-ver">'+
+                            '<div class="ub ub-f1 ub-ac">'+
+                                '<div class="ub tic-log"></div>'+
+                                '<div class="ub ub-f1 ub-ver">'+
+                                    '<div class="ub t-green ulev1n">${subject}</div>'+
+                                    '<div class="ub pt2 t-gra ulev-1">有效期至:${expiretime}</div>'+
+                                '</div>'+
+                            '</div>'+
+                            '<div class="ub ub-f1 ubt b-gra3 pasarea">'+
+                                '<div class="ub ub-f1 ub-ac ub-ver ub-pc">'+
+                                    '<!--div class="ub ub-f1 txm" style="width:100%; background:url(${passwardcode}) top left no-repeat; -webkit-background-size:100% 100%;"></div-->'+
+                                    '<div class="ub ulev0n ub-ac pas">券号：${num}<br>密码：${passward}</div>'+
+                                '</div>'+
+                                '<div class="ub ub-ac ub-pc"><img style="width:5em;height:5em;" src="http://qr.liantu.com/api.php?text=${num}"/></div>'+
+                            '</div>'+
+                            '<div class="ub uinn ub-f1 ulev-3n">'+
+                                '<div class="ub ub-f1 ub-pc uinn t-wh c-green uc-a4 umar-r" onclick="copytext(\'券号：${num}，密码，${passward}\')">复制券信息</div>'+
+                                '<div class="ub ub-f1 ub-pc uinn t-wh c-green uc-a4" onclick="sendsms(\'${subject}的：券号：${num}，密码，${passward}\')">转发给朋友</div>'+
+                            '</div>'+
+                            
+                            '<div class="ub ubt b-gra3 ub-f1 ub-ver pasarea">'+
+                                '<div class="ub umar-b ulev-1">'+
+                                    '<div class="ub t-gra itm">地址</div>'+
+                                    '<div class="ub ub-f1">${c_address}</div>'+
+                                '</div>'+
+                                '<div class="ub ub-ac umar-t" onclick="iwh_calltel(\'${c_tel}\')">'+
+                                    '<div class="ub ub-ae t-gra itm ulev-1"></div>'+
+                                    '<div class="ub ub-ac ub-f1">'+
+                                        '<div class="ub umar-r call2" id="call"></div>'+
+                                        '<div class="ub ub-ver">'+
+                                            '<div class="ub ulev-1 t-gra">直接拨打</div>'+
+                                            '<div class="ub ulev-3n">${c_tel}</div>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="ub tiketbot"></div>'+
+                '</div>';
+	function loadtuanlist(oid){
+		uexWindow.toast(1,5,"加载中",0);
+		var url=weburl+'nouselist.php?ac=wei&oid='+oid;
+		$zy.getJSON(
+			url,
+			function(data){
+				tuanno=data.tuanno;
+				var html;
+				if(tuanno>0){
+					html=zy_tmpl(str,data.tuandata,zy_tmpl_count(data.tuandata));
+				}else{
+					html='<div class="up ub ub-ac ub-pc">您还没有该类订单</div>';
+				}
+				$("#allnplst").append(html);				
+				var fst = window.getComputedStyle(document.body,null).fontSize;
+				var fs = fst.replace('px', "");
+				var sh = Math.round(screen.height/fs*0.3)+"em";
+				$('.txm').css('height',sh);	
+				
+				uexWindow.closeToast();
+			}
+		);
+	}
+	function copytext(text){
+		uexClipboard.copy(text);
+		uexWindow.toast(0,5,"复制成功,可以粘贴到QQ等转发给朋友了",2000);
+	}
+	function sendsms(text){
+		uexSMS.open('',text)
+	}
+</script>
+</html>

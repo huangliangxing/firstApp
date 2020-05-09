@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+		<script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+    </head>
+    <body class="um-vp ulev-1 ub ub-ver" ontouchstart>
+    <div id="">
+        <div class="ub uinn ub-ver pic-b lh" id="xuzhi"></div>
+        <div class="ub uinn ub-ver pic-b lh img_t" id="content"></div>
+		<br />
+    </div>
+    </body>
+    <script>
+        zy_init();
+        window.uexOnload = function(type){
+			uexWindow.toast(1,5,"加载中",0);
+			var params = zy_parse();
+	    	var tid = params.tid;
+            if (!type) {
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+				gettuandetailmore(tid);
+            }
+        }
+		
+		function gettuandetailmore(tid){
+			url=weburl+'gettuandetailmore.php?tid='+tid;
+			$zy.getJSON(
+			url,
+			function(data){		
+			    uexWindow.closeToast();
+			    if(data.canbuy==1){
+                    $("#content").html(data.info.detail);
+                    team_price=data.info.team_price;
+                    market_price=data.info.market_price;
+                    uexWindow.evaluateScript('pdetail_shell','0','changtxt("'+team_price+'","'+market_price+'",'+data.canbuy+');');
+                    $("#allcontentcont").show();
+			    }else{
+			        uexWindow.toast(0,5,data.error,2000);
+			    }
+				
+				
+			}
+			);
+		}
+    </script>
+</html>

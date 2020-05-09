@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+		<script src="js/zy_tmpl.js"></script>
+		<style type="text/css">
+			.goodsList .img{height: 11em;}
+		</style>
+    </head>
+    <body class="um-vp ub c-f1 ub-ver" ontouchstart>
+    	<div class="ub ub-ac c-green h-pd" id="header">
+    		<div class="ub goback ub-ac" style="margin-top: 0.5em;" onclick="uexWindow.close('-1');"></div>
+            <input type="text" class="ub ub-f1 ser_ind ulev0" style="margin-top: 0.7em;" placeholder="请输入搜索关键字" name="keyword" id="keyword">
+            <div class="ulev-3n t-wh" style="margin-top: 1em;" onClick="loadtuanlist()">搜索</div>
+        </div>
+        <div class="ub-f1" id="allcont">
+        	<div id="allscroller" class="ub ub-f1 ub-ver">
+                <div id="tuanlistdiv"></div>
+        	</div>
+        </div>
+    </body>
+	<script>
+		function Int(s){
+			return int(s);
+		}
+		var em;
+		var h;
+		var tmpstr='<div class="goodsList" ontouchstart="zy_touch()" onclick="uexWindow.open(\'p_desc${tid}\',0,\'pdesc_shell.html?tid=${tid}\',2,\'\',\'\',0);">'+
+			'<div class="img">'+
+				'<div class="img myImg" style="background:url(${thumb}) no-repeat #fff; background-size:100% 100%;"></div><div class="needyuyue_${yuyue} ub ub-img"></div>'+
+			'</div>'+
+			'<div class="ub ub-f1 ub-ver">'+
+				'<div class="goodTitle">${subject}</div>'+
+				'<div class="ub t-gra ub-ae ub-f1">'+
+					'<div class="ub ub-f1 ub-ae" >'+
+						'<div class="ub ub-f1 goodsName">'+
+						     '<div class="">${name}</div>'+
+							'<span class="ub ulev-3 ub-pe">${extratext}</span>'+
+						'</div>'+
+					'<div class="price t-bzt ulev1"><span>&yen;</span>${price}</div>'+
+				'</div>'+
+				'</div>'+
+			'</div>'+
+		'</div>';
+		zy_init();
+		var origiurl=weburl+'gettuanlist.php';
+		window.uexOnload=function(type){
+			if(!type){
+				uexWindow.setBounce("0");	
+			}
+			isIPhoneX()
+			gethotlist();
+			gethistory();
+			
+		}
+		function isIPhoneX(fn){
+              var u = navigator.userAgent;
+              var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+              // alert(isIOS)
+              // // iPhone X、iPhone XS
+              var isIPhoneX = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 375 && window.screen.height === 812;
+              console.log(isIPhoneX)
+      
+              // iPhone XS Max
+              var isIPhoneXSMax = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 414 && window.screen.height === 896;
+              console.log(isIPhoneXSMax)
+              // iPhone XR
+              var isIPhoneXR = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 2 && window.screen.width === 414 && window.screen.height === 896-88;
+              console.log(isIPhoneXR)
+              
+              if (isIOS) {        
+                    // alert(window.screen.height)
+                  if (window.screen.height >=812){
+                  // if (isIPhoneX || isIPhoneXSMax || isIPhoneXR){
+                      //是iphoneX
+                      //alert('是iphoneX')
+                     $("#header").css({'height':'4em','padding-top':'3em'});
+      //            
+                  }else{
+                      $("#header").css({'height':'4em','padding-top':'1em'});
+                    // // alert('不是iphoneX')
+                  }
+              }else{
+                  $("#header").css({'height':'3em','padding-top':'0em'})
+                // alert('不是ios')
+              }
+          }
+		function gethotlist(){
+			tpl='<div class="umar-t umar-b ub-f33 ufl" onclick="beginsearch(\'${keyword}\')"><div class="ub uba uc-a4 ub-pc b-gra3 c-wh uinn hotword-li">${keyword}</div></div>';
+			$zy.getJSON(
+				weburl+"hotkeyword.php",
+				function(data){
+					keyno=zy_tmpl_count(data);
+					if(keyno>0){
+						s=zy_tmpl(tpl,data,keyno);
+						$("#hotwords").html(s);
+						$("#hotwords").show();
+						var scr_subm=new iScroll("allcont",{hScrollbar:false,vScrollbar:false,bounce:false,momentum:false,hScroll:false});
+					}
+			         
+				}
+			);
+		}
+		function loadtuanlist(){
+			keyword=$.trim($("#keyword").val());
+			if(keyword=="" || keyword.length<2){
+				uexWindow.toast(0,5,"请输入不少于2个字的关键词",2000);
+				return false;
+			}
+			postdata=[{"key":"keyword","type":"0","value":keyword}];
+			uexWindow.toast(1,5,"搜索中",0);
+			
+			///记录搜索历史
+			searchhistory="";
+			if(window.localStorage.getItem("searchhistory")){
+				searchhistory=window.localStorage.getItem("searchhistory");
+			}
+			if(searchhistory.indexOf(keyword)==-1){
+				if(searchhistory==""){
+					searchhistory=keyword;
+				}else{
+					searchhistory+=","+keyword;
+				}
+				window.localStorage.setItem("searchhistory",searchhistory);
+			}
+			///记录搜索历史
+			url=origiurl;
+			$zy.getJSON(
+				url,
+				function(data){
+					tuanno=data.tuanno;
+					if(tuanno>0){
+						s=zy_tmpl(tmpstr,data.tuandata,zy_tmpl_count(data.tuandata));
+						$(".myImg").height($(".myImg").eq(0).width()*11/16);
+					}else{
+						s="<br/><br/><center>没有找到相关记录，请换一个关键词试试。</center>";
+					}
+					$("#tuanlistdiv").html(s);
+					$(".lip").height($(".lip").eq(0).width()*10/16);
+					uexWindow.closeToast();
+					gethistory();
+					var scr_subm=new iScroll("allcont",{hScrollbar:false,vScrollbar:false,bounce:false,momentum:false,hScroll:false});
+				},
+				'json',
+				function(){},
+				'POST',
+				postdata
+			);
+		}
+		function gethistory(){
+			strlist="";
+			var history=window.localStorage.getItem("searchhistory");
+			if(history!=""){
+					history=history.split(",");
+					history.reverse();
+					$.each(history,function(k,v){
+						v=$.trim(v);
+						strlist+='<div class="uba ufl b-gra2 uinn t-gra umar-l umar-r umar-b umar-t uc-a4" onclick="beginsearch(\''+v+'\')">'+v+'</div>';
+					});
+			}
+			if(strlist!=""){
+				$("#searchistory_cont").html(strlist);
+				$("#searchistory").show();
+				var scr_subm=new iScroll("allcont",{hScrollbar:false,vScrollbar:false,bounce:false,momentum:false,hScroll:false});
+			}
+		}
+		function beginsearch(s){
+			$("#keyword").val(s);
+			loadtuanlist();
+			var scr_subm=new iScroll("allcont",{hScrollbar:false,vScrollbar:false,bounce:false,momentum:false,hScroll:false});
+		}
+		function clearhistory(){
+			$("#searchistory").hide();
+			window.localStorage.removeItem("searchhistory");
+		}
+		function setMenuHeight(){
+			var s=window.getComputedStyle($$('catediv'),null);
+			em = Int(s.fontSize);
+			var temph = Int(window.innerHeight-2.5*em);
+			h = temph2;
+			$('#allcont').css('height',Int(h));
+		}
+	</script>
+</html>

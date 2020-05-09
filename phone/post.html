@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+    <script src="js/jquery-1.6.4.min.js"></script>
+	<script src="js/zy_control.js"></script>
+	<script src="js/zy_click.js"></script>
+    <script src="js/zy_json.js"></script>
+</head>
+<body class="um-vp c-gra-666" ontouchstart>
+    <div id="page_0" class="up ub ub-ver c-gra" tabindex="0">
+        <div class="ub c-green t-wh h-pd uhh" id="header">
+			<div class="ub ub-ac ub-pc" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+				<div class="ub goback ub-ac"></div>
+			</div>
+			<div class="ub ub-f1 ub-ac ub-pc ulev1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="text"></span></div>
+			<div class="ub ub-ac ub-pc" onClick="submita();">
+				<div>同意社区条款并发表</div>
+			</div>
+		</div>
+        <div id="content" class="ub-f1"></div>
+    </div>
+</body>
+<script>
+	zy_init();
+	var fid,tid;
+	window.uexOnload = function(type){
+		var params = zy_parse();
+	    fid = params.fid;
+		tid = params.tid;
+		p_type=params.p_type;
+	    if (!type) {
+			checklogin();
+	    }
+		window.onorientationchange=window.onresize=function(){
+			zy_resize("content",0,$$("header").offsetHeight);				
+		}
+	}
+	
+	function checklogin(){
+		  tid>0?t='回帖':t='发贴';
+		  $("#text").html(t);
+		  url=weburl+"bbs_login.php?rnd="+Math.random();
+		  $zy.getJSON(
+				  url,
+				  function(data){
+					  if(data.result>0){
+						  zy_con("content", "post_content.html?fid="+fid+"&tid="+tid+"&p_type="+p_type, 0, $$("header").offsetHeight);
+					  }else{			
+	uexWindow.toast(0,5,"您没有登录，请返回点击我的登录吧！",5000);		
+
+						  return false;
+					  }
+				  }
+		  );
+	}
+	
+	function submita(){
+		uexWindow.evaluatePopoverScript("post","content","postarticle()");
+	}
+	
+	function openface(){
+		var w=window.screen.width;
+		var h=window.screen.height;
+		uexWindow.openPopover("face","0","face.html","",0,0,"","","","4");
+	}
+	
+	function closeface(){
+		uexWindow.closePopover('face');
+	}
+	
+</script>
+</html>

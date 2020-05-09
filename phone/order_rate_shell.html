@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">     
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="ub c-green t-wh h-pd">
+                <div class="ub ub-ac ub-pc pt2" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+                    <div class="ub goback ub-ac"></div>
+                </div>
+                <div class="ub ub-f1 ub-ac ub-pc ulev1n pt2">评价</div> 
+                
+                <div class="ub ub-ac ub-pc" style="visibility:hidden;">
+                    <div class="h-sear"></div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1">
+
+            </div>
+            <!--content结束-->
+
+        </div>
+    </body>
+    <script>
+    zy_init();
+    window.uexOnload = function(type){  
+        isIPhoneX()
+        var params = zy_parse();
+        var oid = params.oid;
+            if (!type) {
+                zy_con("content",  "order_rate_content.html?oid="+oid,0,$$("header").offsetHeight);
+            }           
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("content",0,$$("header").offsetHeight);
+            }           
+        }
+      function isIPhoneX(fn){
+          var u = navigator.userAgent;
+          var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+          // alert(isIOS)
+          // // iPhone X、iPhone XS
+          var isIPhoneX = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 375 && window.screen.height === 812;
+          console.log(isIPhoneX)
+  
+          // iPhone XS Max
+          var isIPhoneXSMax = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 414 && window.screen.height === 896;
+          console.log(isIPhoneXSMax)
+          // iPhone XR
+          var isIPhoneXR = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 2 && window.screen.width === 414 && window.screen.height === 896-88;
+          console.log(isIPhoneXR)
+          
+          if (isIOS) {        
+                // alert(window.screen.height)
+              if (window.screen.height >=812){
+              // if (isIPhoneX || isIPhoneXSMax || isIPhoneXR){
+                  //是iphoneX
+                  //alert('是iphoneX')
+                 $("#header").css({'height':'5em','padding-top':'2em'});
+  //            
+              }else{
+                  $("#header").css({'height':'4em','padding-top':'1em'});
+                // // alert('不是iphoneX')
+              }
+          }else{
+              $("#header").css({'height':'3em','padding-top':'0em'})
+            // alert('不是ios')
+          }
+      }  
+    </script>
+</html>

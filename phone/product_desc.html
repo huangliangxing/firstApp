@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <style type="text/css">
+            .yugou{background: #2C5C36;color: #fff;padding: 0.2em 0.5em;
+            border-radius: 0.2em;font-size: 0.8em;}
+        </style>
+    </head>
+    <body class="um-vp c-gra" ontouchstart>
+        <div id="allcontentcont">
+    	<div class="ub ub-ver">
+        	<div class="ub" id="fs">
+                <ul id="cfs"></ul>
+            </div>
+            <div id="nav" class="club_focus_nav inav uhide">
+                <ul id="indicator"></ul>
+            </div>
+        </div>
+        <!-- <div class="ub pic-b" style="background-image:url(css/images/sta_img.jpg); background-color:#fff; background-position:center center; background-repeat:no-repeat; background-size:100% 100%;" id="tuanpic"></div>
+         -->
+        <div class="ub ub-f1 umar-b">
+        	<div class="ub uinn10 ub-f1 uinn ub-ver c-wh pdesc-inf">
+				<div class="fwb ulev1n ub">
+				    <span id="subjectname" class="ub ub-f1">...</span>
+				    <span class="yugou ub"></span>
+			  </div>
+				<div class="ulev-3 t-gra umar-t umar-b suj"><span id="subject">...</span></div>
+				<div class="ub uinn9">
+				    <div class="ub ub-f1 ub-ae" id="ifhavejifen">
+                        <div class="ub t-green ub-ae"><span class="ulev-1">&yen;</span><span id="price" class="ub ulev2" style="margin-bottom:-0.15em;">...</span></div>                        
+                        <div class="ub ulev-1 t-green ub-ae" id="fanmoneydiv"></div>
+                        <div class="ub t-gra ulev-1 ub-ae">&nbsp;&yen;<span id="market_price" class="price-del">...</span></div>
+                    </div>
+                	<div class="ub ub-f1 ub-ac ub-pe t-gra" style="font-size: 0.8em"><span id="buyno">0</span>人已购买</div>
+				</div>
+            </div>
+        </div>
+        <div class="tuwen" id="seetuanmore" ontouchstart="zy_touch()">
+           <div  class="myChakan1">
+                                    查看图文详情
+           </div>
+           <div id="myChakan2">
+               <img src="css/images/arrow2.png"/>
+           </div>
+        </div>  
+        <div class="pingjia tuwen" id="seemorerate" ontouchstart="zy_touch()">
+           <div class="myChakan1">
+                                          查看全部评价
+           </div>
+           <div id="myChakan2">
+               <img src="css/images/arrow2.png"/>
+           </div>
+        </div>
+        <div class="umar-b" id="pingjia">
+            <div class="ub ub-f1 ub-ver uc-a4 c-wh" style="width:100%">
+                <div class="ub uinn ubb b-gra3">
+                    <div class="vot-t ub ub-ac ulev-3 t-gra">评价</div>
+                </div>
+                <div class="ub lh uinn">
+                    <ul>
+                        <li><div id="pingjiacont" style="font-size: 0.8em">
+                                                                                        抱歉,暂无评价
+                        </div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+    </body>
+    <script>
+        zy_init();
+		var platform,sid;////什么系统
+		var imgarr=[];
+		var date=new Date();
+		var nowTime=date.getTime();
+		nowTime=parseInt(nowTime/1000);
+        window.uexOnload = function(type){
+			uexWindow.toast(1,5,"加载中",0);
+			var params = zy_parse();
+	    	var tid = params.tid;
+            if (!type) {
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+                loadfocusimg(tid);
+				
+            }
+				
+			uexWidgetOne.cbGetPlatform = function(opId,dataType,data){
+				platform = data;
+			}////////取手机系统
+			uexWidgetOne.getPlatform();			
+        }
+		function getratelist3(tid){
+			ratetpl='<div class="ubb b-gra2 ub ub-ver uinn6">'+
+					'<div class="ub ub-f1 ub-ac">'+
+					'<div class="umar-r ruser" style="background:url(${avatar}) center center no-repeat; -webkit-background-size:100% 100%; background-size:100% 100%;"></div>'+
+					   '<div class="ub-f1 ub ub-ver">'+
+    						'<div class="t-gra6 ulev-3n">${username}</div>'+
+    						'<div class="ub-f1 ub ub-ac">'+
+    						    '<div class="t-org ulev-3n umar-r"><div class="ub rateinlst"><div class="ub starred" style="width:${perbest}"></div></div></div>'+
+        						'<div class="t-gra ulev-3n">${date}</div>'+
+					       '</div>'+
+					   '</div>'+
+					'</div>'+
+					'<div class="ub ub-f1 pt ulev-3n bkw" style="line-height:1.5em;">${content}</div>'+
+					'<div class="imgs_club imgs_club_${rid}">${pictures}</div>'+
+				'</div>';
+			gourl=weburl+"ratelist.php?tid="+tid+"&page=1&rnd="+Math.random();
+			$zy.getJSON(
+				gourl,
+				function(data){
+					pingjiano=data.rateno;
+					if(pingjiano>0){
+						html=zy_tmpl(ratetpl,data.ratedata,zy_tmpl_count(data.ratedata));
+						$("#rateno,#seeratenoall").html(data.rateno);
+						$("#pingjiacont").html(html);
+					}
+					else{
+						$("#pingjiacont").text("抱歉，暂无评价");
+					}
+					
+				}
+			);
+		}
+
+		function goseller(){
+			uexWindow.open('seller_head','0','seller_header.html?sid='+sid,'2','','','0',0);
+		}
+		function gettuandetail(tid){
+			url=weburl+'gettuandetail.php?tid='+tid;
+			window.localStorage.setItem("tid",tid);
+			if(window.localStorage.getItem('iwhtuanlat')){
+				user_lat=window.localStorage.getItem('iwhtuanlat');
+				user_lng=window.localStorage.getItem('iwhtuanlng');
+				url=url+'&lat='+user_lat+'&lng='+user_lng;
+			}
+			$zy.getJSON(
+			url,
+			function(data){
+				sid=data.sid;
+				if(data.bendantime<nowTime){
+				    $(".yugou").html("热卖中");
+				}
+				else{
+				    $(".yugou").html(data.bendanxiangqing+"开售");
+				}
+				$("#price").html(data.price);
+				$("#market_price").html(data.market_price);					
+				$("#buynow").click(function(){
+					uexWindow.open('ord_shell','0','ord_shell.html?tid='+tid,'2','','','0');
+				})
+				$("#seetuanmore").click(function(){
+					uexWindow.open('pdetail_shell','0','pdetail_shell.html?tid='+tid,'2','','','0');
+				})
+				canbuy=data.canbuy;
+				uexWindow.evaluateScript('p_desc'+tid,'0','changtxt(\''+data.price+'\',\''+data.market_price+'\','+canbuy+','+data.fanmoney+','+data.mallusepoint+');');
+				//$("#price").html(price);
+				//$("#subjectname,#subjectname_1,#thisothertuan").html(data.name);
+				$("#subjectname").html(data.name);
+				$("#subject").html(data.subject);
+				$("#address").html(data.c_address);
+				$("#userjuli").html(data.userjuli);
+				$("#tellcall").click(function(){
+					if(platform==1){uexCall.dial(data.c_tel);}
+					if(platform==0){uexCall.call(data.c_tel);}
+				});
+				$("#xinxi").html(data.bendanxiangqing);
+				$("#xuzhi").html(data.xuzhi);
+				$("#buyno").html(data.goods_sell_new);
+				$("#seemorerate").click(function(){
+                            uexWindow.open('pingjia_shell','0','pingjia_shell.html?tid='+tid,'2','','','0');  
+                        });
+				if(data.rateno>0){
+					$("#rateno,#seeratenoall").html(data.rateno);
+					$("#pingfen").html(data.pingfen);
+					$("#manyi").html(data.manyilv);
+					$("#haiqu").html(data.haiqulv);
+					//if(data.rateno>5){
+					    //$("#seemorerate").removeClass("uhide");
+					    
+					//}
+					starno=data.starno;
+					starstr='';
+					subjectdengji='';
+					for(i=0;i<starno;i++){
+						starstr+='★';
+						subjectdengji+='<img src="css/images/star3.png" style="height:1em; margin-right:0.1em;">';
+					}
+					for(i=0;i<(5-starno);i++){
+						starstr+='☆';
+						subjectdengji+='<img src="css/images/star3_off.png" style="height:1em; margin-right:0.1em;">';
+					}
+					$("#star").css("width",data.perbest);
+					$("#star").html(starstr);
+					$("#xingji").html(subjectdengji);
+					$("#rateshowdiv").show();
+					getratelist3(tid);//取3条评价
+				}
+				else{
+					//$("#pingjia").remove();
+				}
+				
+				if(data.cantuikuan==0){
+					$(".bzt-tag").addClass("bzt-tag_off");
+					$(".bzt-tag").eq(0).html('不支持退款');
+					$(".bzt-tag").eq(1).html('不支持退款');
+				}
+				uexWindow.closeToast();
+			}
+			);
+		}
+		function loadfocusimg(tid){
+		    $("#allcontentcont").show();
+            url=weburl+"getPimg.php?tid="+tid;
+            str='<li class="ub ufl fsli" style="background:url(${img}) center center no-repeat #fff; background-size:100% 100%;"></li>';
+            $zy.getJSON(
+                url,
+                function(data){
+                    var html;
+                    fno=zy_tmpl_count(data.list);
+                    linum=fno;
+                    navhtml='';
+                    if(fno>0){
+                        html=zy_tmpl(str,data.list,fno);
+                        for(i=0;i<fno;i++){
+                            if(i==0){
+                                onstr='class="active"';
+                            }else{
+                                onstr='';
+                            }
+                            j=i+1;
+                            navhtml+='<li '+onstr+'>'+j+'</li>';
+                        }
+                    }else{
+                        html='<div class="up ub ub-ac ub-pc">暂时没有图片信息</div>';
+                    }
+                    $("#cfs").html(html);
+                    if(fno>1){
+                        $("#nav").removeClass("uhide");
+                        $("#indicator").html(navhtml);
+                    }
+                    setFoucsImg(fno);
+                }
+            );
+            getsellertuan(tid);
+            gettuandetail(tid);
+            getbrowsetuan(tid);
+        }
+        
+        function setFoucsImg(linum){
+            $('#fs').css('width','100%');
+            $('#nav').css('width','100%');
+            $('#indicator').css('width','100%');
+            $("#cfs").width($("#fs").eq(0).width()*linum);
+            $(".fsli").width($("#fs").eq(0).width());
+            $(".fsli").height($(".fsli").eq(0).width()*11/16);
+            var club_scro;
+            club_scro = new iScroll('fs', {
+                snap: true,
+                momentum: false,
+                hScrollbar: false,
+                vScrollbar: false,
+                onScrollEnd: function () {
+                    document.querySelector('#indicator > li.active').className = '';
+                    document.querySelector('#indicator > li:nth-child(' + (this.currPageX+1) + ')').className = 'active';
+                }
+            });
+            document.addEventListener('DOMContentLoaded', loaded, false);
+        }
+		function seeimg(){
+			$(".imgs_club_"+rid+" div").each(function(index){
+				imgarr[index]=$(this).attr("src");
+			});
+			uexImageBrowser.open(imgarr,i, '1');
+		}
+		function getsellertuan(tid){
+            tuanstr='<div class="ub uinn ubb b-gra3" onclick="gonow(${tid});">'+
+                             '<div class="ub ub-f1 ub-ver">'+
+                                '<div class="ub ulev-3n t-gra" style="padding-bottom:0.2em;">${subject}</div>'+
+                                '<div class="ub ub-f1 ub-ae">'+
+                                    '<div class="ub ub-f1 ub-ae"><span class="ulev-3n t-green umar-r">&yen;${price}</span><span class="price-del ulev-1 t-gra9">&yen;${market_price}</span></div>'+
+                                '</div>'+
+                            '</div>'+
+                            '<div class="rarr1 umar-t"></div>'+
+                        '</div>';
+            url=weburl+"getsellertuan.php?tid="+tid;
+            $zy.getJSON(
+                url,
+                function(data){
+                    count=zy_tmpl_count(data);
+                    var s=zy_tmpl(tuanstr,data,count);
+                    if(count>0){
+                        $("#seller_tuan").removeClass("uhide");
+                        $("#seller_con").html(s);
+                    }
+                    
+                }
+            );
+            
+        }
+        function getbrowsetuan(tid){
+            lat=window.localStorage.getItem("iwhtuanlat");
+            lng=window.localStorage.getItem("iwhtuanlng");
+            
+            btuanstr='<div class="ub uinn ubb b-gra3" onclick="gonow(${tid});">'+
+                        '<div class="sel-img" style="background:url(${thumb}) center center no-repeat #fff; -webkit-background-size:100% 100%; background-size:100% 100%; margin-right:0.5em;"></div>'+
+                             '<div class="ub ub-f1 ub-ver">'+
+                             '<div class="ub">'+
+                                '<div class="ub-f1 ulev-3">${partner}</div>'+
+                                '<div class="ulev-1 t-gra9">${distance}</div>'+
+                             '</div>'+
+                                
+                                '<div class="ub ulev-3n t-gra9" style="height:2.8em;">${subject}</div>'+
+                                '<div class="ub ub-f1 ub-ae">'+
+                                    '<div class="ub ub-f1 ub-ae"><span class="ulev-1 t-green">&yen;</span><span class="ulev0 t-green umar-r">${price}</span><span class="price-del ulev-1 t-gra9">&yen;${market_price}</span></div>'+
+                                    '<div class="ulev-1 t-gra9">已售${sale}</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>';
+            nurl=weburl+"getbrowsetuan.php?tid="+tid;
+            if(lat && lng){
+                nurl=nurl+'&lat='+lat+'&lng='+lng;
+            }
+            $zy.getJSON(
+                nurl,
+                function(data){
+                    count=zy_tmpl_count(data);
+                    var s=zy_tmpl(btuanstr,data,count);
+                    if(count>0){
+                        $("#browse_tuan").removeClass("uhide");
+                        $("#browse_con").html(s);
+                    }
+                }
+            );
+        }
+     function gonow(tid){
+        uexWindow.open('p_desc'+tid,0,'pdesc_shell.html?tid='+tid,2,'','',0);
+     }
+    </script>
+</html>

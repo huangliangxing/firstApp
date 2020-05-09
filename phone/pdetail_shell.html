@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+    </head>
+    <body class="um-vp c-wh" ontouchstart>
+        <div class="up ub ub-ver" tabindex="0">
+        	<div id="header" class="ub c-green t-wh h-pd">
+	            <div class="ub ub-ac ub-pc" style="margin-top: 0.5em;" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+	                <div class="ub goback ub-ac"></div>
+	            </div>
+	            <div class="ub ub-f1 ub-ac ub-pc ulev1n" style="margin-top: 0.5em;">本单详情</div>
+	            <div class="ub ub-ac ub-pc" style="visibility:hidden;">
+	                <div class="h-sear"></div>
+	            </div>
+        	</div>
+            <div id="content" class="ub-f1"></div>
+            <div id="footer" class="ub ubt ub-ac b-gra2">
+				<div class="ub uinn18 ub-f1">
+					<div class="ub ub-f1 ulev1 ub-ae">
+						<div class="ub ulev-1 t-green ub-ae t-lh" style="color: #2C5C36;">&yen;</div>
+						<div id="price" class="ub ulev2 t-green ub-ae t-lh" style="color: #2C5C36">0</div>						
+						<div id="fanmoneydiv" class="ulev-1 t-org2 t-lh"></div>
+						<div class="ub t-gra ulev-1 t-lh">
+							<div class="ub">&nbsp;</div>
+							<div class="ub t-lh">&yen;</div>
+							<div id="market_price" class="ub price-del t-lh">0</div>
+						</div>
+					</div>
+					<div id="buynow" ontouchstart="zy_touch()" class="ub btn-lig uc-a4 uinn2 t-wh ulev-3n ulim">立即抢购</div>
+				</div>
+                <div id="usemp" style="display:none;">¥<b id="jiage">0</b> + <b id="jifen">0</b>积分<label><input type="checkbox" name="mpcheckbox" id="mpcheckbox" value="0" />选择兑换价</label></div>
+            </div>
+        </div>
+    </body>
+    <script>
+    	zy_init();
+        window.uexOnload = function(type){
+			var params = zy_parse();
+	    	var tid = params.tid;
+			$("#buynow").click(function(){
+				mpval=0;
+				if($("#mpcheckbox").prop("checked")==true){
+					mpval=$("#mpcheckbox").val();
+				}
+				buyurl='ord_shell.html?tid='+tid+'&mp='+mpval;
+				uexWindow.open('ord_shell','0',buyurl,'2','','','0');
+			})
+            if (!type) {
+                zy_con("content", "product_detail.html?tid="+tid,0,$$("header").offsetHeight);
+            }
+			window.onorientationchange=window.onresize=function()
+			{
+				zy_resize("content",0,$$("header").offsetHeight);				
+			}
+        }
+		
+		function changtxt(price,market_price,canbuy){
+			$("#price").html(price);
+			$("#market_price").html(market_price);
+			if(canbuy==0){
+				$("#buynow").unbind("click");
+				$("#buynow").html("团购已结束");
+				$("#buynow").addClass("b-gra2 c-gra-ddd");
+			}
+			
+		}
+    </script>
+</html>

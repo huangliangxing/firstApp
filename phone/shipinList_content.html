@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+      <ul class="shipinList" id="videoList">
+          <!--
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">欣赏稻田</p>
+                  <p class="peopleSee">123人观看过</p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          <li onclick="openVideoDetail()">
+              <div class="list">
+                <img src="css/images/shipin1.jpg" class="img1"/>
+                <img src="css/images/bofang.png" class="img2"/>                 
+              </div>
+              <div class="people">
+                  <p class="name">我在村头欣赏稻田</p>
+                  <p class="peopleSee">123<span>人观看过</span></p>
+              </div>  
+          </li>
+          -->
+      </ul>
+    </body>
+    <script>
+        zy_init();
+        var page=1;
+        url=weburl+"videoList.php";
+        var oid;
+        var imgUrl="http://www.tastingbutler.com/static/";
+         window.uexOnload = function(type){
+             uexWindow.toast(1,5,"加载中",0);
+            var params=zy_parse();
+            oid=params.oid;
+            getlist();
+            uexWindow.onBounceStateChange=function(t,s){
+                if(t==1){
+                    if(s==0){
+                        getmorelist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("1");
+                    }
+                }
+                if(t==0){
+                    if(s==0){
+                        refreshlist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("0");
+                    }
+                }
+            }
+            
+            uexWindow.setBounce("1");
+            uexWindow.showBounceView("0","#FFF","0");
+            uexWindow.showBounceView("1","#FFF","0");
+            
+    　　　　    uexWindow.notifyBounceEvent("0","1");
+            uexWindow.notifyBounceEvent("1","1");
+            str='{"loadingText":"刷新中"}';
+            uexWindow.setBounceParams('0',str);
+            str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+            uexWindow.setBounceParams('1', str);             
+        }
+        function getmorelist(){
+            page++;
+            //getlist();
+        }
+        function refreshlist(){
+            page=1;
+            //getlist();
+        }
+        //分页获得视频数据
+        function getlist(){
+            $zy.getJSON(
+                url+"?oid="+oid,
+                function(data){
+                    uexWindow.closeToast();
+                    for(var i=0;i<data.length;i++){
+                        var name=data[i].vid_name;
+                        var img=imgUrl+data[i].vid_img;
+                        var videoId=data[i].vid_id;
+                        var str='<li onclick="openVideoDetail('+videoId+')">'+
+                                      '<div class="list">'+
+                                        '<img src="'+img+'" class="img1"/>'+
+                                        '<img src="css/images/bofang.png" class="img2"/>'+                 
+                                      '</div>'+
+                                      '<div class="people">'+
+                                          '<p class="name">'+name+'</p>'+
+                                          /*
+                                          '<p class="peopleSee">'+0+'<span>人观看过</span></p>'+
+                                          */
+                                      '</div>'+
+                                  '</li>';
+                       $("#videoList").append(str);
+                    }
+                }
+            )
+        }
+        function openVideoDetail(videoId){
+           uexWindow.open("VideoDetails",0,"VideoDetails.html?oid="+videoId,2,'','',0);
+        }
+
+    </script>
+</html>

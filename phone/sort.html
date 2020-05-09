@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/all.js"></script>
+    </head>
+    <body class="um-vp2 ub ub-f1 ub-ver c-pop" ontouchstart>
+        <!-- <div class="ub head_pop" onclick="closepop()"></div> -->
+		<div id="cate" class="menu-h2 ub-no" style="display:none;">
+			<div class="ub ub-f1 ub-no">
+				<div id="hitarea" class="ub ub-fhh ub-f1" onclick="closepop()"></div>
+				<div class="ub ub-fhh c-bzt ub-ver menu-h2">
+					<div class="ubtb uinn17 ub ub-ac ub-pc ulev0" onClick="getcatesort(0,'智能排序')">智能排序</div>
+	                <div class="ubtb uinn17 ub ub-ac ub-pc ulev0" onClick="getcatesort(1,'离我最近')">离我最近</div>
+	                <div class="ubtb uinn17 ub ub-ac ub-pc ulev0" onClick="getcatesort(2,'最新发布')">最新发布</div>
+	                <div class="ubtb uinn17 ub ub-ac ub-pc ulev0" onClick="getcatesort(3,'人气最高')">人气最高</div>
+	                <div class="ubtb uinn17 ub ub-ac ub-pc ulev0" onClick="getcatesort(4,'价格最低')">价格最低</div>
+	                <div class="ubtb uinn17 ub ub-ac ub-pc ulev0" onClick="getcatesort(5,'价格最高')">价格最高</div>
+				</div>
+			</div>
+		</div>
+		<div class="ub ub-f1" onclick="closepop()"></div>
+    </body>
+    <script>
+    var s;
+		window.uexOnload = function(){
+		    var params = zy_parse();
+            s = params.s;
+			$("#cate").show();
+			//uexLocation.openLocation();//打开地图
+			//uexLocation.onChange=iwh_getposition;//获得用户经纬度
+		}
+    	function closepop(){
+			$("#cate").hide();
+			$("#hitarea").css("display","block");
+			uexWindow.close('-1');
+		}
+		
+		function getcatesort(orderid,name){
+		    if(s=='miaosha'){
+		        window.localStorage.setItem("orderid_m",orderid);
+                uexWindow.evaluateScript('sort','0','close()');
+                uexWindow.evaluateScript("allmiaosha_head","0","changeindextopname('ordername_m','"+name+"')");
+                uexWindow.evaluateScript("allmiaosha_head","0","loadindexcontent()");
+		    }else{
+		        window.localStorage.setItem("orderid",orderid);
+                uexWindow.evaluateScript('sort','0','close()');
+                uexWindow.evaluateScript("alltuan_head","0","changeindextopname('ordernamedes','"+name+"')");
+                uexWindow.evaluateScript("alltuan_head","0","loadindexcontent()");
+		    }
+			
+			uexWindow.close(-1);
+		}
+    </script>
+</html>

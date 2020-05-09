@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/jquery.lazyload.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp" ontouchstart>
+		<div id="allcontentcont">
+	        <div class="uinn" id="subject"></div>
+	        <div class="ub ub-ver">
+	        	<div class="ub uinn">
+	        		<div id="face" class="ub tcx uc-a4 umar-r" style="background:center center no-repeat;background-size:100% 100%;background-image:url();"></div>
+					<div class="ub ub-f1 ub-ver ulev-1">
+						<div class="ub ub-f1">
+							<div class="ub ub-f1" id="author"></div>
+							<div class="ub t-gra">楼主</div>
+						</div>
+						<div class="ub ub-f1 ulev-1 t-gra ub-pe" id="postdate"></div>
+					</div>
+	        	</div>
+				<div class="ub uinn ub-ver umar-t">
+					<div id="content" class="cont-lh bkw"></div>
+				</div>
+				<div class="ub uinn ubb ubt b-gra2 c-f7">
+					<div class="ub ub-f1">大家的回复</div>
+					<div class="ub">共<span id="replies">0</span>条</div>
+				</div>
+	            <div id="reply"></div>
+			</div>
+	        <div id="getmore" onClick="loadthread()" class="ub uinn6">
+            	<div class="ub uinn6 ub-f1 uba b-gra2 c-f7 uc-a4 ub-pc ulev-1">点击加载更多精彩回复</div>
+            </div>
+	        <input id="page" name="page" type="hidden" value="1" />
+		</div>
+		<div id="nav"></div>
+		<div style="height:3em"></div>
+    </body>
+    <script>
+    	zy_init();
+		var tid;
+		var imgarr=[];
+		window.uexOnload = function(type){
+			var params = zy_parse();
+	    	tid = params.tid;
+            if (!type) {
+				
+				////////
+				uexWindow.onBounceStateChange=function(t,s){
+					if(t==0){
+						if(s==0){
+							$("#page").val(1);
+							$("#reply").html("");
+							$("#getmore").show();
+							loadthread();				
+						}
+					}
+					uexWindow.resetBounceView("0");
+					uexWindow.resetBounceView("1");
+				}
+				
+				uexWindow.setBounce("1");
+                uexWindow.showBounceView("0","#FFF","0");
+                uexWindow.showBounceView("1","#FFF","0");
+                
+                uexWindow.notifyBounceEvent("1","1");
+                uexWindow.notifyBounceEvent("0","1");
+                str='{"loadingText":"刷新中"}';
+                uexWindow.setBounceParams('0',str);
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+				
+                loadthread();
+            }
+        }
+		
+		function loadthread(){
+			uexWindow.toast(1,5,"正在加载中...",0);
+			page=parseInt($("#page").val());
+			str='<div class="ub ubb b-gra2 ub-ver umar-t umar-b">'+
+                   ' <div class="ub c-f7 uc-a4 umar-r umar-l uinn2">'+
+                       ' <div class="ub tcx uc-a4 umar-r" style="background:url(${reply_face}) center center no-repeat;background-size:100% 100%;"></div>'+
+                       ' <div class="ub ub-f1 ub-ver ulev-1">'+
+                           ' <div class="ub ub-f1">'+
+                               ' <div class="ub ub-f1">${reply_author}</div>'+
+                               ' <div class="ub t-gra">${reply_floor}</div>'+
+                           ' </div>'+
+                           ' <div class="ub ub-f1 ulev-1 t-gra ub-pe">${reply_postdate}</div>'+
+                        '</div>'+
+                   ' </div>'+
+                   ' <div class="uinn t-gra cont-lh bkw">${reply_content}</div>'+
+               ' </div>';
+			url=weburl+"bbs_show.php?tid="+tid+"&page="+page;
+			$zy.getJSON(
+				url,
+				function(data){
+					if(page==1){
+						$("#author").html(data.author);
+						$("#postdate").html(data.postdate);
+						$("#replies").html(data.replies);
+						$("#subject").html(data.subject);
+						$("#content").html(data.content);
+						$("#face").css("background-image","url("+data.face+")");
+					}
+					ps=data.ps;
+					reply=data.reply;
+					replyno=zy_tmpl_count(reply);
+					if(replyno>0){
+						html=zy_tmpl(str,reply,replyno);
+						$("#reply").append(html);
+						$("#page").val(page+1);
+						$("#getmore").show();
+					}
+					if(replyno<ps){
+						$("#getmore").remove();
+					}
+					$("#allcontentcont").show();
+					uexWindow.closeToast();
+					
+					//$(".clubimgpic").lazyload({
+						//effect : "fadeIn"   
+					//}); 
+					seeimg(); 
+				}
+			);
+		}
+
+		function seeimg(){
+			$(".clubimgpic").each(function(index) {
+				imgarr[index]=$(this).attr("bigsrc");
+                $(this).click(function(){
+					uexImageBrowser.open(imgarr,index, '1');
+				});
+            });
+		}	
+    </script>
+</html>

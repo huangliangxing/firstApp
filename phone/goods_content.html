@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <style type="text/css">
+            #category{position: fixed;top:0;left:0;z-index: 999;background: #fff;height:5em;width: 100%;}
+            .top{position: fixed;right:0;bottom:2em;z-index: 999;display: none}
+            .top img{width: 2em;height:2em}
+        </style>
+    </head>
+    <body class="um-vp c-gra" ontouchstart>
+        <div class="ub ub-ver" tabindex="0">
+            <div id="category" class="goodsHead ub ub-ac ub-f1" style="background-color:#fff"></div>
+            <div class="ub-f1 ub-ver c-wh" style="margin-top:6em">
+                <div class="ulev-3n guessulike">
+                                                                       为你推荐
+                    <!--<div class="ufr ulev-1 miaoshan" onclick="loadalltuan()">全部团购&nbsp;〉&nbsp;</div> -->
+                </div>
+                <div id="guessyoulike"></div>
+            </div>
+            <div class="ub vspace">
+                <div class="ub ub-f1 uinn17 ubb b-gra3 c-wh ub-ac ub-pc ulev-1 t-green" onclick="loadalltuan()">
+                                              查看全部商品
+                </div>
+            </div>
+        </div>
+        <div class="top">
+            <img src="css/images/back_top.png"/>
+        </div>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.slider.js"></script>
+        <script src="js/all.js"></script>
+    </body>
+    <script>
+        zy_init();
+        var lat1,log1;
+        var page=1;
+        $(".mark").height($(".mark").eq(0).width());
+        $("#category .ub-ac").height($("#category .ub-ac").eq(0).width());
+        window.localStorage.removeItem("zhoubianshowkm");//取消显示区域筛选按照几千米划分
+        window.uexOnload = function(type){
+            if (!type) {
+                uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            getmorelist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("1");
+                        }
+                    }
+                } 
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("1","#fff","0");
+                uexWindow.notifyBounceEvent("1","1");
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+            }
+            getmenu();
+        }
+         $(window).scroll(function(){
+           if($("body").scrollTop()<400){
+               $(".top").css("display","none");
+           }
+           else{
+              $(".top").css("display","block");
+           }
+       });
+        $('.top').click(function(event) {
+               $('html,body').animate({
+                    'scrollTop': 0},
+                   400);
+         });
+        function getmenu(){
+            uexWindow.toast(1,5,"加载中",0);
+            $zy.getJSON(
+                weburl+'menu.php?rnd='+Math.random(),
+                function(data){
+                    uexWindow.closeToast();
+                    $("#category").html(data);
+                    $("#category .ub-ac").height($("#category .ub-ac").eq(0).width());
+                    $(".mark").height($(".mark").eq(0).width());
+                    getbanner();
+                    getguesslike();
+                    getmiaosha();
+//                  getsjad();
+                },
+                'text',
+                function(){
+                    getmenu();
+                }
+            );
+        }
+        function getmorelist(){
+            page++;
+            getguesslike();
+        }
+        var slider = appcan.slider({
+            selector :'#slider',
+            aspectRatio:6/16,
+            hasLabel:false,
+            index:0,
+            auto:4000
+        });
+        function getbanner(){
+            $("#slider").html('');
+            $zy.getJSON(
+                weburl+'banner.php',
+                function(data){
+                    slider.set(data.banners);
+                    var banners_url=data.banners_url;
+                    slider.on("clickItem",function(index,data){
+                        var i=index;
+                        custom=banners_url[i].custom;
+                        type=banners_url[i].type;
+                        loadurl(type,custom);
+                    });
+                },
+                'json',
+                function(){
+                    getbanner();
+                }
+            );
+        }
+        function loadurl(type,custom) {
+            if(type=='partner') {
+                openSeller(custom);
+            }else if(type=='good') {
+                openSellerGoods(custom);
+            }else if(type=='news') {
+                openDiscovery(custom);
+            }else{
+                return false;
+            }
+        }
+        function getguesslike(){
+            uexWindow.toast(1,5,"加载中",0);
+            var tmpstr='<div class="goodsList" onclick="openSellerGoods(${tid})">'+
+                '<div class="ub img">'+
+                    '<div class="img myImg" style="background:url(${thumb}) 50% 50%; background-repeat: no-repeat; background-color: #fff; background-size:100% 100%;"></div><div class="needyuyue_${yuyue} ub ub-img"></div>'+
+                '</div>'+
+                '<div class="ub ub-f1 ub-ver">'+
+                    '<div class="goodTitle">${subject}</div>'+
+                    '<div class="ub t-gra ub-ae ub-f1">'+
+                        '<div class="ub ub-f1 ub-ae">'+
+                            '<div class="ub ub-ae ub-f1 goodsName">'+
+                                '<div class="ut-s ulev0n companyneedhide">${name}</div>'+
+                                '<span class="ub">${extratext}</span>'+
+                            '</div>'+
+                            '<div class="t-green ub ub-ae myPrice"><span class="ulev-1">&yen;</span>${price}</div>'+
+                        '</div>'+
+                    '</div>'+
+            '</div>'+
+            '</div>';
+            $zy.getJSON(
+                weburl+'like.php?page='+page+'&rnd='+Math.random(),
+                function(data){
+                    uexWindow.closeToast();
+                    tuanno=data.tuanno;
+                    if(tuanno>0){
+                        var tstr=data;
+                        var s=zy_tmpl(tmpstr,tstr.tuandata,zy_tmpl_count(tstr.tuandata));
+                        $("#guessyoulike").append(s);
+                    }else{
+                        if(page>1)
+                           uexWindow.toast(0,5,"暂时没有更多记录",500);
+                    }
+                    $(".myImg").height($(".myImg").eq(0).width()*11/16);
+                    //$(".myImg").css("height","10px");
+                },
+                'json',
+                function(){
+                    getmorelist();
+                }
+            );
+        }
+        function getmiaosha(){
+            uexWindow.toast(1,5,"加载中",0);
+            var msstr='<div class="fmsimg" onclick="openSellerGoods(${tid})">'
+            +'<img src="${thumb}"/>'
+            +'<div style="padding-top:0.5em;margin-bottom: 1.5em;"><span class="msprice">&yen;${price}</span>'
+            +'<del class="msmarketprice">&nbsp;&yen;${market_price}</del></div>'
+            +'</div>';
+            $zy.getJSON(
+                weburl+'miaosha.php',
+                function(data){
+                    uexWindow.closeToast();
+                    tuanno=data.tuanno;
+                    if(tuanno>0){
+                        var tstr=data;
+                        var fdata;
+                        if(tstr.tuandata.length<=3){
+                            fdata=tstr.tuandata;
+                        } else {
+                            fdata=[tstr.tuandata[0],tstr.tuandata[1],tstr.tuandata[2]];
+                        }
+                        var s=zy_tmpl(msstr,fdata,zy_tmpl_count(fdata));
+                        $("#miaoshacontent").append(s);
+                    }else{
+                        $("#msdiv").addClass("uhide");
+                    }
+                },
+                'json',
+                function(){
+                    getmiaosha();
+                }
+            );
+        }
+//      function getbanner(){
+//          $("#slider").html('');
+//          //slider.set([]);
+//          $zy.getJSON(
+//              weburl+'banner.php?rnd='+Math.random(),
+//              function(datan){
+//                 slider.set(datan.banners);
+//              },
+//              'json',
+//              function(){
+//                  getmenu();
+//              }
+//          );
+//      }
+        function changeImg() {
+            if (curIndex==arr.length-1) {
+                curIndex=0;
+            } else {
+                curIndex+=1;
+            }
+            var imgurl = weburl+arr[curIndex];
+//          $("#obj1").css("background-image","url("+imgurl+")");
+            obj.src=imgurl;
+        }
+        function getad(){
+            $zy.getJSON(
+                weburl+"ad.php?rnd="+Math.random(),
+                function(data){
+                    $("#ads").html(data);
+                    data=$.trim(data);
+                    if(data!=""){
+                        $(".ad").height($(".ad").eq(0).width()/3);
+                    }
+                },
+                'text'
+            );
+        }
+        function loadalltuan(){
+            window.localStorage.setItem("orderid",0);
+            window.localStorage.setItem("fid",0);
+            window.localStorage.setItem("sid",0);
+            window.localStorage.setItem("newtuan",0);
+            window.localStorage.removeItem("newtopcatename");
+            uexWindow.open("alltuan_head",'0',"alltuan_header.html",'2','','','0');
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("content",0,$$("header").offsetHeight);
+            }
+        }
+        function loadallmiaosha(){
+            window.localStorage.setItem("orderid",0);
+            window.localStorage.setItem("fid",0);
+            window.localStorage.setItem("sid",0);
+            window.localStorage.setItem("newtuan",0);
+            window.localStorage.removeItem("newtopcatename");
+            uexWindow.open("allmiaosha_head",'0',"allmiaosha_header.html",'2','','','0');
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("miaosha",0,$$("header").offsetHeight);
+            }
+        }
+//      function loadhuodong(){
+//          window.localStorage.setItem("orderid",0);
+//          window.localStorage.setItem("fid",0);
+//          window.localStorage.setItem("sid",0);
+//          window.localStorage.setItem("newtuan",0);
+//          window.localStorage.removeItem("newtopcatename");
+//          uexWindow.open("huodonghead",'0',"huodong_header.html",'2','','','0');
+//          window.onorientationchange=window.onresize=function(){
+//              zy_resize("content",0,$$("header").offsetHeight);
+//          }
+//      }
+        function getsjad(){
+            var sjadstr='<div class="sjadimg" onclick="openSeller(${sid})">'
+            +'<img src="${thumb}"/>'
+            +'</div>';
+            uexWindow.toast(1,5,"加载中",0);
+            $zy.getJSON(
+                weburl+'getsjad.php',
+                function(data){
+                    ps=data.ps;//ps 10
+                    if(ps>0){
+                        var tstr=data.list;
+                        var fdata=[tstr[0],tstr[1],tstr[2],tstr[3]];
+                        var s=zy_tmpl(sjadstr,fdata,zy_tmpl_count(fdata));
+                        $(".sjad").append(s);
+                    }
+                    uexWindow.closeToast();
+                }
+            );
+        }
+        function openDiscovery(tid){
+            uexWindow.open('news_shell','0','news_shell.html?tid='+tid,'2','','','0','0');
+        }
+        function openSeller(sid){
+            uexWindow.open('seller_header'+sid,'0','seller_header.html?sid='+sid,'2','','','0','0');
+        }
+        function openSellerGoods(tid){
+            uexWindow.open('pdesc_shell'+tid,0,'pdesc_shell.html?tid='+tid,2,'','',0);
+        }
+        function getallcates(){
+            uexWindow.open("cate_shell",'0',"cate_shell.html",'2','','','0');
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("content",0,$$("header").offsetHeight);
+            }
+        }
+        //坐标
+        function locationCallback(lat,log){
+            window.localStorage.setItem("iwhtuanlat",lat);
+            window.localStorage.setItem("iwhtuanlng",log);
+            lat1 = lat;
+            log1 = log;
+            uexLocation.getAddress(lat,log);
+        }
+        
+        function get_adress(){
+            uexLocation.getAddress(lat1,log1);
+        }   
+        
+        function LocationSuccess(opCode,dataType,data){
+            window.localStorage.setItem("iwhpositionname",data);
+            uexLocation.closeLocation();
+        }
+        
+        function loadhuodonga(){
+            uexWindow.evaluateScript('root','0','loadhuodonga()');
+        }
+        
+        function loadper(){
+            uexWindow.evaluateScript('root','0','loadper()');
+        }
+        function gowm(){
+            uexWindow.open("wm_shell",'0',"wm_shell.html",'2','','','0');
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("content",0,$$("header").offsetHeight);
+            }
+        }
+        function god(){
+            uexWindow.open("d_shell",'0',"d_shell.html",'2','','','0');
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("content",0,$$("header").offsetHeight);
+            }
+        }
+        function openw(a,b){
+            platform=1;
+            platform=0;
+            url='tool_shell.html?url='+a+'&title='+b;
+            if(platform==0){
+                url="wgtroot://"+url;
+            }
+            uexWindow.open('toolwindow','0',url,'2','','','0');
+       }
+    </script>
+</html>

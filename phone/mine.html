@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/mine.css">
+		<link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+        <script src="js/appcan.js"></script>
+    </head>
+    <body class="um-vp c-f1 ub ub-ver" ontouchstart>
+    	<div class="ub c-f1">
+			<div class="ub-f1" id="oklogin">
+				<div class="ub ub-ver accont">
+				</div>				
+			</div>
+		</div>
+		<div class="bottom1 ub ub-ver">
+		    <div id="avatar">
+				
+			</div>
+            <div id="username">请点击登录</div>
+            <div id="remark_grade" class="ub ub-pe" style="margin-top: 1.5em;margin-right: 1em;font-size: 0.7em;color: #2C5C36">
+            </div>
+        </div>
+		<div class="ub ub-ver c-wh">
+            <div class="ub uinn20 ubb b-gra2 ub-ac" id="allorder">
+                <div class="ub ub-f1 ulev1n">全部订单</div>
+                <span style="color: #a9a4a4;font-size: 0.8em;">
+                                                        查看全部订单
+                </span>
+                <span class="ub ulev1n">
+                    <img src="css/images/arrow2.png"/>
+                </span>
+             </div>
+         </div>
+        <div class="subexpressinfo">
+                        <div class="ub ub-ver">
+                            <div class="ub  uinn ulev-3n">
+                                <div class="ub ub-f1 ub-ver" id="nopayclick">
+                                    <div class="ub ub-ac ub-pc logo-order1"><div class="t-r ic_num ulev-3 uhide" id="unpaid_no"></div></div>
+                                    <div class="ub ub-pc ub-f1 ulev1n ">待付款</div>
+                                </div>
+                                <div class="ub ub-f1 ub-ver" id="nosendclick">
+                                    <div class="ub ub-ac ub-pc logo-order2"><div class="t-r ic_num ulev-3 uhide" id="unsend_no"></div></div>
+                                    <div class="ub ub-pc ub-f1 ulev1n ">待发货</div>
+                                </div>
+                                <div class="ub ub-f1 ub-ver" id="nogoodclick">
+                                    <div class="ub ub-ac ub-pc logo-order3"><div class="t-r ic_num ulev-3 uhide" id="ungood_no"></div></div>
+                                    <div class="ub ub-pc ub-f1 ulev1n ">待收货</div>
+                                </div>
+                                <div class="ub ub-f1 ub-ver" id="orderrateclick">
+                                    <div class="ub ub-ac ub-pc logo-order4"><div class="t-r ic_num ulev-3 uhide" id="rate_no"></div></div>
+                                    <div class="ub ub-pc ub-f1 ulev1n">待评价</div>
+                                </div>
+                                <div class="ub ub-f1 ub-ver" id="refundclick">
+                                    <div class="ub ub-ac ub-pc logo-order5"><div class="t-r ic_num ulev-3 uhide" id="refund_no"></div></div>
+                                    <div class="ub ub-pc ub-f1 ulev1n">退款中</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        <div class="ub ub-ver c-wh umar-t0">
+             <div class="ub uinn20 ubb b-gra2 ub-ac" id="moneyclick">
+                <div class="ub logo-np1"></div>
+                <div class="ub ub-f1 ulev1n">我的钱包</div>
+                <span id="user_money">
+                    0
+                </span>
+                <span id="">
+                    <img src="css/images/arrow2.png"/>
+                </span>
+            </div>
+            <div class="ub uinn20 ubb b-gra2 ub-ac" id="myCart">
+                <div class="ub logo-np2"></div>
+                <div class="ub ub-f1 ulev1n">我的购物车</div>
+                <span id="">
+                    <img src="css/images/arrow2.png"/>
+                </span>
+            </div>
+             <div class="ub uinn20 ubb b-gra2 ub-ac" id="myRengou">
+                <div class="ub logo-np3"></div>
+                <div class="ub ub-f1 ulev1n">我的认购</div>
+                <span id="">
+                    <img src="css/images/arrow2.png"/>
+                </span>
+            </div>
+            <div class="ub uinn20 ubb b-gra2 ub-ac" id="myShipin">
+                <div class="ub logo-np4"></div>
+                <div class="ub ub-f1 ulev1n">收藏视频</div>
+                <span id="">
+                    <img src="css/images/arrow2.png"/>
+                </span>
+            </div>
+            <div class="ub uinn20 ubb b-gra2 ub-ac" id="myXinxi">
+                <div class="ub logo-np5"></div>
+                <div class="ub ub-f1 ulev1n">个人信息</div>
+                <span id="">
+                    <img src="css/images/arrow2.png"/>
+                </span>
+            </div>
+           <div class="ub uinn20 ubb b-gra2 ub-ac" id="lianxi" onclick="contact()">
+                <div class="ub logo-np7"></div>
+                <div class="ub ub-f1 ulev1n">联系我们</div>
+                <span id="">
+                    <img src="css/images/arrow2.png"/>
+                </span>
+            </div>
+        <div class="tuichu" ontouchstart="zy_touch()">
+            <div id="">
+                                             退出账号
+            </div>
+        </div>
+    </body>
+    <script>
+        zy_init();
+		var devicetoken=window.localStorage.getItem("devicetoken");
+		var remark_name;
+		if (devicetoken != "" && devicetoken != null){
+				devicetoken = devicetoken.replace(/\s/ig,'IWEIHAI');
+		}else{
+			devicetoken="";
+		}
+        window.uexOnload = function(type){
+                uexWindow.onStateChange=function(state){
+                   // alert(state);
+                    if(state==0){
+                        window.location.reload();
+                    }
+                }
+                //if (!type) {
+                /*
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+                */
+                uexWindow.setBounce("0");
+				uexWindow.toast(1,5,"加载中",0);
+				getuserinfo();
+				remark_price();
+            //}
+            $(".tuichu").click(function(){
+                  var btnList=new Array();
+                  btnList[0]="确定";
+                  btnList[1]="取消";
+                  var isLogin=window.localStorage.getItem('iwhtuanlogin');
+                  if(isLogin){
+                      appcan.window.alert({
+                      title:'温馨提醒',
+                      content:"确定退出吗？",
+                      buttons:btnList,
+                      callback:function(err,data,dataType,optId){
+                             if(data==0){
+                                 window.localStorage.removeItem("iwhtuanlogin");
+                                 window.localStorage.removeItem("login_userid");
+                                 refreshlist();
+                             }
+                       }
+                    });
+                  }
+            }); 
+        }
+		function getuserinfo(){
+		    if(window.localStorage.getItem("iwhtuanlogin")==1){
+                userid=window.localStorage.getItem("login_userid");
+                url=weburl+'getuserinfo1.php?userid='+userid+'&rnd='+Math.random();
+                    $zy.getJSON(
+                        url,
+                        function(data){
+                            if(data.islogin==1){
+                                $("#avatar").css("background-image","url("+data.avatar+")");
+                                $("#username").html(data.username);
+                                window.localStorage.setItem("username",data.username);
+                                $("#user_money").html(data.rmb);
+                                $("#point").html(data.point);
+                                $("#quanno").html(data.quanno);
+                                $("#rateno").html(data.rateno);
+                                $("#favorno").html(data.collectno);
+                                if(data.order_unpaid_no>0){
+                                    $("#unpaid_no").removeClass("uhide");
+                                    $("#unpaid_no").html(data.order_unpaid_no);
+                                } 
+                               if(data.order_unsend_no>0){
+                                   $("#unsend_no").removeClass("uhide");
+                                   $("#unsend_no").html(data.order_unsend_no);
+                               }
+                               if(data.order_ungood_no>0){
+                                   $("#ungood_no").removeClass("uhide");
+                                   $("#ungood_no").html(data.order_ungood_no);
+                               }
+                                if(data.order_unrate_no>0){
+                                    $("#rate_no").removeClass("uhide");
+                                    $("#rate_no").html(data.order_unrate_no);
+                                } 
+                                if(data.order_refund_no>0){
+                                    $("#refund_no").removeClass("uhide");
+                                    $("#refund_no").html(data.order_refund_no);
+                                } 
+                                
+                                if(data.candaka==1){
+                                    $("#daka").click(function(){
+                                        $zy.getJSON(
+                                            weburl+'daka.php',
+                                            function(data){
+                                                if(data.ok==1){
+                                                    changedakabtn();
+                                                }else{
+                                                    uexWindow.alert('温馨提示',data.textd,'确定');
+                                                }
+                                                
+                                            }          
+                                        );
+                                    })
+                                }else{
+                                    changedakabtn();
+                                }
+                                $("#avatar").click(function(){uexWindow.open('myac_shell','0','myac_shell.html','2','','','0');})
+                                $("#myXinxi").click(function(){uexWindow.open('myac_shell','0','myac_shell.html','2','','','0');})
+                                $("#quanclick").click(function(){uexWindow.open('tok_shell','0','tok_shell.html','2','','','0');})
+                                $("#ratclick").click(function(){uexWindow.open('votes_shell','0','votes_shell.html','2','','','0');})
+                                $("#favorclick").click(function(){uexWindow.open('myfavor_shell','0','myfavor_shell.html','2','','','0');})
+                                $("#moneyclick").click(function(){uexWindow.open('flow','0','flow.html','2','','','0');})
+                                $("#nopayclick").click(function(){uexWindow.open('allorder_shell','0','allorder_shell.html?s=unpay','2','','','0');})
+                                $("#nosendclick").click(function(){uexWindow.open('allorder_shell','0','allorder_shell.html?s=unsend','2','','','0');})
+                                $("#nogoodclick").click(function(){uexWindow.open('allorder_shell','0','allorder_shell.html?s=ungood','2','','','0');});
+                                $("#orderrateclick").click(function(){uexWindow.open('allorder_shell','0','allorder_shell.html?s=unrate','2','','','0');})
+                                $("#refundclick").click(function(){uexWindow.open('allorder_shell','0','allorder_shell.html?s=refund','2','','','0');})
+                                $("#allorder").click(function(){uexWindow.open('allorder_shell','0','allorder_shell.html?s=index','2','','','0');})
+                                $("#nouseclick").click(function(){uexWindow.open('nouse_shell','0','nouse_shell.html','2','','','0');})
+                                $("#setting").click(function(){uexWindow.open('setting',"0","setting.html",'2',"","","0");})
+                                $("#lianxi").click(function(){uexWindow.open('setting',"0","setting.html",'2',"","","0");})
+                                $("#myRengou").click(function(){uexWindow.open("rengou","0","rengou.html","2","","","0");})
+                                $("#myShipin").click(function(){uexWindow.open("favorVideo","0","favorVideo.html","2","","","0");})
+                                $("#myCart").click(function(){uexWindow.open("shoppingCart","0","shoppingCart.html","2","","","0");})
+                                
+                            }
+                        }
+                    );
+    		}else{
+                $("#dakatxt").html('登录签到');
+                $("#orderrateclick,#refundclick,#quanclick,#allorder,#moneyclick,#nopayclick,#username,#ratclick,#avatar,#favorclick,#paylistclick,#daka,#myOrder,#myRengou,#nosendclick,#nogoodclick,#myXinxi,#myShipin,#myCart").click(function(){uexWindow.open('login','0','login.html','2','','','0');});        
+            }
+            $("#recomclick").click(function(){uexWindow.open('recommd_header','0','recommd_header.html','2','','','0');})
+            uexWindow.closeToast();
+    	}
+		
+		function reg(){
+		    window.localStorage.setItem("returnurl","mycontent");
+			uexWindow.open('reg','0','reg.html','1','','','0');
+		}
+		
+		function changedakabtn(){
+		    getuserinfo();
+			$("#daka").unbind("click");
+			$("#checkdaka").removeClass("checked");
+			$("#checkdaka").addClass("checkin");
+			$("#dakatxt").html('已签到');
+		}
+		
+		function showpuliccode(){
+			$("#btn_publiccode").removeClass("uc-bl uc-br");
+			$("#puliccodearea").show();
+		}
+		function refreshlist(){
+		    window.location.reload();
+		    window.localStorage.removeItem("goods");
+		    window.localStorage.removeItem("myRengou");
+		    getuserinfo();
+        }
+       function remark_price(){
+        var userid=window.localStorage.getItem("login_userid");
+        $zy.getJSON(
+            weburl+"remark_grade.php?userid="+userid,
+            function(data){
+                remark_grade=data.relate_data;
+                if(remark_grade<1 && remark_grade>0){
+                    remark_name=data.name;
+                    $("#remark_grade").html(remark_name);
+                }
+                else{
+                    if(window.localStorage.getItem("iwhtuanlogin")==1){
+                       $("#remark_grade").html("青铜地主"); 
+                    }
+                    else{
+                        $("#remark_grade").html(""); 
+                    }
+                }
+            }
+        ); 
+    }
+    function setting(){
+            uexWindow.open("setting",'0',"setting.html","2","","","0");
+        }
+    function contact(){
+            uexWindow.open("contact",'0',"contact.html","2","","","0");
+       }
+    </script>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<widget appId="11592921" channelCode="0000" height="480" pid="" sreensize="4.5" version="00.00.0000" viewmode="application" widgetId="" width="320">
+	
+	<name>直播</name>
+	<description/>
+	<author email=""> </author>
+	<icon src="icon.png"/>
+	<license href=""/>
+	<content encoding="utf-8" src="index.html"/>
+	<updateurl/>
+	<logserverip/> 
+	<showmyspace>false</showmyspace>
+	<obfuscation>false</obfuscation>
+	<bgcolor>#fefefe</bgcolor>
+	<orientation>15</orientation>
+<debug/>
+<partobfuscation>false</partobfuscation>
+<webapp/>
+<config desc="privacyConfig" type="AUTHORITY">
+    <permission platform="iOS" info="privacy" type="camera">
+        <string>上传照片需要使用摄像头</string>
+    </permission>
+    <permission platform="iOS" info="privacy" type="bluetooth">
+        <string>需要蓝牙</string>
+    </permission>
+    <permission platform="iOS" info="privacy" type="locationWhenInUse">
+        <string>获取地理位置时需要定位</string>
+    </permission>
+    <permission platform="iOS" info="privacy" type="photoLibrary">
+        <string>上传照片需要使用相册</string>
+    </permission>
+</config>
+<config desc="uexWeiXin" type="URLSCHEME">
+	<urlScheme name="uexWeiXin" schemes="['wx7157f8ca99e8b796']"/>
+</config>
+<config desc="whiteList" type="AUTHORITY">
+    <permission info="urlSchemeWhiteList" platform="iOS">
+        <string>alipay</string>
+        <string>alipayshare</string>
+        <string>wechat</string>
+		<string>weixin</string>
+    </permission>
+  </config>  
+</widget>

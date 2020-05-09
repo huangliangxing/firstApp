@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.slider.js"></script>
+        <script src="js/all.js"></script>
+        <style type="text/css">
+            .top{position: fixed;right:0;bottom:2em;z-index: 999;display: none}
+            .top img{width: 2em;height:2em;}
+            .zhiboList{position: absolute;top:0;left: 0;}
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+       <ul class="shipin1" style="display:none" id="videoList">
+       </ul>
+      <ul class="zhiboList" style="display:block" id="liveList">
+      </ul>
+      <div class="top">
+          <img src="css/images/back_top.png"/>
+      </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+        var page=1;
+        var url=weburl+"video.php";
+        var myStr=[];
+        var imgUrl="http://www.tastingbutler.com/static/";
+        appcan.ready(function() {
+            getlist1();
+            getlist();
+            uexWindow.onBounceStateChange=function(t,s){
+                if(t==1){
+                    if(s==0){
+                        getmorelist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("1");
+                    }
+                }
+                if(t==0){
+                    if(s==0){
+                        refreshlist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("0");
+                    }
+                }
+            }
+            uexWindow.setBounce("1");
+            uexWindow.showBounceView("0","#FFF","0");
+            uexWindow.showBounceView("1","#FFF","0");
+            uexWindow.notifyBounceEvent("1","1");
+            str='{"loadingText":"刷新中"}';
+            uexWindow.setBounceParams('0',str);
+            str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+            uexWindow.setBounceParams('1', str);
+              
+        });
+        //刷新加载
+        /*
+        function refreshlist(){
+            page=1;
+            getlist();
+            getlist1();
+        }
+        */
+        //加载更多
+        /*
+        function getmorelist(){
+            page++;
+            getlist();
+            getlist1();
+        }
+        */
+       $(window).scroll(function(){
+           if($("body").scrollTop()<400){
+               $(".top").css("display","none");
+           }
+           else{
+              $(".top").css("display","block");
+           }
+       });
+        $('.top').click(function(event) {
+               $('html,body').animate({
+                    'scrollTop': 0},
+                   400);
+         });
+         function getlist1(){
+            uexWindow.toast(1,5,"加载中",0);
+            user_id=window.localStorage.getItem("login_userid");
+            $zy.getJSON(
+                url+"?action=2&user_id="+user_id,
+                function(data){
+                   uexWindow.closeToast();
+                   for(var i=0;i<data.length;i++){
+                       cid=data[i].cam_id;
+                       cam_name=data[i].cam_name;
+                       user_name=data[i].user_name;
+                       cam_img=imgUrl+data[i].cam_img;
+                       cam_head_img=imgUrl+data[i].cam_head_img;
+                       
+                       var str='<li onclick="openZhibo('+cid+')" cid="'+cid+'">'+
+                                
+                                '<div id="" class="ub">'+
+                                    '<img src="'+cam_head_img+'" class="touxiang"/>'+
+                                    '<div id=""class="ub-f1">'+
+                                       '<p class="zhiboTitle">'+cam_name+'</p>'+
+                                       '<p class="zhiboPeople">'+user_name+'</p>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<img src="'+cam_img+'"/>'+
+                            '</li>';
+                      $("#liveList").append(str); 
+                   }
+                }
+            );
+        }
+        function getlist(){
+            uexWindow.toast(1,5,"加载中",0);
+            $zy.getJSON(
+                url+"?action=1",
+                function(data){
+                   uexWindow.closeToast();
+                   for(var i=0;i<data.length;i++){
+                       oid=data[i].id;
+                       name=data[i].name;
+                       img=weburl+"/images/cat"+oid+".png";;
+                       var str='<li onclick="getShiPinList('+oid+')" oid="'+oid+'">'+
+                               '<img src="'+img+'"/>'+
+                               '<div class="shipinName">'+
+                                     '<div class="shipinNameBg">'+
+                                     '</div>'+
+                                     '<div class="shipinTitle">'+name+'</div>'+
+                               '</div>'+
+                           '</li>';
+                      $("#videoList").append(str); 
+                   }
+                }
+            );
+        }
+        //打开视频列表
+        function getShiPinList(oid){
+            uexWindow.open("shipinList",0,"shipinList.html?oid="+oid,2,'','',0);
+        }
+        //直播列表
+        function openRadio(){
+            $(".shipin1").css("display","none");
+            $(".zhiboList").css("display","block");
+        }
+        //视频列表
+        function openVideo(){
+            $(".shipin1").css("display","block");
+            $(".zhiboList").css("display","none");
+        }
+        function openZhibo(cid){
+           uexWindow.open("audioDetails",0,"audioDetails.html?cid="+cid,2,'','',0);
+        }
+    </script>
+</html>

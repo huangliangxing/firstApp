@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <style>
+			select{background-color: #fff;border: 1px solid #eee;border-radius: 0.25em;-webkit-border-radius: 0.25em;-moz-border-radius: 0.25em;width: 6em;height: 1.75em;line-height: 1.75em;}
+        </style>
+    </head>
+    <body class="um-vp c-f1 ub-ver">
+        <div id="content" class="up ub ub-ver vspace" tabindex="0">
+            <div class="ulev-1 t-gra uinn">基本信息</div>
+            <div class="umar1 uinn c-wh ubb ubt b-gra2">
+                <div class="ub ulev0 uinn6 ubb b-gra2 lh">
+                    <div class="ub asw">用户名：</div>
+                     <div class="ub ub-f1">
+                         <input type="text" name="username" class="ubn0 ulev-3 ub-fh lh t-gra" id="username" placeholder="" value="" />
+                     </div>
+                </div>
+                <div class="ub uinn ubb b-gra2 lh ub-ac">
+                     <div class="ub asw t-gra ulev0">头像：</div>
+                     <div class="ub ub-f1">
+                        <div class="ub simg umar-r" id="s_avatar" style="background-image:url() center center no-repeat #fff;"></div>
+                        <input type="hidden" size="6" name="upload_image" id="avatar" value=""/>
+                        <div class="ub" style="margin-left: 0.75em;">   
+                            <div onclick="selectimg(1);" class="ub-f1 ub gallery" style="width: 2em;height: 2em;"></div>&nbsp;&nbsp;
+                            <div onclick="selectimg(2);" class="ub-f1 ub cam" style="width: 2em;height: 2em;"></div>
+                        </div>
+                        <!-- <div class="ub umar-t rarr1 ub-pe"></div> -->
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 ubb b-gra2 lh">
+                     <div class="ub asw">Email：</div>
+                     <div class="ub ub-f1">
+                         <input type="text" name="email" class="ubn0 ulev-3 ub-fh lh t-gra" id="email" placeholder="" value="" />
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 ubb b-gra2 lh">
+                     <div class="ub asw">新密码：</div>
+                     <div class="ub ub-f1">
+                         <input type="password" name="newpwd" class="ubn0 ulev-3 ub-fh lh t-gra" id="newpwd" placeholder="不修改,验证码为您的新密码" value="" />
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 ubb b-gra2 lh">
+                     <div class="ub asw">确认密码：</div>
+                     <div class="ub ub-f1">
+                         <input type="password" name="repwd" class="ubn0 ulev-3 ub-fh lh t-gra" id="repwd" placeholder="请与新密码保持一致" value="" />
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 lh umar-t1 ubb b-gra2">
+                     <div class="ub asw">性别：</div>
+                     <div class="ub ub-f1">
+                         <label><input type="radio" name="gender" id="gender1" value="M" />男</label>
+                          <label><input type="radio" name="gender" id="gender" value="F" />女</label>
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 lh">
+                     <div class="ub asw">所在城市：</div>
+                     <div class="ub ub-f1">
+                         <input type="hidden" name="city" id="city_id" value="" />
+                         <select name="city_id" class="f-city ulev-3 t-gra" id="mycity">
+                            <option selected="selected" value='' id="select_city"></option>
+                            <option value='0'>其他</option>
+                         </select>
+                     </div>
+                </div>
+            </div>
+            <div class="ulev-1 t-gra uinn">其他信息</div>
+            <div class="umar1 uinn c-wh ubb ubt b-gra2">
+                <div class="ub ulev0 uinn6 ubb b-gra2 lh">
+                     <div class="ub asw">手机：</div>
+                     <div class="ub ub-f1">
+                         <input type="number" name="mobile" class="ubn0 ulev0 ub-fh lh t-gra" id="mobile" placeholder="" value="" />
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 ubb b-gra2 lh">
+                     <div class="ub asw">真实姓名：</div>
+                     <div class="ub ub-f1">
+                         <input type="text" name="realname" class="ubn0 ulev0 ub-fh lh t-gra" id="realname" placeholder="请与有效证件保持一致" value="" />
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 ubb b-gra2 lh uhide">
+                     <div class="ub asw">邮政编码:</div>
+                     <div class="ub ub-f1">
+                         <input type="text" name="zipcode" class="ubn0 ulev0 ub-fh lh t-gra" id="zipcode" placeholder="所在地区邮编" value="" />
+                     </div>
+                </div>
+                <div class="ub ulev0 uinn6 lh umar-t1">
+                     <div class="ub asw">收件地址:</div>
+                     <div class="ub ub-f1">
+                         <input type="text" name="address" class="ubn0 ulev0 ub-fh lh t-gra" id="address" placeholder="请输入详细地址信息" value="" />
+                     </div>
+                </div>
+            </div>
+            <div class="ub ub-ver">
+                <div class="ub ub-pc uinn uba b-org2 c-org2 t-wh uc-a ulev-33 act umara" ontouchstart="zy_touch()" onclick="updateUserInfo()">确定更改</div>
+                <div class="ub ub-pc uba b-org2 uinn  c-org2 uc-a t-wh ulev-33 act mlr" ontouchstart="zy_touch()" onclick="loginout()">退出登录</div>
+                <!--<input type="submit" value="确定更改" name="commit" onclick="updateUserInfo()" id="commit" style="width: 92%; margin: 0.5em; border: 0;" class="btn uba b-org2 uinn6 c-org2 c-m2 uc-a1 t-wh us1 ulev1 mlr"/> -->
+            </div>
+        </div>
+    </body>
+    <script>
+        zy_init();
+        var city_id;
+        var file = '',opId = 100;
+        window.uexOnload = function(type){
+            uexWindow.toast(1,5,"会员信息加载中",0);
+            if (!type) {
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+            }
+            getuserdengji();
+            getuserinfo();
+            loadCity();
+        }
+        //判断是否为IOS系统，如果是则在内容页面显示输入框
+        // if(localStorage.getItem("IsAndroid")=="false")
+        // {
+              // $("#footer").show();
+        // }
+        function loginout(){
+            if(window.confirm("确定退出吗?退出后可更换登录账号，如果不退出，下次开启app将免登录哦。")==true){
+                url=weburl+"loginout.php?action=quit";
+                $zy.getJSON(
+                    url,
+                    function(){
+                        window.localStorage.removeItem("iwhtuanlogin");
+                        window.localStorage.removeItem("login_userid");
+                        window.localStorage.removeItem("goods");
+                        window.localStorage.removeItem("myRengou");
+                        uexWindow.evaluateScript('myac_shell','0','reloadmy()');                        
+                         uexWindow.open('root','0','index.html','1','','','0');
+                    }
+                );
+                
+            }
+        }
+        function reg(){
+            uexWindow.open('reg','0','tuisong.html','1','','','0');
+        }
+        function getuserdengji(){
+            url=weburl+'getuserinfo.php?from=1';
+            $zy.getJSON(
+            url,
+            function(data){ 
+                if(data.islogin==1){
+                    $("#dengji").html(data.userinfo.dengji);
+                    $("#paiming").html(data.userinfo.paiming)
+                    }
+                uexWindow.closeToast();
+                }
+            );
+        }
+        function getuserinfo(){
+            url=weburl+'settings.php';
+            $zy.getJSON(
+            url,
+            function(data){
+                $("#username").val(data.username);
+                $("#s_avatar").css("background-image","url("+data.avatar+")");
+                $("#email").val(data.email);
+                $("#qq").val(data.qq);
+                $("#mobile").val(data.mobile);
+                $("#address").val(data.address);
+                $("#zipcode").val(data.zipcode);
+                $("#realname").val(data.realname);
+                $("#select_city").val(data.city_id);
+                $("#select_city").text(data.city_name);
+                $("#city_id").val(data.city_id);
+                if(data.gender=='M'){
+                    $("#gender1").attr("checked",true);
+                }else{
+                     $("#gender").attr("checked",true);
+                }
+                uexWindow.closeToast();
+                }
+            );
+        }
+        var citystr='<option value="${id}">${name}</option>';
+        function loadCity() {
+          $zy.getJSON(
+            weburl+'regcity.php',
+            function(data){
+                tuanno=data.tuanno;
+                var html;
+                if(tuanno>0){
+                    html=zy_tmpl(citystr,data.tuandata,zy_tmpl_count(data.tuandata));
+                    }
+                $("#mycity").append(html);
+                }
+            );
+        }
+        $("#mycity").change(function(){
+            $("#city_id").val($("#mycity").val());
+        });
+        function updateUserInfo(){
+            username=$.trim($("#username").val());
+            email=$.trim($("#email").val());
+            newpwd=$.trim($("#newpwd").val());
+            repwd=$.trim($("#repwd").val());
+            mobile=$.trim($("#mobile").val());
+            qq=$.trim($("#qq").val());
+            gender=$("input[name='gender']:checked").val();
+            city_id=$("#city_id").val();
+            realname=$.trim($("#realname").val());
+            address=$.trim($("#address").val());
+            zipcode=$.trim($("#zipcode").val());
+            avatar=$.trim($("#avatar").val());
+            if(username=="" || mobile==""){
+                uexWindow.toast(0,5,"用户名,密码,手机号一个都不能少喔！",2000);
+                
+            }else{
+                if(username.length < 2 || username.length > 12){
+                    uexWindow.toast(0,5,"用户名格式不正确",2000);
+                    return false;
+                }
+                if(mobile.length!=11 || isNaN(mobile)){
+                    uexWindow.toast(0,5,"手机格式不正确",2000);
+                    return false;
+                }
+                if(repwd!=newpwd){
+                    uexWindow.toast(0,5,"新密码两次输入不一致",2000);
+                    return false;
+                }
+                var postdata =[{"key":"username","type":"0","value":username},
+                {"key":"newpwd","type":"0","value":newpwd},
+                {"key":"mobile","type":"0","value":mobile},
+                {"key":"email","type":"0","value":email},
+                {"key":"qq","type":"0","value":qq},
+                {"key":"realname","type":"0","value":realname},
+                {"key":"address","type":"0","value":address},
+                {"key":"zipcode","type":"0","value":zipcode},
+                {"key":"gender","type":"0","value":gender},
+                {"key":"city_id","type":"0","value":city_id},
+                {"key":"action","type":"0","value":1},
+                {"key":"avatar","type":"0","value":avatar}];
+                uexWindow.toast(1,5,"正在提交",0);
+                url=weburl+'settings.php';
+                $zy.getJSON(
+                    url,
+                    function(data){
+                        uexWindow.closeToast();
+                        if(data.regok==1){//更新成功
+                            uexWindow.alert("温馨提示",'用户信息更新成功','确定');
+                            window.localStorage.setItem('iwhtuanlogin',1);
+                            uexWindow.evaluateScript('myac_shell','0','reloadmy()');                        
+                            //uexWindow.open('root','0','index.html','1','','','0');
+                            //window.localStorage.setItem('iwhtuanlogin',1);
+                           //uexWindow.evaluateScript('login','0','uexWindow.close("")');
+                           //uexWindow.evaluateScript('root','0','loadmycontent()');
+                           //uexWindow.close(-1);
+                           uexWindow.open('root','0','index.html','1','','','0');
+                                
+                        }else if(data.regok==2){
+                            uexWindow.toast(0,5,"用户信息更新失败",3000);
+                        }
+                    },
+                    'json',
+                    function(){
+                        uexWindow.alert("温馨提示","用户信息更新失败,请检查您的输入",'确定');
+                        uexWindow.closeToast();
+                    },
+                    'POST',
+                    postdata
+                );
+            }
+        }
+        //传照片
+        function selectimg(which){
+            if (which == 1) {
+                 uexImage.onCropperClosed=function(info){
+                   var obj=eval('('+info+')');
+                    file=obj.data;
+                    uploadimg();
+                }
+                uexImage.onPickerClosed=function(info){
+                    var obj=eval('('+info+')');
+                    img=obj.data[0];
+                    var data={
+                        src:img,
+                        mode:1
+                    }
+                    var json=JSON.stringify(data);
+                    uexImage.openCropper(json);
+                }
+                var data = {
+                    min:1,
+                    max:1,
+                    quality:0.8,
+                    detailedInfo:false
+                }
+                var json = JSON.stringify(data);
+                uexImage.openPicker(json);
+			}else{
+            	var comtextareass = '0';
+            	var quality = '10';
+            	uexCamera.open(comtextareass, quality, function(data) {
+            		file=data;
+                    uploadimg();
+            	});
+            }
+        }
+        function cbCreateUploader(opId,dataType,data){
+           if(dataType == 2 && data==0){
+             //上传文件到服务器
+             uexUploaderMgr.uploadFile(opId,file,'fileName',3);
+           }
+         }
+         //上传文件回调函数
+         function onStatus(opId,fileSize, percent,serverPath,status){
+           switch(status) {
+             case 0:
+               uexWindow.toast('1', '5', '正在上传...', 0);
+               break;
+             case 1:
+               uexWindow.closeToast();
+               uexWindow.toast(0,5,"上传成功",2000);
+               var j = eval('('+serverPath+')');
+               ////成功后的处理
+               insertimg(j.aid,j.avatarurl,0);
+               ////成功后的处理
+               
+               uexUploaderMgr.closeUploader(opId);
+               break;
+             case 2:
+               alert("上传失败!");
+               uexUploaderMgr.closeUploader(opId);
+               break;
+             default: 
+               break;
+           }
+         }
+        function uploadimg() {
+        	var upUrl = weburl+'avatarupfile.php';
+			var param = {
+				url: upUrl,
+				type: 1
+			};
+			var uploader = uexUploaderMgr.create(param);
+			if (uploader) {
+				uexUploaderMgr.uploadFile(uploader, file, "fileName", 0, 800,
+				function(packageSize, percent, responseString, status) {
+					switch (status) {
+					case 0:
+						uexWindow.toast("1", "5", "上传中..." + percent + "%", 0);
+						break;
+					case 1:
+						uexWindow.closeToast();
+						uexWindow.toast(0, 5, "上传成功", 2000);
+						var j = eval('(' + responseString + ')');
+						insertimg(j.aid, j.avatarurl, 0);
+						uexImage.clearOutputImages();
+						uexUploaderMgr.closeUploader(uploader);
+						break;
+					case 2:
+						uexWindow.closeToast();
+						uexWindow.toast(0, 5, "上传失败", 2000);
+						uexUploaderMgr.closeUploader(uploader);
+						break;
+					}
+				});
+			} else {
+				uexWindow.toast(0, 5, "上传创建失败", 2000);
+			}
+		}
+        //传照片
+        function selectface(){
+            uexWindow.evaluateScript("post",0,"openface()");
+        }
+        function insertimg(aid,imgurl,type){///type 0增加图片  1是删除图片
+            avatar=$("#avatar").val();
+            html='<div onclick="imgoperate('+aid+')" id="'+aid+'" src="'+imgurl+'" style="background-image:url('+imgurl+')"></div>';
+             $("#s_avatar").css("background-image","url("+imgurl+")");
+            if(type==0){
+                avatar+=aid;
+                $("#imgs_club").append(html);
+            }
+            if(type==1){
+                avatar=avatar.replace(aid,'');
+                $("#imgs_club #"+aid).remove();
+            }
+            $("#avatar").val(avatar);
+        }
+        function imgop(){
+            imgurl=$("#s_avatar").attr("src");
+            var array = [];             
+            array[0] = imgurl;
+            uexImageBrowser.open(array);
+        }
+        function imgoperate(aid){
+            imgurl=$("#"+aid).attr("src");
+            uexWindow.cbActionSheet = function(opId, dataType, data){
+                if (data == "0") {
+                	insertimg(aid,imgurl,1);
+                } else if (data == "1") {
+                    var array = [];             
+                    array[0] = imgurl;
+                    uexImageBrowser.open(array);
+                }
+            }
+            var value = ["删除","预览"];
+            uexWindow.actionSheet('', '取消', value);
+        }             
+    </script>
+</html>
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+    <script src="js/zy_control.js"></script>
+    <script src="js/zy_click.js"></script>
+	<script src="js/zy_anim.js"></script>
+	<script src="js/dis_control.js"></script>
+    <script src="js/all.js"></script>
+  </head>
+<body class="um-vp ub ub-pc" style="background:none;">
+	<div class="ub ub-pc ub-ac rpynav" onclick="startpost()">
+		<div class="mak2">爆料</div>
+	</div>
+</body>
+<script>
+	zy_init();
+	var fid;
+	window.uexOnload=function(type){
+		var params = zy_parse();
+		fid = params.fid;
+	    tid = params.tid;
+        if (!type) {
+            //moveOutsc();
+        }
+	}
+	
+	function startpost(){
+		iwh_club_post(14,0,928);
+	}
+	
+	function moveOutsc(){
+		var dy = '-500';
+		var fsc = getstorage('fscreen');
+		if(fsc) dy = '500';		
+		/*浮动菜单动画效果*/
+		disShowAnim('0', dy);
+	}
+</script>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" id="mev" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+		<script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub c-gra ub-ver ">
+        <div class="ub c-green ub-ver t-wh uinn0">
+            <div class="ub ub-ac ub-pc ulev0 umar-t0">您好！为您奉上本地的定制优惠</div>
+            <div class="ub ub-ac ub-pc umar-t0" onClick="get_adress_refrsh();">
+                  <div class="ulev-1 uba b-gra8 bra1 uinn26" id="addr" style="background:url(css/images/ic_action_refresh.png) right center no-repeat; padding-right:2em; background-size:auto 1em;background-color: rgba(0,0,0,0.1);">位于郑州</div>
+            </div>
+        </div>
+    	<div class="ub ub-f1 ub-pc ub-ac uhide" id="noresult">
+            <div class="ub ub-pc ub-ac ub-ver">
+                <div class="logo-notuan"></div>
+                <div class="ulev-1 t-gra6 pt2">暂无此信息</div>
+            </div>
+        </div>
+        <div id="tuanlistdiv" class="umar-bb c-wh"></div>      
+		<input type="hidden" name="tuanoffset" id="tuanoffset" value="1" />
+        
+    </body>
+<script>
+	zy_init();
+	var devicetoken=window.localStorage.getItem("devicetoken");
+	var origiurl=weburl+'index.php';
+	window.uexOnload=function(type){
+		var lat1,log1;
+		var ishandrefresh=0;///1表示手动刷新坐标时,获取完地址后刷新列表
+		//startlocation();
+		
+		cityname=window.localStorage.getItem("iwhpositionname");
+		if(cityname){
+		    $("#addr").html('位于'+cityname);
+		}else{
+		    $("#addr").html('定位失败');
+		}
+		
+		
+		if(!type){
+			uexWindow.onBounceStateChange=function(t,s){
+				if(t==1){
+					if(s==0){
+						getmorelist();
+					}else if(s==2){
+					    uexWindow.resetBounceView("1");
+					}
+				}
+				if(t==0){
+					if(s==0){
+						refreshlist();
+					}else if(s==2){
+					    uexWindow.resetBounceView("0");
+					}
+				}
+			}
+			
+			
+			uexWindow.setBounce("1");
+			uexWindow.showBounceView("0","#FFF","0");
+			uexWindow.showBounceView("1","#FFF","0");
+			
+	　　　　	uexWindow.notifyBounceEvent("0","1");
+			uexWindow.notifyBounceEvent("1","1");
+			str='{"loadingText":"刷新中"}';
+			uexWindow.setBounceParams('0',str);
+			str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+			uexWindow.setBounceParams('1', str);
+			loadtuanlist();
+			
+		}
+			
+	}
+	
+	var tmpstr='<div class="ub uinn ubb b-gra3" onclick="gonow(${tid});">'+
+                        '<div class="sel-img" style="background:url(${thumb}) center center no-repeat #fff; -webkit-background-size:100% 100%; background-size:100% 100%; margin-right:0.5em;"></div>'+
+                             '<div class="ub ub-f1 ub-ver">'+
+                             '<div class="ub">'+
+                                '<div class="ub-f1 ulev0">${name}</div>'+
+                                '<div class="ulev-1 t-gra9">${distance}</div>'+
+                             '</div>'+
+                                '<div class="ub ulev-3n t-gra9 pt2" style="height:2.8em;">${subject}</div>'+
+                                '<div class="ub ub-f1 ub-ae">'+
+                                    '<div class="ub ub-f1 ub-ae"><span class="ulev-1 t-green">&yen;</span><span class="ulev1 t-green umar-r">${price}</span><span class="price-del ulev-1 t-gra9">&yen;${market_price}</span></div>'+
+                                    '<div class="ulev-1 t-gra9">${cate_name}</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>';
+	function refreshlist(){
+		$("#tuanoffset").val(1);
+		$("#tuanlistdiv").html("");
+		getmorelist();	
+	}
+				
+	function loadtuanlist(){
+		uexWindow.toast(1,5,"加载中",0);
+		tuanmoreoffset=$("#tuanoffset").val();
+		
+		//此处IOS取Divicetoken
+		if (devicetoken != "" && devicetoken != null){
+			devicetoken = devicetoken.replace(/\s/ig,'IWEIHAI');
+		}
+		lat=window.localStorage.getItem("iwhtuanlat");
+        lng=window.localStorage.getItem("iwhtuanlng");
+		url=origiurl+"?tuanmoreoffset="+tuanmoreoffset+"&lat="+lat+"&lng="+lng+"&devicetoken="+devicetoken;
+		
+		$zy.getJSON(
+			url,
+			function(data){
+				tuanno=data.tuanno;
+				offset=parseInt($("#tuanoffset").val());
+				uexWindow.closeToast();
+				if(tuanno>0){
+					$("#tuanoffset").val(offset+1);
+					var s=zy_tmpl(tmpstr,data.tuandata,zy_tmpl_count(data.tuandata));
+					$("#tuanlistdiv").append(s);
+				}else{
+					if(offset==1){
+						$("#noresult").removeClass("uhide");
+					}else{
+						uexWindow.toast(0,5,"已经是最后记录了",3000);
+					}
+				}
+				$(".lipp").height($(".lipp").eq(0).width()*11/13);
+				
+				if(window.localStorage.getItem("iwhpositionname_isshow")==1){///显示用户的位置
+					window.localStorage.setItem("iwhpositionname_isshow",0);
+				}
+			}
+		);
+	}
+
+	function getmorelist(){
+		loadtuanlist();	
+	}
+	
+	function buyagain(tid){
+		uexWindow.open('ord_shell','0','ord_shell.html?tid='+tid,'2','','','0');
+	}
+	////坐标
+	function startlocation(){
+		uexLocation.openLocation();//打开地图
+		uexLocation.onChange=locationCallback;//获得用户经纬度
+		uexLocation.cbGetAddress = LocationSuccess;///获得用户位置名称
+	}
+	
+	function locationCallback(lat,log){
+		window.localStorage.setItem("iwhtuanlat",lat);
+		window.localStorage.setItem("iwhtuanlng",log);
+		lat1 = lat;
+		log1 = log;
+		uexLocation.getAddress(lat,log);
+	}
+	
+	function get_adress_refrsh(){
+		uexWindow.toast(0,5,"刷新中",3000);
+		ishandrefresh=1;
+		startlocation();
+		//uexLocation.getAddress(lat1,log1);
+		
+	}	
+	
+	function LocationSuccess(opCode,dataType,data){
+	    //alert('dataType='+dataType+'data='+data);
+		window.localStorage.setItem("iwhpositionname",data);
+		if(data){
+            $("#addr").html('位于'+data);
+        }else{
+            $("#addr").html('定位失败');
+        }
+		uexLocation.closeLocation();
+		uexWindow.closeToast();
+		if(ishandrefresh==1){
+			ishandrefresh=0;
+			refreshlist();
+		}
+	}
+	////坐标
+    function compare(propertyName) {
+            return function(object1, object2) {
+                var value1 = object1[propertyName];
+                var value2 = object2[propertyName];
+                if (value2 > value1) {
+                    return -1;
+                } else if (value2 < value1) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+    }
+    function gonow(tid){
+        uexWindow.open('p_desc'+tid,0,'pdesc_shell.html?tid='+tid,2,'','',0);
+    }
+</script>
+</html>

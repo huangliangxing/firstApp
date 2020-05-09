@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp c-f1 ub ub-ver" ontouchstart>           
+		<div class="uinn umar-t ub-ver listarea uhide" id="moretool">
+        </div>
+        <div class="umar-t ub-ver listarea">
+            <div class="ub ub-ac uinn19 c-wh uc-tl uc-tr ubb b-gra3" ontouchstart="zy_touch()" id="tellcall">
+                <div class="ub logo-npl morecall"></div>
+                <div class="ub ub-f1" id="rmbg">客服电话</div>
+                <div class="ub newtip" style="visibility:hidden;"></div>
+                <div class="ub ub-ac ub-pe t-gra seed" >拨打</div>
+                <div class="ub rarr"></div>
+            </div>
+            <div class="ub ub-ac uinn19 c-wh uc-tl uc-tr ubb b-gra3"  onclick="clearCache()">
+                <div class="ub logo-npl memory"></div>
+                <div class="ub ub-f1">清空缓存</div>
+                <div class="ub newtip" style="visibility:hidden;"></div>
+                <div class="ub ub-ac ub-pe t-gra seed"></div>
+                <div class="ub rarr"></div>
+            </div>
+            <!-- <div class="ub ub-ac uinn19 c-wh uc-tl uc-tr ubb b-gra3"  onclick="upgrade()">
+                <div class="ub logo-npl updatevision"></div>
+                <div class="ub ub-f1">版本号：04.02.0102</div>
+                <div class="ub newtip" style="visibility:hidden;"></div>
+                <div class="ub ub-ac ub-pe t-gra seed">检查</div>
+                <div class="ub rarr"></div>
+            </div>  -->
+        </div>
+    </body>
+    <script>
+        zy_init();
+        var androidurl="";
+        var iosurl="";
+        var opCode = 1;
+        function download() {
+            uexDownloaderMgr.createDownloader(opCode);
+        }
+        
+        var platform;
+        var apptype=1;
+        window.uexOnload = function(type){
+            if (!type) {
+                uexWindow.setBounce("0");
+                platform=window.localStorage.getItem("platform");
+                getmoretool();
+                getuserinfo();
+            }
+            exWidgetOne.cbGetPlatform = platformSuccess;
+            uexWindow.cbConfirm = ConfirmSuccess;
+            uexDownloaderMgr.onStatus = function(opCode, fileSize, percent, status){　　　
+                switch (status){
+                    case 0:
+                        uexWindow.toast('1', '5', '当前下载的进度：' + percent + '%', '');　
+                        break;
+                    case 1:
+                        uexWindow.alert("温馨提示", "下载完成，请进行安装！", "我知道了");
+                        uexDownloaderMgr.closeDownloader(opCode);
+                        uexWindow.closeToast();
+                        install();
+                        break;
+                    case 2:
+                        uexWindow.alert("温馨提示", "下载失败，请联系管理员！", "我知道了");　　　　
+                        uexDownloaderMgr.closeDownloader(opCode);
+                        break;
+                }
+            }
+            uexDownloaderMgr.cbCreateDownloader = function(opCode, dataType, data){
+                if (data == 0) {
+                    uexDownloaderMgr.download(1, androidurl,'wgt://pyt.apk', '0');
+                } else {
+                    uexWindow.alert("温馨提示", "创建下载资源失败，请确认你手机中装有SD存储卡。", "我知道了");
+                }
+            }
+            uexWidgetOne.cbError = function(opCode, errorCode, errorInfo){
+                 uexWindow.alert('温馨提示','网络出错，错误码：'+errorInfo,'确定');
+            }
+        }
+        
+        var tmpstr = '<div class="ub ub-ac uinn19 c-wh uc-tl uc-tr ubb b-gra3" onclick="openw(\'${detail}\',\'${title}\');" ontouchstart="zy_touch()">'+
+                '<div class="ub logo-npl" style="background-image:url(http://mt2016.jzphp.com/static/${image})"></div>'+
+                '<div class="ub ub-f1" id="rmb">${title}</div>'+
+                '<div class="ub newtip" style="visibility:hidden;"></div>'+
+                '<div class="ub ub-ac ub-pe t-gra seed" ></div>'+
+                '<div class="ub rarr"></div>'+
+            '</div>';
+        function getmoretool(){
+            uexWindow.toast(1,5,"加载中",0);
+            $zy.getJSON(
+                weburl+'moretool.php',
+                function(data){
+                    tuanno=data.tuanno;
+                    if(tuanno>0){
+                        var s=zy_tmpl(tmpstr,data.tuandata,zy_tmpl_count(data.tuandata));
+                        $("#moretool").removeClass("uhide");
+                        $("#moretool").append(s);
+                    }
+                    $(".lip").height($(".lip").eq(0).width()*13/16);
+                    uexWindow.closeToast();
+                }
+            );
+        }
+        function openw(a,b){
+            platform=1;
+            platform=0;
+            url='tool_shell.html?url='+a+'&title='+b;
+            if(platform==0){
+                url="wgtroot://"+url;
+            }
+            uexWindow.open('toolwindow','0',url,'2','','','0');
+        }
+        
+        
+        function clearCache(){
+            if(confirm("您确定清除缓存 ？")){
+                uexImageBrowser.cleanCache();
+                uexWidgetOne.cleanCache();
+                uexWindow.alert('温馨提示',"清除完成",'确定');
+            }
+        }
+        
+        function getuserinfo(){
+            url=weburl+'moretool.php';
+            $zy.getJSON(
+                url,
+                function(data){ 
+                    $("#rmbg").html(data.username);
+                    $("#tellcall").click(function(){
+                            if(platform==1){
+                                uexCall.dial(data.username);
+                            }
+                            if(platform==0){
+                                uexCall.call(data.username);
+                            }
+                        });
+                    uexWindow.closeToast();
+                }
+            );
+        }
+        
+        function install() {
+            uexWidget.installApp("wgt://pyt.apk");
+        }
+        
+        function checkupdate() {
+            uexWindow.toast("1", "5", "正在检测中...", "0");
+            checks();
+        }
+        function upgrade(){
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4) {
+                    if (xmlhttp.status == 200) {
+                        var str = xmlhttp.responseText;
+                        uexWindow.closeToast();
+                        if (str == "no") {
+                            uexWindow.alert("温馨提示", "当前是最新版本", "我知道了");
+                        } else {
+                            var jsonList = eval("(" + str + ")");
+                            var strs = jsonList[0].str;
+                            androidurl = jsonList[0].android;
+                            iosurl = jsonList[0].ios;
+                            var value = "现在更新;稍后再说";
+                            var mycars = value.split(";");
+                            uexWindow.confirm("更新提示：", strs, mycars);
+                        }
+                    } else {
+                        uexWindow.alert("温馨提示", "检测无法成功，请检查你的网络配置。", "我知道了");
+                        uexWindow.closeToast();
+                    }
+                }
+            }
+            var url = weburl+"more.php?ver=04.02.0102";
+            xmlhttp.open("get", url, true);
+            xmlhttp.send();
+        }
+        function ConfirmSuccess(opId, dataType, data) {
+            if (data == "0") {
+                isplat();
+            }
+        }
+        function isplat() {
+            if (localStorage.platstr == "ios") {
+                uexWidget.loadApp(iosurl);
+            }
+            if (localStorage.platstr == "android") {
+                download();
+            }
+        }
+        function platformSuccess(opId, dataType, data) {
+            var platstr = "";
+            if (dataType == 2 && data == 0) {
+                localStorage.platstr = "ios";
+            }
+            if (dataType == 2 && data == 1) {
+                localStorage.platstr = "android";
+            }
+            if (dataType == 2 && data == 4) {
+                localStorage.platstr = "wp";
+            }
+        }        
+
+
+    </script>
+</html>
+
+

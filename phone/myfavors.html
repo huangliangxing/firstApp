@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" id="mev" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+		<script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub c-f1 ub-ver">
+        <div class="ub ub-f1 ub-pc ub-ac uhide" id="nofavor">
+            <div class="ub ub-pc ub-ac ub-ver">
+                <div class="logo-nofavor"></div>
+                <div class="ulev-1 t-gra6 pt2">您还没有收藏</div>
+            </div>
+        </div>
+    	<div class="c-wh" id="tuanlistdiv"></div>
+		<input type="hidden" name="tuanoffset" id="tuanoffset" value="1" />
+        
+    </body>
+<script>
+	zy_init();
+	var devicetoken=window.localStorage.getItem("devicetoken");
+	var origiurl=weburl+'showfavors.php';
+	window.uexOnload=function(type){
+		
+		if(!type){
+			uexWindow.onBounceStateChange=function(t,s){
+				if(t==1){
+                    if(s==0){
+                        getmorelist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("1");
+                    }
+                }
+                if(t==0){
+                    if(s==0){
+                        refreshlist();
+                    }else if(s==2){
+                        uexWindow.resetBounceView("0");
+                    }
+                }
+			}	
+			uexWindow.setBounce("1");
+			uexWindow.showBounceView("0","#FFF","0");
+			uexWindow.showBounceView("1","#FFF","0");
+			
+	　　　　	uexWindow.notifyBounceEvent("0","1");
+			uexWindow.notifyBounceEvent("1","1");
+			str='{"loadingText":"刷新中"}';
+			uexWindow.setBounceParams('0',str);
+			str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+			uexWindow.setBounceParams('1', str);
+			getfavorlist();
+			
+		}
+			
+	}			
+	function refreshlist(){
+		$("#tuanoffset").val(1);
+		$("#tuanlistdiv").html("");
+		getmorelist();	
+	}
+	
+	tmpstr='<div class="ub uinn ubb b-gra3" id="favor_${tid}">'+
+                '<div class="sel-img" onclick="gonow(${tid});" style="background:url(${thumb}) center center no-repeat #fff; -webkit-background-size:100% 100%; background-size:100% 100%; margin-right:0.5em;"></div>'+
+                     '<div class="ub ub-f1 ub-ver">'+
+                     '<div class="ub" onclick="gonow(${tid});">'+
+                        '<div class="ub-f1 ulev-3">${partner}</div>'+
+                        '<div class="ulev-1 t-gra9">${distance}</div>'+
+                     '</div>'+
+                        
+                        '<div class="ub ulev-3n t-gra9" onclick="gonow(${tid});" style="height:2.8em;">${subject}</div>'+
+                        '<div class="ub ub-f1 ub-ae">'+
+                            '<div class="ub ub-f1 ub-ae"><span class="ulev-1 t-green">&yen;</span><span class="ulev0 t-green umar-r">${price}</span></div>'+
+                            '<div class="ulev-1 t-org4 uba uinn24 bra0 umar-r" onclick="favor(${tid});">删除</div>'+
+                            '<div class="ulev-1 t-org4 uba uinn24 bra0" onclick="gonow(${tid});">立即抢购</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>';
+
+    function getfavorlist(){
+            uexWindow.toast(1,5,"加载中",0);
+            tuanmoreoffset=$("#tuanoffset").val();
+            //此处IOS取Divicetoken
+            if (devicetoken != "" && devicetoken != null){
+                devicetoken = devicetoken.replace(/\s/ig,'IWEIHAI');
+            }
+            lat=window.localStorage.getItem("iwhtuanlat");
+            lng=window.localStorage.getItem("iwhtuanlng");
+            url=origiurl+"?page="+tuanmoreoffset+"&lat="+lat+"&lng="+lng+"&devicetoken="+devicetoken;
+           
+            $zy.getJSON(
+                url,
+                function(data){
+                    uexWindow.closeToast();
+                    listno=zy_tmpl_count(data);
+                    offset=parseInt($("#tuanoffset").val());
+                    
+                    if(listno>0){
+                        $("#tuanoffset").val(offset+1);
+                        var s=zy_tmpl(tmpstr,data,zy_tmpl_count(data));
+                        $("#tuanlistdiv").append(s);
+                    }else{
+                        if(offset==1){
+                            $("#nofavor").removeClass("uhide");
+                        }else{
+                            uexWindow.toast(0,5,"已经是最后记录了",3000);
+                        }
+                    }
+                    $(".lip").height($(".lip").eq(0).width()*10/16);
+                    
+                }
+            );
+        }
+	function getmorelist(){
+		getfavorlist();	
+	}
+	function favor(tid){
+            if(window.localStorage.getItem("iwhtuanlogin")==1){
+                if(window.confirm("确定取消对该商品的收藏吗?")){
+                    uexWindow.toast(1,5,"操作中...",0);
+                    $zy.getJSON(
+                        weburl+"myfavor.php?tid="+tid,
+                        function(data){ 
+                            uexWindow.closeToast();
+                            if(data.islogin==1){
+                                if(data.result==2){
+                                    refreshlist();
+                                    uexWindow.toast(0,5,"删除成功",3000);
+                                }else{
+                                    uexWindow.toast(0,5,"操作失败",3000);
+                                }
+                            }else{
+                                uexWindow.toast(0,5,"请先登录",3000);
+                            }
+                        }
+                    );
+                }
+            }else{
+                uexWindow.toast(0,5,"请先登录",3000);
+            }
+        }
+	function gonow(tid){
+        uexWindow.open('p_desc'+tid,0,'pdesc_shell.html?tid='+tid,2,'','',0);
+    }
+</script>
+</html>

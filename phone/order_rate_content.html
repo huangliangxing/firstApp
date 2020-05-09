@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <link rel="stylesheet" href="order_rate_shell_content/css/main.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub ub-ver c-f7" ontouchstart>
+        <div class="ub c-wh ub-ver ubb b-gra2" id="tuaninfo">
+            <div class="ub ub-f1 uinn ub-ac ub-pc">
+                <div class="umar-r sel-img" id="tuanpic" style="background: url(css/images/sta_img.jpg) center center no-repeat #fff; -webkit-background-size: auto 100%;background-size: auto 100%;"></div>
+                <div class="ub ub-f1 ub-ver">
+                    <div class="ut-s ulev0" id="subject"></div>
+                    <div class="ub-f1 ulev-3n t-gra pt3">总价:<span id="origin" class="t-green"></span>&nbsp;数量:<span class="t-green" id="num"></span></div>
+                    <div class="ub ulev-3n t-gra pt2">购买时间:<span id="dateline"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="ub c-wh umar-bb ub-ver">
+            <div class="ub uinn ulev0 t-gra6 ubb b-gra2">
+                <div>总体评价</div>
+                <div class="ub-f1 umar-l-ec">
+                    <div class="pos_re uwh-ec2">
+                        <div class="ub ub-ac uwh-ec2">
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('0',20)"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('0',40)"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('0',60)"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('0',80)"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('0',100)"></div>
+                        </div>
+                        <div class=" uabs uof" id="star0" style="width:0%;">
+                            <div class="ub ub-ac">
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('0',20)"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('0',40)"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('0',60)"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('0',80)"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('0',100)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ulev-3 t-org4" id="tip0"></div>
+            </div>
+            <div class="ub ub-ver ubb b-gra2 uhide" id="detail">
+                <div class="ub uinn ulev0 t-gra6">
+                    <div class="text_in" id="type1">商品</div>
+                    <div class="ub-f1 umar-l-ec">
+                        <div class="pos_re uwh-ec2">
+                            <div class="ub ub-ac uwh-ec2">
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('1',20)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('1',40)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('1',60)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('1',80)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('1',100)"></div>
+                            </div>
+                            <div class=" uabs uof" id="star1" style="width:60%;">
+                                <div class="ub ub-ac">
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('1',20)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('1',40)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('1',60)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('1',80)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('1',100)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ulev-3 t-org4" id="tip1">满意</div>
+                </div>
+                <div class="ub uinn ulev0 t-gra6">
+                    <div class="text_in">服务</div>
+                    <div class="ub-f1 umar-l-ec">
+                        <div class="pos_re uwh-ec2">
+                            <div class="ub ub-ac uwh-ec2">
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('2',20)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('2',40)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('2',60)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('2',80)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('2',100)"></div>
+                            </div>
+                            <div class=" uabs uof" id="star2" style="width:60%;">
+                                <div class="ub ub-ac">
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('2',20)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('2',40)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('2',60)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('2',80)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('2',100)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ulev-3 t-org4" id="tip2">满意</div>
+                </div>
+                <div class="ub uinn ulev0 t-gra6">
+                    <div class="text_in" id="type3">环境</div>
+                    <div class="ub-f1 umar-l-ec">
+                        <div class="pos_re uwh-ec2">
+                            <div class="ub ub-ac uwh-ec2">
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('3',20)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('3',40)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('3',60)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('3',80)"></div>
+                                <div class="uwh-ec3 ub-img star2-ec umar-ar3" onclick="changestar('3',100)"></div>
+                            </div>
+                            <div class=" uabs uof" id="star3" style="width:60%;">
+                                <div class="ub ub-ac">
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('3',20)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('3',40)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('3',60)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('3',80)"></div>
+                                    <div class="uwh-ec3 ub-img star1-ec umar-ar3" onclick="changestar('3',100)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ulev-3 t-org4" id="tip3">满意</div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver umar-bb ubb b-gra2">
+                <div class="ulev-3 t-gra6 uinn18">评价内容</div>
+                <div class="triangle3 umar-l-ec2"></div>
+                <div class="c-wh uinn">
+                    <div class="ub-f1" style="height: 3em;">
+                        <textarea placeholder="亲，您的评价对其他买家有很大帮助哦！" name="content" id="content" type="text" class="ub-fh ub-fv ulev-3 bra0"></textarea>
+                    </div>
+                    <div class="t-wh-c7 ulev-2 ub-pe ub-ae tx-r pt2">
+                        评价内容不能为空
+                    </div>
+                </div>
+       </div>
+        <!-- <div class="ub ub-ver ubb b-gra2">
+            <div class="ulev-3 t-gra6 uinn18">添加图片</div>
+            <div class="ub c-wh uinn ub-f1">
+                <div class="ub-img uwh-bg imgBg0 umar-r-ect"></div>
+                <div class="ub-img uwh-bg imgBg umar-r-ect"></div>
+                <div class="ub-img uwh-bg imgBg "></div>    
+            </div>
+       </div> -->
+       <input type="hidden" name="overall" id="grade0" value="0" />
+       <input type="hidden" name="comm" id="grade1" value="3" />
+       <input type="hidden" name="service" id="grade2" value="3" />
+       <input type="hidden" name="log" id="grade3" value="3" />
+       
+       <div class="ub umar-tn umar-bb uinn3" onclick="order_rate();">
+                <div class="ub ub-f1 ub-pc t-wh ulev1n c-green uinn bra0">发布</div>
+            </div>
+    <script>
+       zy_init();
+       var oid;
+        window.uexOnload = function(type){
+            var params = zy_parse();
+            oid = params.oid;
+            if (!type) {
+                uexWindow.setBounce("0");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+                getrinfo(oid);
+            }   
+            
+        }
+        function getrinfo(oid){
+            url=weburl+'orderinfo.php?oid='+oid;
+            $zy.getJSON(
+                url,
+                function(data){
+                    $("#tuanpic").css("background-image", "url("+data.thumb+")");
+                    $("#subject").html(data.subject);
+                    $("#dateline").html(data.dateline);
+                    $("#num").html(data.num);
+                    $("#origin").html('&yen;'+data.origin);
+                    $(".sel-img").height($(".sel-img").eq(0).width()*11/16);
+                    if(data.express=='Y'){
+                        $("#type3").html("物流");
+                    }
+                } 
+            );
+        }
+        function changestar(id,percent){
+            if(id=='0') $("#detail").removeClass("uhide");
+            var score=0;
+            var tip='';
+            if(percent==20){ score=1;tip='差';}
+            else if(percent==40){score=2;tip='一般';} 
+            else if(percent==60){score=3;tip='满意';}
+            else if(percent==80){score=4;tip='很满意';} 
+            else if(percent==100){score=5;tip='强烈推荐';} 
+            $("#star"+id).css("width",percent+'%');
+            $("#grade"+id).val(score);
+            if(id=='0'){
+                $("#tip0").html(score+'分');
+            }else{
+                $("#tip"+id).html(tip);
+            }
+            
+        }
+        function order_rate(){
+            var overall=$("#grade0").val();
+            var comm=$("#grade1").val();
+            var service=$("#grade2").val();
+            var log=$("#grade3").val();
+            var content=$.trim($("#content").val());
+            if(overall==0){
+                uexWindow.toast(0,5,'请先评分',2000);
+                return false;
+            }
+            if(content==''){
+                uexWindow.toast(0,5,'评价内容不能为空！',2000);
+                $("#content").focus();
+                return false;
+            }else{
+                var postdata=[{"key":"oid","type":"0","value":oid},
+                {"key":"overall","type":"0","value":overall},
+                {"key":"comm","type":"0","value":comm},
+                {"key":"service","type":"0","value":service},
+                {"key":"log","type":"0","value":log},
+                {"key":"content","type":"0","value":content}];
+                purl=weburl+'rate_sub.php';
+                $zy.getJSON(
+                    purl,
+                    function(data){
+                        if(data.res==1){
+                            uexWindow.toast(0,5,'评价成功！',3000);
+                            uexWindow.evaluatePopoverScript('allorder_shell','content',"refreshlist()");
+                            uexWindow.evaluateScript('order_rate_shell',0,"uexWindow.close('')");
+                        }else{
+                            uexWindow.toast(0,5,data.error,3000);
+                        }
+                    },
+                    'json',
+                    function(){
+                        uexWindow.alert("温馨提示","网络连接失败，请稍后再试.",'确定');
+                        uexWindow.closeToast();
+                    },
+                    'POST',
+                    postdata
+                );
+            }
+        }
+    </script>
+</html>

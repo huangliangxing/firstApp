@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+    </head>
+    <body class="um-vp c-f1 ub ub-ver" ontouchstart>
+    	<div id="allcontentcont" class="uinn">
+        	<div class="uc-tl uc-tr c-wh ubl ubt ubr b-gra3 uinn"><span id="name"></span>的总体评价(<span id="" class="t-org2">很满意</span>)</div>
+            <div id="zhengtipingjia" class="ub uc-bl uc-br ub-ac ub-pc uinn ub-f1 ubb ubl ubr b-gra3 c-wh starclick">
+	            <div class="ratestar_off"></div>
+                <div class="ratestar_off"></div>
+                <div class="ratestar_off"></div>
+                <div class="ratestar_off"></div>
+                <div class="ratestar_off"></div>
+            </div>
+            <div id="qiyucontent" style="display:none;">
+                <div class="ub-f1 umar-b ubb ubl ubr b-gra3 c-f9 uinn" id="pingjialist"></div>
+                <div class="uc-a4 uba b-gra3 umar-t uinn c-f9 umar-b">
+                 
+                    <div class="ulev-1 t-gra">还愿意去这家店吗?</div>
+                    <div class="umar-t umar-b">
+                    <label><input type="radio" name="tuan_qu" id="tuan_qu_1" value="1"  />愿意</label>&nbsp;&nbsp;
+                    <label><input type="radio" name="tuan_qu" id="tuan_qu_2" value="2"  />不愿意</label>
+                    </div>
+                    <!--   
+                    <div class="umar-t ulev-1 t-gra">是否有额外支出?</div>
+                    <div class="umar-t umar-b">
+                    <label><input type="radio" name="tuan_zhichu" id="tuan_zhichu_1" value="1" />有</label>&nbsp;&nbsp;
+                    <label><input type="radio" name="tuan_zhichu" id="tuan_zhichu_2" value="2" />没有</label>
+                    </div>
+                    
+                    <div class="umar-t ulev-1 t-gra">团购是否符合描述?</div>
+                    <div class="umar-t umar-b">
+                    <label><input type="radio" name="tuan_miaoshu" id="tuan_miaoshu_1" value="1" />符合</label>&nbsp;&nbsp;
+                    <label><input type="radio" name="tuan_miaoshu" id="tuan_miaoshu_2" value="2" />不符合</label>
+                    </div>
+                    
+                    <div class="umar-t ulev-1 t-gra">团购有被差别对待吗?</div>
+                    <div class="umar-t umar-b">
+                    <label><input type="radio" name="tuan_duidai" id="tuan_duidai_1" value="1" />有</label>&nbsp;&nbsp;
+                    <label><input type="radio" name="tuan_duidai" id="tuan_duidai_2" value="2" />没有</label>
+                    </div>
+                    -->
+                    
+                    <div id="renjunxiaofeidiv" class="umar-t" style="display:none;">
+                        <span id="useprice_title"></span><input type="number" name="price" id="xiaofei" class="t_input c-f7 ub-f1 uba b-gra3 uc-a4" size="6" style="font-size:1em; margin:0 0.5em;" /><span id="useprice_unit"></span>
+                    </div>
+                </div>
+                
+                <div class="ulev-1 t-gra">点评内容</div>
+                <div class="umar-t umar-b ub ub-ac ub-pc"><textarea name="content" id="content" cols="25" rows="4" class="ub ub-f1 uba b-gra3 uc-a4" style="padding:1em; font-size:1em;" placeholder="您的评价对其他会员是很重要的参考(20-2000个字)"></textarea></div>
+                
+                <!--pic-->
+                <div class="ub umar-t c-f9 uc-a4 una b-gra3 uinn ub-ac ub-pc">	
+                    <div onclick="selectimg(1);" class="ub-f1 ub gallery"></div>
+                    <div onclick="selectimg(2);" class="ub-f1 ub cam"></div>
+                </div>
+                
+                <div class="ub uinn3" id="imgs_club"></div>
+                <!--pic-->
+                
+                <div id="replydiv" style="display:none;">
+                    <div>商家回复</div>
+                    <div id="reply"></div>
+                    <div class="t-gra ulev-1">回复时间：<span id="replydate"></span></div>
+                </div>
+                
+                <div onClick="submitrate()" class="uc-a4 c-green ub ub-pc ub-ac uinn t-wh umar-b umar-t">提交</div>
+            </div>
+        </div>
+        <input type="hidden" name="rid" id="rid">
+    </body>
+<script>
+    	zy_init();
+		var isuserprice=0;//是否显示人均消费
+		var file = '',opId = 100,id,rid,sid;
+        window.uexOnload = function(type){
+			uexWindow.toast(1,5,"加载中",0);
+			var params = zy_parse();
+	    	id = params.id;
+            getrateinfo(id);
+        }
+		
+		function submitrate(){
+			best=$("#zhengtipingjia .ratestar_on").size();
+			if(best<1){
+				uexWindow.toast(0,5,"请进行整体评价",2000);
+				return false;
+			}
+			jdata =[{"key":"id","type":"0","value":id},{"key":"rid","type":"0","value":rid},{"key":"best","type":"0","value":best}];
+			
+			starno=true;
+			$(".starclick:gt(0)").each(function(){
+				name=$(this).attr('id');
+				name="review["+name+"]";
+				s=$(this).find(".ratestar_on").size();
+				if(s<1){
+					starno=false;
+				}else{
+					val={"key":name,"type":"0","value":s};
+					jdata.push(val);
+				}
+			});
+			if(starno==false){
+				uexWindow.toast(0,5,"请对每项进行打分",2000);
+				return false;
+			}
+			
+			/*
+			if($("input[name='tuan_qu']:checked").size()<1){
+				uexWindow.toast(0,5,"请选择是否还愿意去这家店",2000);
+				return false;
+			}
+			s=$("input[name='tuan_qu']:checked").val();
+			val={"key":"tuan_qu","type":"0","value":s};
+			jdata.push(val);
+			
+			if($("input[name='tuan_zhichu']:checked").size()<1){
+				uexWindow.toast(0,5,"请选择是否有额外支出",2000);
+				return false;
+			}
+			s=$("input[name='tuan_zhichu']:checked").val();
+			val={"key":"tuan_zhichu","type":"0","value":s};
+			jdata.push(val);
+			
+			if($("input[name='tuan_miaoshu']:checked").size()<1){
+				uexWindow.toast(0,5,"请选择团购是否符合描述",2000);
+				return false;
+			}
+			s=$("input[name='tuan_miaoshu']:checked").val();
+			val={"key":"tuan_miaoshu","type":"0","value":s};
+			jdata.push(val);
+			
+			if($("input[name='tuan_duidai']:checked").size()<1){
+				uexWindow.toast(0,5,"请选择团购有被差别对待吗",2000);
+				return false;
+			}
+			s=$("input[name='tuan_duidai']:checked").val();
+			val={"key":"tuan_duidai","type":"0","value":s};
+			jdata.push(val);
+			*/
+			
+			if(isuserprice==1){
+				price=$("#xiaofei").val();
+				if(price=="" || price<1){
+					msg=$("#useprice_title").html();
+					msg="请输入"+msg;
+					uexWindow.toast(0,5,msg,2000);
+					return false;
+				}
+				val={"key":"price","type":"0","value":price};
+				jdata.push(val);
+			}
+			
+			content=$("#content").val();
+			if(content==""){
+				uexWindow.toast(0,5,"请输入评价内容",2000);
+				return false;
+			}
+			if(content.length<20){
+				uexWindow.toast(0,5,"请更详细的描述一下您的评价，您的评价对我们很重要。",2000);
+				return false;
+			}
+			val={"key":"content","type":"0","value":content};
+			jdata.push(val);
+			
+			if($("#imgs_club input").size()>0){
+				$("#imgs_club input").each(function(){
+					imgid=$(this).val();
+					val={"key":"pictures["+imgid+"]","type":"0","value":imgid};
+					jdata.push(val);
+				});
+			}
+
+			url=weburl"rateinfo.php";
+			uexWindow.toast(1,5,"正在提交",0);
+			$zy.getJSON(
+				url,
+				function(data){
+					uexWindow.closeToast();
+					if(data.reslut==1){
+						uexWindow.alert('温馨提示',data.msg,'确定');
+						uexWindow.close('-1');
+						uexWindow.evaluateScript("rating_shell","0","uexWindow.close('-1');");
+					}else{
+						uexWindow.toast(0,5,data.msg,2000);
+					}
+				},
+				'json',
+				function(){
+					uexWindow.alert('温馨提示',"提交失败,请重试.",'确定');
+					uexWindow.closeToast();
+				},
+				'POST',
+				jdata
+			);
+		}
+		
+		function getrateinfo(id){
+			url=weburl+"rateinfo.php?id="+id;
+			$zy.getJSON(
+					url,
+					function(data){
+						sid=data.sid;
+						sortarr=data.sortarr;
+						rid=data.rid;
+						if(rid>0){
+							$("#qiyucontent").show();
+						}
+												
+						best=data.best;
+						$("#zhengtipingjia div:lt("+best+")").addClass("ratestar_on");
+						
+						name=data.name;
+						$("#name").html(name);
+						
+						content=data.content;
+						$("#content").val(content);
+						
+						pingjialist=data.pingjialist;
+						strhtml="";
+						$.each(pingjialist,function(k,v){
+							n=sortarr[k];
+							shtml=getratestar(n);
+							strhtml+='<div class="ulev-1">'+v['name']+'</div><div id="'+k+'" class="ub starclick">'+shtml+'</div>';
+						});
+						$("#pingjialist").html(strhtml);
+						
+						/*
+						tuan_qu=data.tuan_qu;
+						$("#tuan_qu_"+tuan_qu).attr("checked","checked");
+						
+						tuan_zhichu=data.tuan_zhichu;
+						$("#tuan_zhichu_"+tuan_zhichu).attr("checked","checked");
+						
+						tuan_miaoshu=data.tuan_miaoshu;
+						$("#tuan_miaoshu_"+tuan_miaoshu).attr("checked","checked");
+						
+						tuan_duidai=data.tuan_duidai;
+						$("#tuan_duidai_"+tuan_duidai).attr("checked","checked");
+						*/
+						price=data.price;
+						useprice=data.useprice;
+						useprice_required=data.useprice_required;
+						useprice_title=data.useprice_title;
+						useprice_unit=data.useprice_unit;
+						if(useprice==1 && useprice_required==1){
+							isuserprice=1;
+							$("#useprice_title").html(useprice_title);
+							$("#xiaofei").val(price);
+							$("#useprice_unit").html(useprice_unit);
+							$("#renjunxiaofeidiv").show();
+						}
+						
+						reply=data.reply;
+						replydate=data.replydate;
+						if($.trim(reply)!=""){
+							$("#reply").html(reply);
+							$("#replydate").html(replydate);
+							$("#replydiv").show();
+						}
+						
+						havepic=data.havepic;
+						pictures=data.pictures;
+						if(havepic==1 && pictures!=""){
+							picstr='';
+							$.each(pictures,function(k,v){
+								picstr+='<div onclick="imgoperate('+k+')" id="'+k+'" src="'+weburl+''+v['thumb']+'" style="background-image:url('+weburl+''+v['thumb']+')"><input name="pictures[]" value="'+k+'" type="hidden"></div>';
+							});
+							$("#imgs_club").html(picstr);
+						}
+						
+						$("#allcontentcont").show();
+						inintstar();
+						uexWindow.closeToast();	
+					}
+			);
+		}
+		function getratestar(n){
+			str='';
+			for(i=1;i<=5;i++){
+				on='';
+				if(i<=n){on='ratestar_on'}
+				str+='<div class="ratestar_off '+on+'"></div>';
+			}
+			return str;
+		}
+		function inintstar(){
+			$(".starclick").each(function(){
+				$(this).find(".ratestar_off").each(function(index){
+					$(this).click(function(){
+						$("#qiyucontent").show();
+						$(this).parent().find(".ratestar_off").removeClass("ratestar_on");
+						$(this).parent().find(".ratestar_off:lt("+(index+1)+")").addClass("ratestar_on");
+					});
+				});
+			});
+		}
+		//传照片
+    function selectimg(which){
+			if(which==1){
+				var data={
+			    min:1,
+			    max:1,
+			    quality:0.8,
+			    detailedInfo:false
+				}
+				var json=JSON.stringify(data);
+				uexImage.openPicker(json);
+				uexImage.onPickerClosed=function(info){
+					var jsonimage=$.parseJSON(info);
+					file=jsonimage.data;
+					uploadimg();
+				}
+			}else{
+				var comtextareass = '0';
+				var quality = '10';
+	    	uexCamera.open(comtextareass, quality, function(data) {
+	    		file=data;
+	    		uploadimg();
+	    	});
+			}
+		}
+		function uploadimg() {
+			var upUrl = weburl+'bbsupfile.php?sid='+sid+'&action=up';
+			var param = {
+				url: upUrl,
+				type: 1
+			};
+			var uploader = uexUploaderMgr.create(param);
+			if (uploader) {
+				uexUploaderMgr.uploadFile(uploader, file, "picture", 0, 800,
+				function(packageSize, percent, responseString, status) {
+					switch (status) {
+					case 0:
+						uexWindow.toast("1", "5", "上传中..." + percent + "%", 0);
+						break;
+					case 1:
+						uexWindow.closeToast();
+						uexWindow.toast(0, 5, "上传成功", 2000);
+						var j = eval('(' + responseString + ')');
+						insertimg(j.aid,j.attachurl,0);
+						uexImage.clearOutputImages();
+						uexUploaderMgr.closeUploader(uploader);
+						break;
+					case 2:
+						uexWindow.closeToast();
+						uexWindow.toast(0, 5, "上传失败", 2000);
+						uexUploaderMgr.closeUploader(uploader);
+						break;
+					}
+				});
+			} else {
+				uexWindow.toast(0, 5, "上传创建失败", 2000);
+			}
+		}
+		
+//		function selectimg(which){
+//			if(which==1){
+//				uexImageBrowser.cbPick = function(opCode, dataType, data) {
+//					file=data;
+//					uploadimg();
+//				}
+//				uexImageBrowser.pick();
+//			}else{
+//				uexCamera.cbOpen = function(opCode, dataType, data) {
+//					file=data;
+//					uploadimg();
+//				}
+//				uexCamera.open();
+//			}
+//		}
+//		function uploadimg(){
+//			uexUploaderMgr.cbCreateUploader = cbCreateUploader;
+//   		uexUploaderMgr.onStatus = onStatus;
+//			uexWindow.toast('1', '5', '正在上传...', 0);
+//			uexUploaderMgr.createUploader(opId, weburl+'bbsupfile.php?sid='+sid+'&action=up');
+//		}
+//		
+//		//创建上传对象回调
+//		 function cbCreateUploader(opId,dataType,data){
+//		   if(dataType == 2 && data==0){
+//			 //上传文件到服务器
+//			 uexUploaderMgr.uploadFile(opId,file,'picture',3);
+//		   }
+//		 }
+//		 //上传文件回调函数
+//		 function onStatus(opId,fileSize, percent,serverPath,status){
+//		   switch(status) {
+//			 case 0:
+//			   uexWindow.toast('1', '5', '正在上传...', 0);
+//			   break;
+//			 case 1:
+//			   uexWindow.closeToast();
+//			   uexWindow.toast(0,5,"上传成功",2000);
+//			   var j = eval('('+serverPath+')');
+//			   
+//			   ////成功后的处理
+//			   insertimg(j.aid,j.attachurl,0);
+//			   ////成功后的处理
+//			   
+//			   uexUploaderMgr.closeUploader(opId);
+//			   break;
+//			 case 2:
+//			   uexWindow.closeToast();
+//			    uexWindow.alert('温馨提示',"上传失败!",'确定');
+//			   uexUploaderMgr.closeUploader(opId);
+//			   break;
+//			 default: 
+//			   break;
+//		   }
+//		 }
+			//传照片
+		
+	   function insertimg(aid,imgurl,type){///type 0增加图片  1是删除图片
+			html='<div onclick="imgoperate('+aid+')" id="'+aid+'" src="'+imgurl+'" style="background-image:url('+imgurl+')"><input name="pictures[]" value="'+aid+'" type="hidden"></div>';
+			if(type==0){
+				$("#imgs_club").append(html);
+			}
+			if(type==1){
+				$("#imgs_club #"+aid).remove();
+			}
+		}
+		
+		function imgoperate(aid){
+			imgurl=$("#"+aid).attr("src");
+			uexWindow.cbActionSheet = function(opId, dataType, data){
+				if (data == "0") {
+						insertimg(aid,imgurl,1);				
+				} else if (data == "1") {
+						var array = [];
+						array[0] = imgurl;
+						uexImageBrowser.open(array);
+				}
+			}
+			var value = ["删除","预览"];
+			uexWindow.actionSheet('', '取消', value);
+		}
+</script>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+    </head>
+    <body class="um-vp ub c-f7 ub-ver">
+    	<div id="header" class="ub c-green t-wh h-pd">
+			<div class="ub ub-ac ub-pc" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+				<div class="ub goback ub-ac"></div>
+			</div>
+			<div class="ub ub-f1 ub-ac ub-pc">订单支付</div>
+			<div class="ub ub-ac ub-pc" style="visibility:hidden;">
+				<div class="h-sear"></div>
+			</div>
+        </div>
+		<div id="allcontentcont">
+		  <div id="yuediv" style="display:block;">
+                    <div class="ubb ub b-gra2 uinn6 ub-ac">
+                        <div class="ub ub-f1">我的余额</div>
+                        <div class="ub ub-ac umar-r">
+                            <span id="rmb">0</span>元
+                        </div>
+                        <input name="tuanuseyuepay" id="tuanuseyuepay" type="checkbox" value="yes" class="def_sele" />
+                    </div>
+            </div> 
+			<div class="ub uinn c-wh" id="expinfo">
+			    <div class="t-gra6 ulev-33 ub-f1">快递费用</div>
+			    <div class="ulev-33 t-gra6"><span id="fare"></span>元</div>
+			</div>
+			<div class="ub ulev0 t-gra uinn">结算信息</div>
+			<div class="ubb t-gra6 ub b-gra2 umar-bb1 ub-ver c-wh">
+				<div class="ubb ub b-gra2 uinn6 ub-ac">
+					<div class="ub ub-f1">总价</div><div class="ub t-bzt"><span id="price">99</span>元</div>
+				</div>
+                <div id="yuediv" style="display: none;">
+                    <div class="ubb ub b-gra2 uinn6 ub-ac">
+                        <div class="ub ub-f1">我的余额</div>
+                        <div class="ub ub-ac umar-r">
+                            <span id="rmb">0</span>元
+                        </div>
+                        <input name="tuanuseyuepay" id="tuanuseyuepay" type="checkbox" value="yes" class="def_sele" />
+                    </div>
+                </div>
+           		<div class="ub uinn6 ub-ac">
+					<div class="ub ub-f1">还需支付</div><div class="ub t-bzt"><span id="haixurmb">0</span>元</div>
+				</div>
+			</div>
+		
+			
+            <div id="zhifufangshi" class="umar-bb1" style="display:block">
+                <div class="ub t-gra ulev-3 uinn">请选择支付方式</div>
+                <div class="ub b-gra2 ub-f1 ub-ver c-wh">
+    				<div id="daijinquandiv" style="display: none;">
+        				<div class="ubt b-gra2 ub uinn6 ub-f1 ub-ac hdfk">
+                            <label class="ub ub-f1 ub-ac" for="hdfk">
+                                <div class="ub ub-f1 ub-ver">
+                                	<div class="ub">货到付款</div>
+    								<div class="ub ulev-1 t-gra">免在线支付，货到付款。</div>
+    							</div>
+                                <div class="ub ub-ac">
+                                    <input name="payment_name" type="radio" id="hdfk"   value="hdfk" class="def_sele" />
+                                </div>
+                            </label>
+                        </div> 
+					</div>       
+                    <div class="ubb b-gra2 ub uinn6 ub-f1 ub-ac webpay">
+                        <div class="ub ub-f1 ub-ac" for="alipay">
+                            <div class="ub ub-f1 ub-ver umar-l">
+                            	<div class="ulev0">支付宝支付</div>
+								<div class="ulev-1 t-gra pt2">支付宝余额和各个银行卡快捷支付</div>
+							</div>
+                            <div class="ub ub-ac">
+                                <input name="payment_name" type="radio" id="alipay" checked value="alipay" class="def_sele ubn0" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--
+                     <div class="ubb b-gra2 ub uinn6 ub-f1 ub-ac weixinpay" style="display: none ">
+                        <div class="ub ub-f1 ub-ac" for="wxpay">
+                            <div class="ub ub-f1 ub-ver umar-l">
+                                <div class="ulev0">微信支付</div>
+                                <div class="ulev-1 t-gra pt2">微信快捷支付</div>
+                            </div>
+                            <div class="ub ub-ac">
+                                <input name="payment_name" type="radio" id="wxpay"  value="wxpay" class="def_sele ubn0" />
+                            </div>
+                        </div>
+                    </div>
+                    -->
+                </div>  
+            </div> 
+			<div id="gotopay" class="ub ub-pc bra0 mlr uinn6 c-blue t-wh ulev1n">确认支付</div>
+		</div>
+		<!--content结束-->
+    </div>
+    </body>
+<script>
+	zy_init();
+	var url=weburl+"pay.php";
+	var oid,usermb,price,haixurmb,subject;
+	var quanmoneyarray=new Array();
+	var prepayId;
+	window.uexOnload = function(type){
+		uexWindow.toast(1,5,"加载中",0);
+		isIPhoneX()
+		var para=zy_parse();
+		oid=para.oid;
+        if (!type) {
+            uexWindow.setBounce("0");
+			getpayinfo(oid);	
+        }
+		uexAliPay.onStatus = paySuccess;
+		uexWidgetOne.cbError = payFailed;
+		
+    }
+    function isIPhoneX(fn){
+          var u = navigator.userAgent;
+          var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+          // alert(isIOS)
+          // // iPhone X、iPhone XS
+          var isIPhoneX = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 375 && window.screen.height === 812;
+          console.log(isIPhoneX)
+  
+          // iPhone XS Max
+          var isIPhoneXSMax = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 414 && window.screen.height === 896;
+          console.log(isIPhoneXSMax)
+          // iPhone XR
+          var isIPhoneXR = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 2 && window.screen.width === 414 && window.screen.height === 896-88;
+          console.log(isIPhoneXR)
+          
+          if (isIOS) {        
+                // alert(window.screen.height)
+              if (window.screen.height >=812){
+              // if (isIPhoneX || isIPhoneXSMax || isIPhoneXR){
+                  //是iphoneX
+                  //alert('是iphoneX')
+                 $("#header").css({'height':'5em','padding-top':'2em'});
+  //            
+              }else{
+                  $("#header").css({'height':'4em','padding-top':'1em'});
+                // // alert('不是iphoneX')
+              }
+          }else{
+              $("#header").css({'height':'3em','padding-top':'0em'})
+            // alert('不是ios')
+          }
+      }
+	function getpayinfo(){
+		$zy.getJSON(
+			url+'?oid='+oid,
+			function(data){
+			    uexWindow.closeToast();
+            	if (data.canbuy == 0) {
+            		uexWindow.toast(1,5,"已成功支付，进入订单详情",2000);
+            		uexWindow.open('quan','0','quan_shell.html?oid='+oid,'1','','','0',0);
+            		uexWindow.evaluateScript("notpay_shell",0,"uexWindow.close('')");
+            		uexWindow.close('');
+            	}	
+            	console.log(data);
+				subject=data.subject;			
+				$("#subject").html(subject);
+				$("#num").html(data.num);				
+				$("#danprice").html(data.danprice);
+				//fare=data.fare;
+				price=data.price;
+				fare=data.fare;
+				$("#price").html(data.price);
+				$("#fare").html(fare);
+				usermb=data.rmb;
+				$("#rmb").html(usermb);
+				/*
+				if(usermb>0){
+					$("#yuediv").show();
+					$("#tuanuseyuepay").attr("checked","checked");
+				}
+				*/
+				daijinquanstr=data.daijinquan;
+				if(daijinquanstr!=0){
+					$("#daijinquandiv").show();
+					$.each(daijinquanstr,function(k,v){
+							$("#daijinquan").append("<option value='"+v.quanid+"'>"+v.quanname+"</option>");
+							quanmoneyarray[v.quanid]=v.quanjine;
+						})
+				}
+				
+				if(price>usermb){
+					$("#zhifufangshi").show();
+				}
+				tongjiprice();
+				$("#gotopay").click(function(){
+					pay();
+				});
+				$("#yuediv").click(function(){
+					tongjiprice();
+				});
+				$("#daijinquan").change(function(){
+					tongjiprice();
+				});
+				$("#allcontentcont").show();
+				uexWindow.closeToast();
+			}
+		);
+	}
+	
+	function tongjiprice(){
+		if($("#tuanuseyuepay").prop("checked")==true){
+			haixurmb=(price*10000-usermb*10000)/10000;
+		}else{
+			haixurmb=price;
+		}
+		
+		quanidval=$("#daijinquan").val();
+		if(quanidval>0){
+			haixurmb=(haixurmb*10000-quanmoneyarray[quanidval]*10000)/10000;
+		}
+		
+		if(haixurmb<0){
+			haixurmb=0;
+			$("#zhifufangshi").hide();
+		}
+		if(haixurmb>0){
+			$("#zhifufangshi").show();
+		}
+		$("#haixurmb").html(haixurmb);
+	}
+	
+	function setpayinfo(trade_no,subject,pay_fee){
+	    uexWindow.toast(1,5,"跳转中...",3000);
+	    $zy.getJSON(
+            weburl+"get_alipayconfig.php",
+            function(info){
+                partner = info.partner;
+                seller = info.seller;
+                rsaPrivate = info.rsaPrivate;
+                rsaPublic = info.rsaPublic;
+                notifyUrl=info.notifyUrl;
+                //alert(partner+'==\n'+seller+'==\n'+rsaPrivate+'==\n'+rsaPublic+'==\n'+notifyUrl)
+                uexAliPay.setPayInfo(partner, seller, rsaPrivate, rsaPublic, notifyUrl);
+                uexAliPay.pay(trade_no, subject,'商品',pay_fee);
+            }
+        );
+	}
+	
+	function pay(){
+		uexWindow.toast(1,5,"正在提交...",3000);
+		payment_name=$("#zhifufangshi input:checked").val();
+		tuanuseyuepay="no";
+		if($("#tuanuseyuepay").prop("checked")==true){
+			tuanuseyuepay="yes";
+		}
+		serviced = "credit";
+		payment = "";
+	    paytype = "";	
+		if (haixurmb > 0) {	
+    		if (payment_name == 'alipay' ||payment_name == 'wxpay') {
+    			payment = "redirect";
+                serviced = "";
+    			paytype = "";			
+    		}	
+    	    if (payment_name == 'hdfk') {
+    			payment = "";
+    			serviced = "";
+    	        paytype = "hdfk";
+    		}		
+		}else{
+		    paytype='credit';
+		}
+		quanquan=$("#daijinquan").val();
+		postdata=[{"key":"daijinquan","type":"0","value":quanquan},
+		{"key":"paytype","type":"0","value":paytype},
+		{"key":"action","type":"0","value":payment},
+		{"key":"yuepay","type":"0","value":tuanuseyuepay},
+		{"key":"service","type":"0","value":serviced},
+		{"key":"oid","type":"0","value":oid}];
+		$zy.getJSON(
+			url,
+			function(data){
+			    //alert(data);
+				if(data.canbuy==1){
+				    uexWindow.closeToast();
+					if(haixurmb>0){
+						if(payment_name=='alipay'){
+						    setpayinfo(data.trade_no, data.subject,haixurmb);
+						}
+						if(payment_name=='alipay_wap'){
+						    payurl="pay_alipay_wap_shell.html?oid="+data.trade_no+"&subject="+data.subject+"&fee="+haixurmb;
+                            uexWindow.open('pay_alipay_wap','0',payurl,'2','','','0');
+						}
+						if(payment_name=='hdfk'){
+							uexWindow.toast(0,5,"购买成功",5000);
+							gomyorder();
+						}												
+					}else{
+						uexWindow.toast(0,5,"购买成功",5000);
+						uexWindow.evaluateScript("ord_shell",0,"uexWindow.close('')");
+						gomyorder();
+						uexWindow.close('');
+					}
+				}else{
+					uexWindow.alert("温馨提示",data.error,'确定');
+					//uexWindow.close('-1');
+				}
+				
+			},
+			'json',
+			function(){uexWindow.alert("温馨提示",'信息提交失败，请重新提交','确定');},
+			'POST',
+			postdata
+		);
+		
+	}
+	
+	function paySuccess(status,des){
+		if(status==0){
+		    uexWindow.toast(0,5,"支付成功，进入订单详情...",3000);
+		    uexWindow.evaluateScript("ord_shell",0,"uexWindow.close('')");
+		    gomyorder();
+		    uexWindow.close('');
+		}else if(status==1){
+			uexWindow.toast(1,5,"正在支付",2000);
+		}else if(status==2){
+		    //alert(status+'=des='+des);
+			///if(des=="支付插件不完整"){
+				//if(window.confirm("您还没有安装支付宝插件,单击确定开始安装")){
+					//path="res://alipay.apk";
+					//uexWidget.installApp(path);
+				//}
+			//}
+		}else{
+			uexWindow.alert("温馨提示",'支付失败','确定');
+			uexWindow.close('-1');
+		}		
+	}
+	function gomyorder(){      
+        uexWindow.open('quan','0','quan_shell.html?oid='+oid,'1','','','0',0);
+    }
+	function payFailed(opCode, errorCode, des){
+		uexWindow.alert("温馨提示",opCode+'opCode'+errorCode+'-'+des+'-failed','确定');
+	}
+	
+	function payok(){
+		uexWindow.open('pay_ok','0','pay_ok.html?oid='+oid,'2','','','0',0);
+		uexWindow.evaluateScript("nouse_shell",0,"uexWindow.close('')");
+		uexWindow.evaluateScript("ord_shell",0,"uexWindow.close('')");
+		uexWindow.evaluateScript("notpay_shell",0,"uexWindow.close('')");
+		uexWindow.close('');
+	}
+	function remark_price(){
+	    var userid=window.localStorage.getItem("login_userid");
+	    userid=441;
+	    $zy.getJSON(
+	        weburl+"remark_grade.php?userid="+userid,
+	        function(data){
+	            remark_grade=data.relate_data;
+	            if(remark_grade<1 && remark_grade>0){
+	                remark_name=data.name;
+	            }
+	        }
+	    );
+	   
+	}
+	
+    
+</script>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <style type="text/css">
+            #DetailComment{background: #fff;}
+        </style>
+
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="DetailComment">
+           <p>评论(<span id="commentNum">0</span>)</p>
+           <ul></ul>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+<script>
+    var cid;
+    var url=weburl+"liveBofang.php";
+    var imgUrl="http://www.tastingbutler.com/static/";
+    var pid=0;
+    var user_id=0;
+    var page=1;
+    var msg;
+    var username;
+    var pusername;
+    var address;
+    user_id=window.localStorage.getItem("login_userid");
+     window.uexOnload = function(type){
+            uexWindow.toast(1,5,"加载中",0);
+            var params = zy_parse();
+            cid = params.cid;
+            if (!type) {
+                uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            getmorelist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("1");
+                        }
+                    }
+                } 
+                getComment();
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("1","#fff","0");
+                uexWindow.notifyBounceEvent("1","1");
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+            }        
+        }
+        function getmorelist(){
+            page++;
+            getComment();
+        }
+        function getComment(){
+            $zy.getJSON(
+                url+"?cid="+cid+"&page="+page,
+                function(data){
+                    var length=data.comment_list.length;
+                    $("#commentNum").html(data.sum);
+                    for(var i=0;i<length;i++){
+                        var comment=data.comment_list[i].content;
+                        var time=data.comment_list[i].change_time;
+                        var username=data.comment_list[i].username;
+                        var userImg=imgUrl+data.comment_list[i].avatar;
+                        var pusername=data.comment_list[i].pusername;
+                        var userId=data.comment_list[i].user_id;
+                        var pid=data.comment_list[i].pid;
+                        if(pusername){
+                            var str='<li class="ub">'+
+                                   '<img src="'+userImg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                        '<p><span class="commentPeople" userId="'+userId+'">'+username+'</span>回复<span class="commentPeople" userId="'+pid+'">'+pusername+'</span></p>'+
+                                        '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        comment+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                        }
+                        else{
+                            var str='<li class="ub">'+
+                                   '<img src="'+userImg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                            '<p class="commentPeople" userId="'+userId+'">'+username+':</p>'+
+                                            '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        comment+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                        }
+                       $("#DetailComment ul").append(str);
+                    }
+                    huifu();
+                }
+            )
+        }
+        function huifu(){
+            $(".commentPeople").click(function(){
+                pusername=$(this).text();
+                uexWindow.evaluateScript("audioDetails",0,"huifu1('"+pusername+"')");
+                pid=$(this).attr("userId");
+            });
+        }
+        function sendComment(msg){
+            msg=msg;
+            var user_id=window.localStorage.getItem('login_userid');
+            pid=pid;
+            if(!msg){
+                uexWindow.alert('温馨提示',"内容不能为空",'确定');
+            }
+            else{
+                var postdata={"msg":msg,"user_id":user_id,"pid":pid,"vid":cid};
+                url1=weburl+"cam_dealComment.php";
+                appcan.request.ajax({
+                    url:url1,
+                    type:'POST',
+                    data:postdata,
+                    dataType:'json',
+                    success:function(data){
+                        if(data.res == 1){
+                            uexWindow.evaluateScript("audioDetails",0,"clear()");
+                            msg=data.content;
+                            userimg=imgUrl+data.useravatar;
+                            username=data.username;
+                            pusername=data.pusername;
+                            time=data.time;
+                            if(pid){
+                                 var str='<li class="ub">'+
+                                   '<img src="'+userimg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                        '<p><span class="commentPeople" userId="'+user_id+'">'+username+'</span>回复<span class="commentPeople" userId="'+pid+'">'+pusername+'</span></p>'+
+                                        '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        msg+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                            }
+                            else{
+                                var str='<li class="ub">'+
+                                   '<img src="'+userimg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                        '<p><span class="commentPeople" userId="'+user_id+'">'+username+
+                                        '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        msg+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                            }
+                            $("#commentNum").text(parseInt($("#commentNum").text()) +1);
+                            $("#DetailComment ul").prepend(str);
+                                
+                        }
+                    },error:function(xhr,erroType,error,msg){
+                        uexWindow.alert('提示','网络出是错，请稍后再试','确定');
+                    }
+                });              
+            }
+        }
+    </script>
+</html>

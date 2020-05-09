@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+<title></title>
+<meta charset="utf-8">
+<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+<script src="js/jquery-1.6.4.min.js"></script>
+<script src="js/zy_control.js"></script>
+<script src="js/zy_click.js"></script>
+<script src="js/zy_json.js"></script>
+<script src="js/zy_tmpl.js"></script>
+</head>
+<body class="um-vp c-f1" ontouchstart>
+    <div class="up ub ub-ver" tabindex="0">   
+    	<div class="ub uba b-gra2 t-gra ub-ac ulev0 uinn addr2" onClick="get_adress_refrsh();" style="background-image:url(css/images/refresh.png); background-repeat:no-repeat; background-color:#f9f9f9; background-position:95% 50%;">
+    		<!-- <div class="ub">当前：</div> -->
+    		<div class="ub ub-f1 ulev0" id="addr"></div>
+    	</div>
+    	<div class="ub ub-f1 ub-pc ub-ac uhide" id="noresult">
+            <div class="ub ub-pc ub-ac ub-ver">
+                <div class="logo-notuan"></div>
+                <div class="ulev-1 t-gra6 pt2">暂无此信息</div>
+            </div>
+        </div>
+    	<div class="ub ub-f1 ub-ver" id="subjectlistcont"></div>
+    	
+    </div>
+    <input type="hidden" name="sellerpage" id="sellerpage" value="1" />
+</body>
+<script>
+    	zy_init();
+		var devicetoken=window.localStorage.getItem("devicetoken");
+		window.uexOnload=function(type){
+			var lat1, log1;
+			var ishandrefresh = 0;///1表示手动刷新坐标时,获取完地址后刷新列表
+			//startlocation();
+			positionname=window.localStorage.getItem("iwhpositionname");
+            $("#addr").html(positionname);
+        
+			if (!type) {
+			    uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            getmorelist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("1");
+                        }
+                    }
+                    if(t==0){
+                        if(s==0){
+                            refreshlist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("0");
+                        }
+                    }
+                }
+                
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0","#FFF","0");
+                uexWindow.showBounceView("1","#FFF","0");
+                
+                uexWindow.notifyBounceEvent("1","1");
+                uexWindow.notifyBounceEvent("0","1");
+                str='{"loadingText":"刷新中"}';
+                uexWindow.setBounceParams('0',str);
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+                getsubjectlist();
+            }
+		}
+		function refreshlist(){
+            $("#sellerpage").val(1);
+            $("#subjectlistcont").html("");
+            getmorelist();  
+        }
+        function getmorelist(){
+            getsubjectlist();
+        }
+		function startlocation(){
+			uexLocation.openLocation();//打开地图
+			uexLocation.onChange=locationCallback;//获得用户经纬度
+			uexLocation.cbGetAddress = LocationSuccess;///获得用户位置名称
+		}
+		function locationCallback(lat,log){
+			window.localStorage.setItem("iwhtuanlat",lat);
+			window.localStorage.setItem("iwhtuanlng",log);
+			lat1 = lat;
+			log1 = log;
+			uexLocation.getAddress(lat,log);
+		}	
+		function get_adress_refrsh(){
+			uexWindow.toast(1,5,"刷新中",0);
+			ishandrefresh=1;
+			startlocation();
+			//uexLocation.getAddress(lat1,log1);
+			
+		}		
+		function LocationSuccess(opCode,dataType,data){
+			window.localStorage.setItem("iwhpositionname",data);
+			$("#addr").html(data);
+			uexLocation.closeLocation();
+			uexWindow.closeToast();
+			if(ishandrefresh==1){
+				ishandrefresh=0;
+				getsubjectlist();
+			}
+		}
+
+		function getsubjectlist(){
+			uexWindow.toast(1,5,"加载中...",0);
+			s_fid=s_sid=s_orderid=s_areaid=0;
+			s_fid_1=window.localStorage.getItem("s_fid");
+			if(s_fid_1!="" && s_fid_1!="undefined" && s_fid_1!=null){
+				s_fid=s_fid_1;
+			}
+			s_sfid_1=window.localStorage.getItem("s_sid");
+			if(s_sfid_1!="" && s_sfid_1!="undefined" && s_sfid_1!=null){
+				s_sid=s_sfid_1;
+			}
+			s_orderid_1=window.localStorage.getItem("s_orderid");
+			if(s_orderid_1!="" && s_orderid_1!="undefined" && s_orderid_1!=null){
+				s_orderid=s_orderid_1;
+			}
+			s_areaid_1=window.localStorage.getItem("s_areaid");
+			if(s_areaid_1!="" && s_areaid_1!="undefined" && s_areaid_1!=null){
+				s_areaid=s_areaid_1;
+			}
+		
+			page=parseInt($("#sellerpage").val());
+			lat=window.localStorage.getItem("iwhtuanlat");
+			lng=window.localStorage.getItem("iwhtuanlng");
+
+			url=weburl+"getsubjectlist.php?fid="+s_fid+"&sid="+s_sid+"&orderid="+s_orderid+"&areaid="+s_areaid+"&page="+page+"&lat="+lat+"&lng="+lng;
+			tpl='<div class="ub ubb b-gra3 uinn18 c-wh" onclick="uexWindow.open(\'seller_head\',\'0\',\'seller_header.html?sid=${sid}\',\'2\',\'\',\'\',\'0\',0);">'+
+					'<div class="ub ub-f1">'+
+					  '<div class="ub uc-a4 umar-r s-img loadingtu" style="width:25%; background:url(${thumb}) center center no-repeat; -webkit-background-size:100% 100%; background-size:100% 100%;"></div>'+
+					  '<div class="ub ub-f1 ub-ver">'+
+						'<div class="ub pt2 ulev0"><span id="subjectname">${name}</span></div>'+
+						'<div class="ub pt2">'+
+						  '<div class="rateinlst"><div class="ub starred" style="width:${perbest}"></div></div>'+
+						  '<div class="ub-f1 ulev-1 t-gra">&nbsp;${rateno}</div>'+
+						'</div>'+
+						'<div class="ub ulev-1 t-gra pt1">'+
+						  '<div class="">${fdes}</div>'+
+						  '<div class="ub-f1">&nbsp;&nbsp;${areades}</div>'+
+						  '<div class="">${juli}</div>'+
+						'</div>'+
+					  '</div>'+
+					'</div>'+
+				  '</div>';
+			$zy.getJSON(
+				url,
+				function(data){
+				    offset=parseInt($("#sellerpage").val());
+					listno=zy_tmpl_count(data.list);
+					uexWindow.closeToast();
+					if(listno>0){
+						$("#sellerpage").val(offset+1);
+						html=zy_tmpl(tpl,data.list,listno);
+						$("#subjectlistcont").append(html);
+					}else{
+                        if(offset==1){
+                            $("#noresult").removeClass("uhide");
+                        }else{
+                            uexWindow.toast(0,5,"已经是最后记录了",3000);
+                        }
+                    }
+					$(".s-img").height($(".s-img").eq(0).width());
+					
+				}
+			);
+		}
+		
+		function compare(propertyName) { 
+            return function (object1, object2) { 
+                var value1 = object1[propertyName]; 
+                var value2 = object2[propertyName]; 
+                if (value2 > value1) { 
+                    return -1; 
+                } 
+                else if (value2 < value1) { 
+                    return 1; 
+                } 
+                else { 
+                    return 0; 
+                } 
+            } 
+        } 
+        
+        function openpop(n){
+            uexWindow.openPopover(n, "0", n+".html", "", 0, 0, "", "", "", "4");
+        }
+        
+        function clospop(){
+            var popArr = new Array("pop","area","sort","clubsubmenu");
+            for(i=0;i<popArr.length;i++){
+                uexWindow.closePopover(popArr[i]);  
+            }
+        }
+        function loadindexcontent(){        
+            zy_con("content", "index_content.html", 0,$$("header").offsetHeight+$$("popmenu").offsetHeight+1);          
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("content",0,$$("header").offsetHeight+$$("popmenu").offsetHeight+1);
+            }
+        }
+        function changeindextopname(a,b){
+            $("#"+a).html(b);
+        }
+		
+    </script>
+</html>

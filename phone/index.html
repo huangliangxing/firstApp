@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script>
+        </script>
+    </head>
+    <body class="um-vp c-gra" ontouchstart>
+        <div id="page_0" class="up ub ub-ver" tabindex="0">
+        	<div id="header" class="uh uhh"></div>
+            <div id="content" class="ub-f1"></div>
+            <div id="footer" class="uf c-gra-333 ubt b-gra5" style="height:3em;"></div>
+        </div>
+    </body>
+    <script>
+    	zy_init();
+		function Int(s){
+			return int(s);
+		}
+		//
+		var androidurl="";
+        var iosurl="";
+        var opCode = 1;
+        function download() {
+            uexDownloaderMgr.createDownloader(opCode);
+        } 
+		var platform;
+		var apptype=1;
+		
+		var yyIhoneY='';
+        s=window.getComputedStyle($$('header'),null);
+        em = Int(s.fontSize);
+        $('#footer').css({'height':'3em','paddingBottom':'0em'})
+        yyIhoneY=Int(window.innerHeight)-Int(3.1*em);
+        
+		window.localStorage.removeItem("fid");
+		window.localStorage.removeItem("sid");
+		window.localStorage.removeItem("newtuan");
+		window.localStorage.removeItem("orderid");
+		window.localStorage.removeItem("areaid");
+		window.localStorage.removeItem("nowCity");
+        window.uexOnload = function(type){
+            uexWidgetOne.getPlatform();
+			uexWidgetOne.cbGetPlatform = platformSuccess;
+			uexWindow.cbConfirm = ConfirmSuccess;
+			uexDownloaderMgr.onStatus = function(opCode, fileSize, percent, status){　　　
+                switch (status){
+                    case 0:
+                        uexWindow.toast('1', '5', '当前下载的进度：' + percent + '%', '');　　　　　
+                        break;
+                    case 1:
+                        uexWindow.alert("温馨提示", "下载完成，请进行安装！", "我知道了");
+                        uexDownloaderMgr.closeDownloader(opCode);
+                        uexWindow.closeToast();
+                        install();
+                        break;
+                    case 2:
+                        uexWindow.alert("温馨提示", "下载失败，请联系管理员！", "我知道了");　　　　
+                        uexDownloaderMgr.closeDownloader(opCode);
+                        break;
+                }
+            }
+            uexDownloaderMgr.cbCreateDownloader = function(opCode, dataType, data){
+                if (data == 0) {
+                    uexDownloaderMgr.download(1, androidurl,'wgt://pyt.apk', '0');　　　　　　　　　
+                } else {
+                    uexWindow.alert("温馨提示", "创建下载资源失败，请确认你手机中装有SD存储卡。", "我知道了");　　
+                }
+            }
+            uexWidgetOne.cbError = function(opCode, errorCode, errorInfo){
+                 uexWindow.alert('温馨提示','网络出错，错误码：'+errorInfo,'确定');
+            }
+			//uexLocation.openLocation();
+			//uexLocation.onChange=locationCallback;
+            if (!type) {
+                isIPhoneX()
+				setTimeout(function(){loadindex();},100);
+				uexWidget.setPushNotifyCallback("cbNotify");
+				uexDevice.cbGetInfo = function(opCode, dataType, data){
+					var device = eval('('+data+')');
+					devicetoken=device.deviceToken;
+					window.localStorage.setItem("devicetoken",devicetoken);
+				}
+				setdeviceToken();
+				uexDevice.getInfo('11');
+				uexWidget.cbGetPushInfo = function(opCode, dataType, data){
+					$zy.getJSON(
+						"http://a.php?rnd="+Math.random(),
+						function(data){
+						}
+					);
+					if (data != '') {
+						var obj = eval('(' + data + ')');
+						type = obj.type;
+						if(type==1){
+							uexWindow.open('noused', 0, 'nouse_shell.html', 2, '', '', 0);
+						}else if(type==2){
+							tid = obj.tid;
+							uexWindow.open('p_desc'+tid, 0, 'pdesc_shell.html?tid='+tid, 2, '', '', 0);
+						}				
+					}
+				}
+				uexWidget.getPushInfo();
+            }
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+        }
+        function isIPhoneX(fn){
+            var u = navigator.userAgent;
+            var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+            // alert(isIOS)
+            // // iPhone X、iPhone XS
+            var isIPhoneX = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 375 && window.screen.height === 812;
+            console.log(isIPhoneX)
+    
+            // iPhone XS Max
+            var isIPhoneXSMax = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 414 && window.screen.height === 896;
+            console.log(isIPhoneXSMax)
+            // iPhone XR
+            var isIPhoneXR = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 2 && window.screen.width === 414 && window.screen.height === 896-88;
+            console.log(isIPhoneXR)
+            
+            if (isIOS) {        
+                  // alert(window.screen.height)
+                if (window.screen.height >=812){
+                // if (isIPhoneX || isIPhoneXSMax || isIPhoneXR){
+                    //是iphoneX
+                    //alert('是iphoneX')
+                   $("#header").css({'height':'5em','padding-top':'0em'});
+                   $('#footer').css({'height':'4.5em','paddingBottom':'0em'})
+                   yyIhoneY=Int(window.innerHeight)-Int(4.5*em);
+    //            
+                }else{
+                    $("#header").css({'height':'4em','padding-top':'0em'});
+                    $("#footer").css({'height':'3em','padding-top':'0em'})
+                    yyIhoneY=Int(window.innerHeight)-Int(3.1*em);
+                  // // alert('不是iphoneX')
+                }
+            }else{
+                 $("#header").css({'height':'3em','padding-top':'0em'})
+                 yyIhoneY=Int(window.innerHeight)-Int(3.1*em);
+ 
+              // alert('不是ios')
+            }
+        }
+        //sdcard
+        function install() {
+            uexWidget.installApp("wgt://pyt.apk");
+        }
+        function checks() {
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            var url = weburl+"more.php?ver=04.02.0102";
+            xmlhttp.open("get", url, true);
+            xmlhttp.send();
+            
+        }
+        
+        function ConfirmSuccess(opId, dataType, data) {
+            if (data == "0") {
+                isplat();
+            }
+        }
+        function isplat() {
+            if (localStorage.platstr == "ios") {
+                uexWidget.loadApp(iosurl);
+            }
+            if (localStorage.platstr == "android") {
+                download();
+            }
+        }
+        
+        function platformSuccess(opId, dataType, data) {
+            var platstr = "";
+            if (dataType == 2 && data == 0) {
+                localStorage.platstr = "ios";
+            }
+            if (dataType == 2 && data == 1) {
+                localStorage.platstr = "android";
+            }
+            if (dataType == 2 && data == 4) {
+                localStorage.platstr = "wp";
+            }
+             window.localStorage.setItem('platform', data);
+        }        
+        
+		function setdeviceToken(){
+			userid=window.localStorage.getItem("userid");
+			if(userid!=""){
+	 			uexWidget.setPushInfo(userid,"");
+			}
+		}
+		
+		function cbNotify(){
+			logger("cbNotify");
+			uexWidget.getPushInfo();
+		}
+		
+		function logger(s){
+			var l=document.createElement("li");
+			l.innerText = s;
+			document.getElementById("logger").appendChild(l);
+			
+		}
+		
+		function loadper(){
+			uexWindow.open('per_head',0, 'per_head.html', 2, '', '', 0);
+		}
+		
+		function openpop(n){
+		    var titHeight = $$("header").offsetHeight+$$("sjnav").offsetHeight;
+            uexWindow.openPopover(n, "0", n+".html", "", 0,titHeight, "", "", "", "4");
+			//uexWindow.openPopover(n, "0", n+".html", "", 0, 0, "", "", "", "4");
+		}
+		
+		function clospop(){
+			var popArr = new Array("pop_s","area_s","sort_s","clubsubmenu");
+			for(i=0;i<popArr.length;i++){
+				uexWindow.closePopover(popArr[i]);	
+			}
+		}
+		
+		function changedes(){
+			catenamedes=window.localStorage.getItem("s_catename");
+			if(catenamedes!="" && catenamedes!="undefined" && catenamedes!=null){
+				$("#catenamedes").html(catenamedes);
+			}
+			areanamedes=window.localStorage.getItem("s_areaname");
+			if(areanamedes!="" && areanamedes!="undefined" && areanamedes!=null){
+				$("#areanamedes").html(areanamedes);
+			}
+			ordernamedes=window.localStorage.getItem("s_ordername");
+			if(ordernamedes!="" && ordernamedes!="undefined" && ordernamedes!=null){
+				$("#ordernamedes").html(ordernamedes);
+			}
+		}
+		
+		function loadmycontent(){
+			zy_con("content", "mine.html",0,$$("header").offsetHeight);
+			zy_con("header", "mine_header.html",0,0);
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		
+		function loadshangjia(){
+			//zy_con("header", "shangjia_header.html",0,0);
+			zy_con("content", "shangjia.html",0,$$("header").offsetHeight);
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+			changedes();
+		}
+		
+		function loadshangjianew(){
+			//zy_con("header", "shangjia_header.html",0,0);
+			zy_con("content", "shangjia.html", 0,$$("header").offsetHeight+$$("sjnav").offsetHeight);
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		
+		function loadtool(){
+			//zy_con("header", "index_header.html",0,0);
+			zy_con("content", "more.html", 0,$$("header").offsetHeight);
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		function loadindex(){
+			s=window.getComputedStyle($$('header'),null);
+			em = Int(s.fontSize);
+			yy = yyIhoneY;
+			zy_con("header", "index_header.html",0,0);
+			zy_con("footer", "index_footer.html",0,Int(yy));
+			zy_con("content", "newindex.html", 0,$$("header").offsetHeight);
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		function loadtuan(){
+		    zy_con("content", "newindex.html", 0,$$("header").offsetHeight);
+			zy_con("header", "index_header.html",0,0);
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		function loadshipin(){
+            zy_con("content", "shipinIndex_content.html", 0,$$("header").offsetHeight);
+            zy_con("header", "shipinIndex.html",0,0);
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("content",0,$$("header").offsetHeight);
+            }
+		}
+		function loadZhibo(){
+		    zy_con("content","goods_content.html",0,$$("header").offsetHeight);
+		    zy_con("header","goods.html",0,0);
+		    window.onorientationonchange=window.onresize=function(){
+		        zy_resize("content",0,$$("header").offsetHeight);
+		    }
+		}
+		
+		function loadclub(){
+			//zy_con("header", "club_shell.html",0,0);
+			zy_con("content", "club.html", 0,0);
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,0);
+			}	
+		}
+		function changeindextopname(a,b){
+			$("#"+a).html(b);
+		}
+		function locationCallback(lat,log){
+			uexLocation.closeLocation();
+			window.localStorage.setItem("iwhtuanlat",lat);
+			window.localStorage.setItem("iwhtuanlng",lng);
+    	}
+
+		function loadmailbox(){
+			uexWindow.open('loadmailbox','0','loadmailbox_shell.html','1','','','0');
+		}
+
+    </script>
+</html>

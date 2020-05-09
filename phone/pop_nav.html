@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+    <script src="js/zy_control.js"></script>
+    <script src="js/zy_click.js"></script>
+	<script src="js/zy_anim.js"></script>
+	<script src="js/dis_control.js"></script>
+  </head>
+<body class="um-vp ub ub-pc" style="background:rgba(0,0,0,0);">
+	<div class="ub ub-pc ub-ac rpynav" onclick="reply()">
+		<div class="mak">回复</div>
+	</div>
+</body>
+<script>
+	zy_init();
+	var tid;
+	window.uexOnload=function(type){
+		var params = zy_parse();
+	    tid = params.tid;
+        if (!type) {
+            //moveOutsc();
+        }
+	}
+	
+	function reply(){
+		uexWindow.open("post",'0',"post.html?fid=0&tid="+tid,'12','','','0');
+		window.onorientationchange=window.onresize=function(){
+			zy_resize("content",0,$$("header").offsetHeight);
+		}
+	}
+	
+	function moveOutsc(){
+		var dy = '-500';
+		var fsc = getstorage('fscreen');
+		if(fsc) dy = '500';		
+		/*浮动菜单动画效果*/
+		disShowAnim('0', dy);
+	}
+</script>
+</html>

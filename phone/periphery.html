@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/all.js"></script>
+    </head>
+    <body class="um-vp" baontouchstart>
+		<div class="uinn" id="phcont"></div>
+    </body>
+    <script>
+	var lat1,log1
+	window.uexOnload = function(type){
+			if (!type) {
+			uexWindow.setBounce("0");
+			}
+			window.localStorage.setItem("zhoubianshowkm",1);
+			getcateph();
+			//uexLocation.openLocation();//打开地图
+			//uexLocation.onChange=locationCallback;//获得用户经纬度
+			//uexLocation.cbGetAddress = LocationSuccess;///获得用户位置名称
+			uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
+    			//alert("errorCode:" + errorCode + "\nerrorInfo:" + errorInfo);
+    		}
+	}
+	
+	function phchange(cateid,name){
+		get_adress();
+		window.localStorage.setItem("iwhpositionname_isshow",1);
+		window.localStorage.setItem("fid",cateid);
+		window.localStorage.setItem("sid",0);
+		window.localStorage.setItem("orderid",1);
+		window.localStorage.setItem("areaid",0);
+		getnewcate(cateid,0,0,name);
+		//uexWindow.evaluateScript("root","0","changeindextopname('catenamedes','"+name+"')");
+		//uexWindow.evaluateScript("root","0","changeindextopname('ordernamedes','离我最近')");
+		//uexWindow.evaluateScript("root","0","changeindextopname('areanamedes','3千米')");
+		//uexWindow.evaluateScript("root","0","loadindexcontent()");
+		//uexWindow.close('-1');
+		
+		
+	}
+	
+	function getcateph(){
+		url=weburl+"catezb.php";
+		$zy.getJSON(
+			url,
+			function(data){
+				$("#phcont").html(data);
+			},
+			'text',
+			function(){},
+			'get',
+			'',
+			false
+		);
+	}
+	
+	
+	function locationCallback(lat,log){
+		window.localStorage.setItem("iwhtuanlat",lat);
+		window.localStorage.setItem("iwhtuanlng",log);
+		window.sessionStorage.setItem("user_lat",lat);
+		window.sessionStorage.setItem("user_lng",log);
+    	uexWindow.closeToast();
+    	lat1 = lat;
+    	log1 = log;
+		uexLocation.getAddress(lat,log);
+    }
+	
+    function get_adress(){
+    	uexLocation.getAddress(lat1,log1);
+    }	
+	
+    function LocationSuccess(opCode,dataType,data){
+		window.localStorage.setItem("iwhpositionname",data);
+		uexLocation.closeLocation();
+		uexWindow.closeToast();
+		uexWindow.toast(0,8,"当前位置:"+data,5000);
+    }	
+    </script>
+</html>

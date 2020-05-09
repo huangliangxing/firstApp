@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" type="text/css" href="css/newindex.css"/>
+        <style type="text/css">
+            .top{position: fixed;right:0;bottom:2em;z-index: 999;display: none}
+            .top img{width: 2em;height:2em}
+        </style>
+    </head>
+    <body class="um-vp c-gra" ontouchstart>
+		<div class="ub ub-ver" tabindex="0">
+			<div id="slider" class="slider"></div>
+			<div class="ulev-3n events">
+                                           活动资讯
+            </div>
+			<div id="allcontentcont">
+                <div class="ub ub-ver" tabindex="0">                    
+                    <div class="ub ub-f1 ub-ver" id="listclub"></div>
+                </div>
+                <div id="getmore" class="ub" onClick="loadfocuslist()">
+                    <div class="ub uinn6 ub-f1 uba b-gra2 uc-a4 ub-pc t-green ulev-1">加载更多新闻</div>
+                </div>
+                <input type="hidden" id="page" value="1">
+           </div>
+		</div>
+		 <div class="top">
+             <img src="css/images/back_top.png"/>
+      </div>
+		<script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.slider.js"></script>
+        <script src="js/all.js"></script>
+	</body>
+    <script>
+    	zy_init();
+		var lat1,log1;
+		var page=1;
+		$(".mark").height($(".mark").eq(0).width());
+		$("#category .ub-ac").height($("#category .ub-ac").eq(0).width());
+		window.localStorage.removeItem("zhoubianshowkm");//取消显示区域筛选按照几千米划分
+		window.uexOnload = function(type){
+            if (!type) {
+				uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            loadfocuslist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("1");
+                        }
+                    }
+                }
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("1","#fff","0");               
+                uexWindow.notifyBounceEvent("1","1");
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+			}
+            getmenu();
+        }
+         $(window).scroll(function(){
+           if($("body").scrollTop()<400){
+               $(".top").css("display","none");
+           }
+           else{
+              $(".top").css("display","block");
+           }
+       });
+        $('.top').click(function(event) {
+               $('html,body').animate({
+                    'scrollTop': 0},
+                   400);
+         });
+		function getmenu(){
+			uexWindow.toast(1,5,"加载中",0);
+			$zy.getJSON(
+				weburl+'menu.php?rnd='+Math.random(),
+				function(data){
+					uexWindow.closeToast();
+					$("#category").html(data);
+					$("#category .ub-ac").height($("#category .ub-ac").eq(0).width());
+					$(".mark").height($(".mark").eq(0).width());
+					getbanner();
+					loadfocusimg();
+					getguesslike();
+//					getsjad();
+				},
+				'text',
+                function(){
+                    getmenu();
+                }
+			);
+		}
+		function getmorelist(){
+			page++;
+			getguesslike();
+		}
+		var slider = appcan.slider({
+			selector:'#slider',
+            hasIndicator:false,
+            aspectRatio:6/16,
+            hasLabel:false,
+            index:0,
+            auto:4000,
+            hasCircle:true,
+		});
+	    function getbanner(){
+	        $("#slider").html('');
+	        $zy.getJSON(
+	            weburl+'banner.php',
+	            function(data){
+	            	slider.set(data.banners);
+	            	var banners_url=data.banners_url;
+	            	slider.on("clickItem",function(index,data){
+	            		var i=index;
+	            		custom=banners_url[i].custom;
+	            		type=banners_url[i].type;
+		            	loadurl(type,custom);
+			        });
+	            },
+				'json',
+				function(){
+					getbanner();
+				}
+	        );
+	    }
+	    function loadurl(type,custom) {
+	    	if(type=='partner') {
+	    		openSeller(custom);
+	    	}else if(type=='good') {
+	    		openSellerGoods(custom);
+	    	}else if(type=='news') {
+	    		openDiscovery(custom);
+	    	}else{
+	    		return false;
+	    	}
+	    }
+	    function getguesslike(){
+			uexWindow.toast(1,5,"加载中",0);
+			var tmpstr='<div class="ubb b-gra3 ub uinn" onclick="openSellerGoods(${tid})">'+
+				'<div class="ub umar-r lip">'+
+					'<div class="ub ub-f1 uc-a4" style="background-image:url(${thumb}); background-repeat: no-repeat; background-color: #fff; background-size:100% 100%;"></div><div class="needyuyue_${yuyue} ub ub-img"></div>'+
+				'</div>'+
+				'<div class="ub ub-f1 ub-ver">'+
+					'<div class="ub t-gra ulev-3n pt3">${subject}</div>'+
+					'<div class="ut-s ulev0n companyneedhide">【${name}】</div>'+
+					'<div class="ub t-gra ub-ae ub-f1">'+
+						'<div class="ub ub-f1 ub-ae" >'+
+							'<div class="ub ub-ae">'+
+								'<div class="ulev1 myPrice">${price}<span class="danwei">元/斤</span></div>'+
+							'</div>'+
+						'<div class="ub ulev-3 ub-f1 ub-pe">${extratext}</div>'+
+					'</div>'+
+					'</div>'+
+				'</div><div class="isneworder_${isnew} ub ub-img"></div>'+
+			'</div>';
+			$zy.getJSON(
+				weburl+'like.php?page='+page+'&rnd='+Math.random(),
+				function(data){
+					uexWindow.closeToast();
+					tuanno=data.tuanno;
+					if(tuanno>0){
+						var tstr=data;
+						var s=zy_tmpl(tmpstr,tstr.tuandata,zy_tmpl_count(tstr.tuandata));
+						$("#guessyoulike").append(s);
+					}else{
+                        if(page>1)
+                           uexWindow.toast(0,5,"暂时没有更多记录",500);
+                    }
+					$(".lip").height($(".lip").eq(0).width()*11/13);
+				},
+				'json',
+				function(){
+				    getguesslike();
+				}
+			);
+		}
+		function changeImg() {
+            if (curIndex==arr.length-1) {
+            	curIndex=0;
+            } else {
+            	curIndex+=1;
+            }
+            var imgurl = weburl+arr[curIndex];
+            obj.src=imgurl;
+        }
+		function getad(){
+			$zy.getJSON(
+				weburl+"ad.php?rnd="+Math.random(),
+				function(data){
+					$("#ads").html(data);
+					data=$.trim(data);
+					if(data!=""){
+						$(".ad").height($(".ad").eq(0).width()/3);
+					}
+				},
+				'text'
+			);
+		}
+		function loadalltuan(){
+			window.localStorage.setItem("orderid",0);
+			window.localStorage.setItem("fid",0);
+			window.localStorage.setItem("sid",0);
+			window.localStorage.setItem("newtuan",0);
+			window.localStorage.removeItem("newtopcatename");
+			uexWindow.open("alltuan_head",'0',"alltuan_header.html",'2','','','0');
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		function loadallmiaosha(){
+            window.localStorage.setItem("orderid",0);
+            window.localStorage.setItem("fid",0);
+            window.localStorage.setItem("sid",0);
+            window.localStorage.setItem("newtuan",0);
+            window.localStorage.removeItem("newtopcatename");
+            uexWindow.open("allmiaosha_head",'0',"allmiaosha_header.html",'2','','','0');
+            window.onorientationchange=window.onresize=function(){
+                zy_resize("miaosha",0,$$("header").offsetHeight);
+            }
+        }
+        function getsjad(){
+        	var sjadstr='<div class="sjadimg" onclick="openSeller(${sid})">'
+	        +'<img src="${thumb}"/>'
+	        +'</div>';
+            uexWindow.toast(1,5,"加载中",0);
+            $zy.getJSON(
+                weburl+'getsjad.php',
+                function(data){
+                    ps=data.ps;//ps 10
+                    if(ps>0){
+                        var tstr=data.list;
+                        var fdata=[tstr[0],tstr[1],tstr[2],tstr[3]];
+                        var s=zy_tmpl(sjadstr,fdata,zy_tmpl_count(fdata));
+                        $(".sjad").append(s);
+                    }
+                    uexWindow.closeToast();
+                }
+            );
+        }
+        function openDiscovery(tid){
+			uexWindow.open('news_shell','0','news_shell.html?tid='+tid,'2','','','0','0');
+		}
+        function openSeller(sid){
+			uexWindow.open('seller_header'+sid,'0','seller_header.html?sid='+sid,'2','','','0','0');
+		}
+        function openSellerGoods(tid){
+			uexWindow.open('pdesc_shell'+tid,0,'pdesc_shell.html?tid='+tid,2,'','',0);
+		}
+		function getallcates(){
+			uexWindow.open("cate_shell",'0',"cate_shell.html",'2','','','0');
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		//坐标
+		function locationCallback(lat,log){
+			window.localStorage.setItem("iwhtuanlat",lat);
+			window.localStorage.setItem("iwhtuanlng",log);
+			lat1 = lat;
+			log1 = log;
+			uexLocation.getAddress(lat,log);
+		}
+		
+		function get_adress(){
+			uexLocation.getAddress(lat1,log1);
+		}	
+		
+		function LocationSuccess(opCode,dataType,data){
+			window.localStorage.setItem("iwhpositionname",data);
+			uexLocation.closeLocation();
+		}
+		
+		function loadhuodonga(){
+			uexWindow.evaluateScript('root','0','loadhuodonga()');
+		}
+		
+		function loadper(){
+			uexWindow.evaluateScript('root','0','loadper()');
+		}
+		function gowm(){
+			uexWindow.open("wm_shell",'0',"wm_shell.html",'2','','','0');
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		function god(){
+			uexWindow.open("d_shell",'0',"d_shell.html",'2','','','0');
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}
+		}
+		function openw(a,b){
+            platform=1;
+            platform=0;
+            url='tool_shell.html?url='+a+'&title='+b;
+            if(platform==0){
+                url="wgtroot://"+url;
+            }
+            uexWindow.open('toolwindow','0',url,'2','','','0');
+       }
+       
+      function loadfocusimg(){
+            uexWindow.toast(1,5,"加载中",0);
+            url=weburl+"getfocus.php?action=1&rnd="+Math.random();
+            str='<li onclick="iwh_seearticlenews(${tid})" class="ub ufl fsli" style="background:url(${img}) center center no-repeat #fff; background-size:100% 100%;"></li>';
+            $zy.getJSON(
+                url,
+                function(data){
+                    var html;
+                    fno=zy_tmpl_count(data.list);
+                    linum=fno;
+                    navhtml='';
+                    if(fno>0){
+                        html=zy_tmpl(str,data.list,fno);
+                        for(i=0;i<fno;i++){
+                            if(i==0){
+                                onstr='class="active"';
+                            }else{
+                                onstr='';
+                            }
+                            j=i+1;
+                            navhtml+='<li '+onstr+'>'+j+'</li>';
+                        }
+                    }else{
+                        $("#imgdiv").remove();
+                    }
+                    $("#cfs").html(html);
+                    if(fno>1)
+                       $("#indicator").html(navhtml);
+                       $("#allcontentcont").show();
+                    loadfocuslist();
+                }
+            );
+        }
+        
+        function loadfocuslist(){
+            uexWindow.toast(1,5,"加载中",0);
+            page=parseInt($("#page").val());
+            url=weburl+"getfocus.php?action=2&page="+page+"&rnd="+Math.random();
+            str='<div onclick="iwh_seearticlenews(${tid})" class="ub ub-ver ubb b-gra3 uinn">'+
+                    '<div class="activityImg" style="background:url(${img}) center center no-repeat #fff;background-size:100% 100%;"></div>'+
+                    '<div class="ub ub-f1 ub-ver umar-r">'+
+                        '<div class="acitivityTitle">${subject}</div>'+
+                        '<div class="activitySummary">${des}</div>'+
+                        '<div class="activityTime">'+
+                            '<img src="css/images/index_time.png"/>'+
+                            '<span>${time}</span>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>';
+            $zy.getJSON(
+                url,
+                function(data){
+                    var html;
+                    ps=data.ps;
+                    fno=zy_tmpl_count(data.list);
+                    if(fno>0){
+                        html=zy_tmpl(str,data.list,fno);
+                        $("#page").val(page+1);
+                        $("#getmore").show();
+                        $("#listclub").append(html);
+                    }
+                    else{
+                        uexWindow.toast(1,5,"已经是最后记录",0);
+                        $("#getmore").remove();
+                    }
+                    uexWindow.closeToast();
+                    if(page==1){
+                        setFoucsImg();
+                    }
+                }
+            );
+        }
+        function setFoucsImg(){
+            $('.cti').css('width','30%');
+            $(".cti").height($(".cti").eq(0).width()*9/16);
+            $('#fs').css('width','100%');
+            $('#nav').css('width','100%');
+            $('#indicator').css('width','100%');
+            $("#cfs").width($("#fs").eq(0).width()*linum);
+            $(".fsli").width($("#fs").eq(0).width());
+            $(".fsli").height($(".fsli").eq(0).width()*9/16);
+            var club_scro;
+            club_scro = new iScroll('fs', {
+                snap: true,
+                momentum: false,
+                hScrollbar: false,
+                vScrollbar: false,
+                onScrollEnd: function () {
+                    document.querySelector('#indicator > li.active').className = '';
+                    document.querySelector('#indicator > li:nth-child(' + (this.currPageX+1) + ')').className = 'active';
+                }
+            });
+            document.addEventListener('DOMContentLoaded', loaded, false);
+        }
+        
+    </script>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub ub-ver">
+		<div class="ub ub-ver" id="ratediv"></div>
+        <input type="hidden" id="page" name="page" value="1" />
+    </body>
+<script>
+	zy_init();
+	var sid=0;
+	var imgarr=[];
+	var origiurl=weburl+'myratelist.php';
+	var temstr='<div class="ubb2 b-gra2 ub ub-ver uinn6">'+
+				'<div class="ub ub-f1 ub-ae">'+
+	      			'<div class="ub t-gra ulev-1">${sname}</div>'+
+					'<div class="ub ub-f1 ub-pe t-org ulev-2">${date}</div>'+
+				'</div>'+
+				'<div class="ub ub-f1 pt ulev"><div class="ub rateinlst"><div class="ub starred" style="width:${perbest}"></div></div></div>'+
+				'<div class="ub ub-f1 pt ulev-1 bkw" style="line-height:1.5em;">${content}</div>${reply}'+
+				'<div class="imgs_club imgs_club_${rid}">${pictures}</div>'+
+      		'</div>';
+	window.uexOnload = function(type){
+           if (!type) {
+                uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            getmorelist();                  
+                        }
+                    }
+                    if(t==0){
+                        if(s==0){
+                            refreshlist();                  
+                        }
+                    }
+                    uexWindow.resetBounceView("0");
+                    uexWindow.resetBounceView("1");
+                }
+                
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0","#FFF","0");
+                uexWindow.showBounceView("1","#FFF","0");
+                
+        　　　　        uexWindow.notifyBounceEvent("0","1");
+                uexWindow.notifyBounceEvent("1","1");
+                str='{"loadingText":"刷新中"}';
+                uexWindow.setBounceParams('0',str);
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+				loadratelist();		
+           }
+    }
+	function refreshlist(){
+        $("#page").val(1);
+        $("#ratediv").html("");
+        getmorelist();  
+    }
+    
+	function loadratelist(){
+		uexWindow.toast(1,5,"加载中",0);
+		page=parseInt($("#page").val());
+		gourl=origiurl+"?page="+page+"&rnd="+Math.random();
+		$zy.getJSON(
+			gourl,
+			function(data){
+				rateno=data.rateno;
+				offset=parseInt($("#page").val());
+                uexWindow.closeToast();
+				var html;
+				if(rateno>0){
+					$("#page").val(page+1);
+					html=zy_tmpl(temstr,data.ratedata,zy_tmpl_count(data.ratedata));
+					$("#ratediv").append(html);
+				}else{
+				    if(offset==1){
+				        html='<br><br><br><center>暂时没有评价</center>';
+                        $("#ratediv").html(html);
+				    }
+				    else{
+				        uexWindow.toast(0,5,"已经是最后记录了",3000);
+				    }
+					
+				}
+			}
+		);
+	}
+	function getmorelist(){
+        page=parseInt($("#page").val());
+        url=origiurl+'?page='+page;
+        loadratelist(); 
+    }
+	function seeimg(rid,i){
+			$(".imgs_club_"+rid+" div").each(function(index){
+				imgarr[index]=$(this).attr("src");
+			});
+			uexImageBrowser.open(imgarr,i, '1');
+	}
+	
+</script>
+</html>

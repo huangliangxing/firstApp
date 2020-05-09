@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" href="order_rate_shell_content/css/main.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub ub-ver c-f7" ontouchstart>
+    <div class="ub ub-ver">  
+        <div class="ub c-wh ub-ver umar-bb ubb b-gra2" id="tuaninfo">
+            <!--
+            <div class="ub ub-f1 uinn ubb b-gra2 ub-ac ub-pc">
+                <div class="umar-r sel-img" id="tuanpic" style="background: url(css/images/sta_img.jpg) center center no-repeat #fff; -webkit-background-size: auto 100%;background-size: auto 100%;"></div>
+                <div class="ub ub-f1 ub-ver">
+                    <div class="ut-s fwb ulev0" id="sname"></div>
+                    <div class="fwb ulev-3n t-gra pt3" id="subject"></div>
+                    <div class="ub ulev0 pt3"><div class="t-green umar-r" id="price"></div><div class="t-gra ulev-3 price-del pt3" id="market_price"></div></div>
+                </div>
+                <div class="rarr"></div>
+            </div>
+            -->
+        </div>
+        
+        <div class="ub ub-ver umar-bb uinn3 uhide" id="unpay">
+            <div class="ub ub-pc t-wh ulev1n c-org uinn bra0">付款</div>
+        </div>
+        
+        <div class="ub ub-ver umar-bb uinn3 uhide" id="close">
+            <div class="ub ub-pc t-wh ulev1n c-gra-ccc uinn bra0">已过期</div>
+        </div>
+        
+        <div class="ub umar-bb c-wh uinn ubb b-gra2 ub-ac uhide" id="unrate">
+            <div class="ub-f1 rateinlst1"></div>
+            <div class="ulev-3 t-gra">去评价</div>
+            <div class="rarr"></div>
+        </div>
+        
+        <div class="ub umar-bb c-wh uinn ubb b-gra2 ub-ac uhide" id="finish">
+            <div class="ub-f1 umar-l-ec">
+                    <div class="pos_re uwh-ec2">
+                        <div class="ub ub-ac uwh-ec2">
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3"></div>
+                            <div class="uwh-ec3 ub-img star2-ec umar-ar3"></div>
+                        </div>
+                        <div class=" uabs uof" id="star" style="width:0%;">
+                            <div class="ub ub-ac">
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3"></div>
+                                <div class="uwh-ec3 ub-img star1-ec umar-ar3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="ulev-3 t-org4" id="score"></div>
+        </div>
+        
+        <div class="ub ub-ver c-wh umar-bb uinn3 ubb b-gra2 uhide" id="unuse">
+            
+            <div class="ub uinn18 ubb b-gra2">
+                <!--
+                <div class="ub ub-f1 ub-ver t-gra">
+                    <div class="ulev0">团购券</div>
+                    <div class="ulev-3n pt3">有效期至:<span id="expire_time"></span></div>
+                </div>
+                -->
+                <div class="ub ub-ac ub-pc t-wh ulev-3 uhide" id="refundclick">
+                    <div class="c-blue uinn18 bra0">申请退款</div>
+                </div>
+            </div>
+            <div class="ub ub-ver" id="quaninfo">
+            </div>
+            <div class="ub ub-ac uinn ulev-3n t-green ubt b-gra2 uhide" ontouchstart="zy_touch()" id="refundinfo">
+                    <div class="ub-f1">查看退款详情</div>
+                    <div class="rarr"></div>
+            </div>
+        </div>
+        
+        <div class="ub c-wh ub-ver umar-bb ubb b-gra2">
+            <div class="ulev-3 t-gra uinn ubb b-gra2">商家信息</div>
+            <div class="ub uinn ub-ac ub-f1">
+                <div class="ub ub-f1 umar-r ub-ver ubr b-gra2" id="sellerinfo">
+                    <div id="sname1" class="ub ub-f1 umar-b ulev0"></div>
+                    <div class="ub ulev-3n t-gra" id="address"></div>
+                    <div class="ub ulev-3 i_loc t-gra umar-t1" id="distance"></div>
+                </div>
+                <div ontouchstart="zy_touch()" class="ub call" id="tellcall"></div>
+            </div>
+        </div>
+        
+        <div class="ub ub-f1 umar-bb ubb b-gra2">
+            <div class="ub ub-f1 ub-ver uc-a4 c-wh">
+            </div>
+        </div>
+        
+		<div class="ub c-wh ub-ver umar-bb ubb b-gra2">
+		    <div class="ulev0 t-gra uinn ubb b-gra2">订单信息</div>
+			<div class="ub ub-f1 ub-ver uinn6 t-gra6 ulev-3n">
+				<div class="ub uinn9">
+					<div class="ub ub-ac umar-r text_in">订单号:</div>
+					<div class="ub ub-ac" id="orderid"></div>
+				</div>
+                <div class="ub uinn9">
+					<div class="ub ub-ac umar-r">购买手机号:</div>
+					<div class="ub ub-ac umar-r" id="mobile"></div>
+				</div>
+				 <div class="ub uinn9">
+                    <div class="ub ub-ac umar-r text_in0" id="tname">付款时间:</div>
+                    <div class="ub ub-ac" id="dateline"></div>
+                </div>
+                <div class="ub uinn9">
+					<div class="ub ub-ac umar-r text_in1">数量:</div>
+					<div class="ub ub-f1 ub-ac" id="num"></div>
+				</div>
+                <div class="ub uinn9">
+					<div class="ub ub-ac umar-r text_in1">总价:</div>
+					<div class="ub ub-f1 ub-ac" id="origin"></div>
+				</div>
+ 			</div>
+		</div>
+        <div class="ub c-wh ub-ver umar-bb ubb b-gra2 uhide" id="expressinfo">
+            <div class="ulev0 t-gra uinn ubb b-gra2">送货信息</div>
+            <div class="ub ub-f1 ub-ver uinn6 t-gra6 ulev-3n">
+                <div class="ub uinn9">
+                    <div class="ub ub-ac umar-r text_in0">收货人:</div>
+                    <div class="ub ub-ac" id="ex_name"></div>
+                </div>
+                <div class="ub uinn9" style="overflow: hidden">
+                    <div class="ub ub-ac umar-r">收货地址:</div>
+                    <div class="ub ub-ac umar-r" id="ex_address"></div>
+                </div>
+                <div class="ub uinn9">
+                    <div class="ub ub-ac umar-r text_in">快递:</div>
+                    <div class="ub ub-ac umar-r" id="ex_type"></div>
+                </div>
+                <div class="ub uinn9">
+                    <div class="ub ub-ac umar-r text_in">备注:</div>
+                    <div class="ub ub-ac umar-r" id="ex_remark"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ub ub-ver umar-bb uinn3 uhide" id="ex_refund">
+            <div class="ub ub-pc t-wh ulev1n c-blue uinn bra0">申请退款</div>
+        </div>
+        
+    </div>
+</body>
+<script>
+        zy_init();
+        var platform,oid;
+        window.uexOnload = function(type){
+			var params = zy_parse();
+	    	oid = params.oid;
+            if (!type) {
+                uexWindow.setBounce("0");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+                gettuandetail(oid); 
+                getOrder(oid);
+                uexWidgetOne.cbGetPlatform = function(opId,dataType,data){
+                    platform = data;
+                }////////取手机系统
+                uexWidgetOne.getPlatform();         
+            }	
+			
+        }
+		function gettuandetail(oid){
+		    uexWindow.toast(1,5,"加载中",0);
+		    lat=window.localStorage.getItem("iwhtuanlat");
+            lng=window.localStorage.getItem("iwhtuanlng");
+			url=weburl+'orderinfo.php?oid='+oid;
+			if(lat && lng) url +='&lat='+lat+'&lng='+lng;
+			$zy.getJSON(
+    			url,
+    			function(data){
+    			    tid=data.tid;
+    			    oid=data.oid;
+    			    sid=data.sid;
+    				$("#tuaninfo").click(function(){
+    					uexWindow.open('p_desc'+tid,'0','pdesc_shell.html?tid='+tid,'2','','','0');
+    				});
+    				$("#sellerinfo").click(function(){
+                        uexWindow.open('seller_head','0','seller_header.html?sid='+sid,'2','','','0',0);
+                    });
+                    $("#seetuanmore").click(function(){
+                        uexWindow.open('pdetail_shell','0','pdetail_shell.html?tid='+tid,'2','','','0');
+                    });
+                    /*
+    				$("#tuanpic").css("background-image", "url("+data.thumb+")");
+    				$("#sname,#sname1").html(data.sname);
+    				$("#subject").html(data.subject);
+    				$("#price").html('&yen;'+data.team_price);
+    				$("#market_price").html('&yen;'+data.market_price);
+    				*/
+    				$("#xuzhi").html(data.xuzhi);
+    				$("#address").html(data.s_address);
+    				$("#distance").html(data.distance);
+    				if(data.cantuikuan==0){
+    					$(".bzt-tag").addClass("bzt-tag_off");
+    					$(".bzt-tag").eq(0).html('不支持随时退款');
+    					$(".bzt-tag").eq(1).html('不支持过期退款');
+    				}
+                    $("#tellcall").click(function(){
+                        if(platform==1){uexCall.dial(data.s_tel);}
+                        if(platform==0){uexCall.call(data.s_tel);}
+                    });
+                    
+    				$("#orderid").html(data.oid);
+    				$("#tname").html(data.tname);
+    				$("#dateline").html(data.dateline);
+    				$("#mobile").html(data.mobile);
+    				$("#num").html(data.num);
+    				$("#origin").html('&yen;'+data.origin);
+    				
+    				$(".sel-img").height($(".sel-img").eq(0).width()*11/16);
+    				
+    				if(data.express=='Y'){
+    				    $("#expressinfo").removeClass("uhide");
+    				    $("#ex_name").html(data.ex_name);
+                        $("#ex_address").html(data.ex_address);
+                        $("#ex_type").html(data.ex_type);
+                        $("#ex_remark").html(data.ex_remark);
+    				}
+    				state=data.state;
+    				if(state=='close'){
+    				    $("#close").removeClass("uhide");
+    				    $("#tuaninfo").unbind("click");
+    				}else if(state=='unpay'){
+    				    $("#unpay").removeClass("uhide");
+    				    $("#unpay").click(function(){
+                            uexWindow.open('pay',0,'pay.html?oid='+oid,2,'','',0);
+                        });
+    				}else{
+    				    getquaninfo(oid);
+    				    if(data.express=='N')
+    				        $("#unuse").removeClass("uhide");
+    				    if(state=='unuse'){
+                            $("#refundclick").removeClass("uhide");
+                            $("#refundclick").click(function(){
+                                uexWindow.open('askrefund_shell',0,'askrefund_shell.html?oid='+oid,2,'','',0);
+                            });
+                        }else if(state=='unrate'){
+                            $("#unrate").removeClass("uhide");
+                            if(data.express=='Y')$("#ex_refund").removeClass("uhide");
+                            $("#unrate").click(function(){
+                                uexWindow.open('order_rate_shell',0,'order_rate_shell.html?oid='+oid,2,'','',0);
+                            });
+                            $("#ex_refund").click(function(){
+                                uexWindow.open('askrefund_shell',0,'askrefund_shell.html?oid='+oid,2,'','',0);
+                            });
+                        }else if(state=='askrefund' ||state=='berefund'||state=='norefund'){
+                            $("#refundinfo").removeClass("uhide");
+                            $("#refundinfo").click(function(){
+                                uexWindow.open('refundview_shell',0,'refundview_shell.html?oid='+oid,2,'','',0);
+                            });
+                        }else{
+                            $("#finish").removeClass("uhide");
+                            $("#score").html(data.score+'分');
+                            var percent=data.score*20;
+                            $("#star").css("width",percent+'%');
+                        }
+    				} 
+    				//$("#allcontentcont").show();
+    				uexWindow.closeToast();
+    			}
+    		);
+    	}   	
+    	function getquaninfo(oid){
+    	    quanurl=weburl+'getquan.php?oid='+oid;
+            $zy.getJSON(
+                quanurl,
+                function(data){
+                    var s=zy_tmpl(tmpstr,data.quan,zy_tmpl_count(data.quan));
+                    $("#quaninfo").html(s);
+                    $("#expire_time").html(data.expire_time);
+                }
+            );
+    	}
+    	function getOrder(oid){
+    	    url1=weburl+"myOrderInfo.php?oid="+oid;
+    	    var imgUrl="http://www.tastingbutler.com/static/";
+    	    $zy.getJSON(
+    	        url1,
+    	        function(data){
+    	            for(var i=0;i<data.myOrder.length;i++){
+    	                //img=imgUrl+data.myOrder[i].image;
+    	                title=data.myOrder[i].title;
+    	                title=title.substring(0,14)+"...";
+    	                var str='<div class="ub ub-f1 uinn ubb b-gra2 ub-ac ub-pc">'+
+                                    '<div class="umar-r sel-img" id="tuanpic" style="background: url('+data.myOrder[i].image+') center center no-repeat #fff; -webkit-background-size: auto 100%;background-size: auto 100%;"></div>'+
+                                    '<div class="ub ub-f1 ub-ver">'+
+                                        '<div class="ut-s fwb ulev0" id="sname">'+data.myOrder[i].pname+'</div>'+
+                                        '<div class="fwb ulev-3n t-gra pt3" id="subject">'+title+'</div>'+
+                                        '<div class="ub ulev0 pt3"><div class="t-green umar-r" id="price">'+data.myOrder[i].team_price+'</div><div class="t-gra ulev-3 price-del pt3" id="market_price">'+data.myOrder[i].market_price+'</div></div>'+
+                                    '</div>'+
+                                    '<div class="rarr"></div>'+
+                                '</div>';
+                         $('#tuaninfo').append(str);
+                         $(".sel-img").height($(".sel-img").eq(0).width()*11/16);
+    	            }
+    	        }
+    	    )
+    	}
+    </script>
+</html>

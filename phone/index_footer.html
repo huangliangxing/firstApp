@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.6.4.min.js">
+        </script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+    </head>
+    <body class="um-vp" ontouchstart>
+        
+        <div class="ub c-gra-333 t-gra tab">
+            <input class="uhide" type="radio" name="tabSwitch" checked="true" >
+            <div  ontouchstart="zy_touch('',zy_for)" onClick="loadtuan()" class="ub-f1 ub ub-ver tab-act"><div class="ub-f1 tp-tuan"></div><div class="uinn18 tx-c ulev-2">首页</div></div>
+            <input class="uhide" type="radio" name="tabSwitch">
+            <div  ontouchstart="zy_touch('',zy_for)" onClick="loadshipin()" class="ub-f1 ub ub-ver tab-act myFooter1"><div class="ub-f1 tp-sj"></div><div class="uinn18 tx-c ulev-2">视频</div></div>
+           <input class="uhide" type="radio" name="tabSwitch">
+            <div  ontouchstart="zy_touch('',zy_for)" onClick="loadZhibo()" class="ub-f1 ub ub-ver tab-act myFooter1"><div class="ub-f1 tp-club"></div><div class="uinn18 tx-c ulev-2">地主余粮</div></div>       
+            <input class="uhide" type="radio" name="tabSwitch">
+            <div  ontouchstart="zy_touch('',zy_for)" onClick="loadmycontent()" class="ub-f1 ub ub-ver tab-act myFooter1"><div class="ub-f1 tp-me"></div><div class="uinn18 tx-c ulev-2">地主家</div></div>
+        </div>
+        
+    </body>
+    <script>
+        zy_init();
+        function loadtuan(){
+            //$(".input1").attr("checked","false");
+            uexWindow.evaluateScript('root','0','loadtuan()');   
+        }
+        /*
+        function loadshangjia(){
+            uexWindow.evaluateScript('root','0','loadshangjia()');
+        }
+        
+        function loadshangjianew(){
+            uexWindow.evaluateScript('root','0','loadshangjianew()');
+        }
+        
+        function loadhuodong(){
+            uexWindow.evaluateScript('root','0','loadhuodong()');
+        }
+        function loadclub(){
+            uexWindow.evaluateScript('root','0','loadclub()');
+        }
+        */
+        function loadmycontent(){
+            uexWindow.evaluateScript('root','0','loadmycontent()');
+           
+        }
+        /*
+        function loadtool(){
+            uexWindow.evaluateScript('root','0','loadtool()');
+        }
+        */
+        function loadshipin(){
+             uexWindow.evaluateScript('root','0','loadshipin()');
+        }
+        function loadZhibo(){
+            uexWindow.evaluateScript("root","0",'loadZhibo()');
+        }
+        
+    </script>
+</html>

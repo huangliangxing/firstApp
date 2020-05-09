@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" type="text/css" href="css/video-js.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/video.min.js"></script>
+        <style type="text/css">
+            video{width: 100%;height:12em;background: #000;}
+            #video-wrapper{position: relative}
+            .loading{position: absolute;left:50%;top:80px;margin-left:-1em;text-align:center;
+                display: none;color: #fff;}
+            .loading img{width: 1em;height:1em}
+            .controls{position: absolute;bottom: 0em;left: 0;width:100%;height:2em;background:rgba(0,0,0,0)}
+            .bofang{position: absolute;left:0em;top:0em;color: #fff;width:4em;height:2em;padding-left:0.5em;
+            box-sizing: border-box;display: none}
+            .bofang1{position: absolute;left:50%;margin-left:-2em;top:-7em;color: #fff;width:4em;height:4em;
+            box-sizing: border-box;}
+            .bofang1 img{width: 4em;height:4em}
+            .bofang img{width: 1.5em;height: 1.5em;}
+            .fullScreen{position: absolute;right: 0em;color: #fff;top:0;width:3em;height:2em;box-sizing:border-box;
+            text-align:center;padding-left: 1em;padding-right: 0.5em}
+            .fullScreen img{width:1.5em;height:1.5em}
+            a{color: #000;position: absolute;bottom:5em;left:50%;width: 3em;margin-left: -1.5em;}
+            a img{width: 3em;height:3em;}
+            #DetailName div p{width:100%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap}
+            .video-js{width: 100% !important;height:100% !important;}
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart style="background: #fff;">
+           <div id="video-wrapper" style="width:100%;height:15em">
+           </div>  
+           <div id="myHeight" style="height:3em;display: none">
+               123
+           </div>
+        <div id="DetailName" class="ub">
+        </div>
+        <!--评论列表-->
+        <div id="DetailComment">
+           <p>评论(<span id="commentNum">0</span>)</p>
+           <ul>
+           </ul>
+        </div>
+        <!--
+        <div id="myComment" class="ub">
+            <div id="">
+                <input type="text" name="" id="msg" value="" placeholder="说点什么吧..."/>
+                <button>发送</button>
+            </div>
+        </div>
+        -->
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+    var cid;
+    var url=weburl+"liveBofang.php";
+    var imgUrl="http://www.tastingbutler.com/static/";
+    var pid=0;
+    var user_id=0;
+    var page=1;
+    var msg;
+    var username;
+    var pusername;
+    var address;
+    user_id=window.localStorage.getItem("login_userid");
+     window.uexOnload = function(type){
+            uexWindow.toast(1,5,"加载中",0);
+            var params = zy_parse();
+            cid = params.cid;
+            uexVideo.onPlayerClose = function(info){
+                uexWindow.evaluateScript("audioDetails",0,"closePage()");
+            };
+            getVideo();
+            if (!type) {
+                uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            getmorelist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("1");
+                        }
+                    }
+                } 
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("1","#fff","0");
+                uexWindow.notifyBounceEvent("1","1");
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+            }        
+        }
+        function getmorelist(){
+            page++;
+            getComment();
+        }
+        function getVideo(){
+            $zy.getJSON(
+                url+"?cid="+cid,
+                function(data){
+                    uexWindow.closeToast();
+                    uexWindow.evaluateScript("VideoDetails",0,"loadfavor("+data.shoucang_yes+")");
+                    var name=data.myVideo.user_name;
+                    address=data.myVideo.address;
+                    var post_img=imgUrl+data.myVideo.post_img;
+                    
+                    var platform=uexWidgetOne.getPlatform();
+                    if(platform==0){   //0为iOS,1为Android
+                         openVideo();
+                    }else{
+                        var str='<video poster="'+post_img+'" src="'+address+'" width="100%" controls="controls" webkit-playsinline id="my-video" class="video-js" preload="auto" autoplay="autoplay" data-setup="{}" class="video-js">'+
+                               '</video>';
+                       $("#video-wrapper").append(str);
+                        var myVideo1=document.getElementById("my-video");
+                        myVideo1.play()
+                    }
+                    //loadVideo();
+                    var str2='<div class="ub-f1">'+
+                                       '<p>'+name+'</p>'+
+                                  '</div>';
+                     $("#DetailName").append(str2);
+                     getComment();
+                }
+            )
+        }
+        function getComment(){
+            $zy.getJSON(
+                url+"?cid="+cid+"&page="+page,
+                function(data){
+                    var length=data.comment_list.length;
+                    $("#commentNum").html(data.sum);
+                    for(var i=0;i<length;i++){
+                        var comment=data.comment_list[i].content;
+                        var time=data.comment_list[i].change_time;
+                        var username=data.comment_list[i].username;
+                        var userImg=imgUrl+data.comment_list[i].avatar;
+                        if(data.comment_list[i].avatar==null){
+                            userImg="css/images/default_nick.png";
+                        }
+                        var pusername=data.comment_list[i].pusername;
+                        var userId=data.comment_list[i].user_id;
+                        var pid=data.comment_list[i].pid;
+                        if(pusername){
+                            var str='<li class="ub">'+
+                                   '<img src="'+userImg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                        '<p><span class="commentPeople" userId="'+userId+'">'+username+'</span>回复<span class="commentPeople" userId="'+pid+'">'+pusername+'</span></p>'+
+                                        '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        comment+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                        }
+                        else{
+                            var str='<li class="ub">'+
+                                   '<img src="'+userImg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                            '<p class="commentPeople" userId="'+userId+'">'+username+':</p>'+
+                                            '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        comment+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                        }
+                       $("#DetailComment ul").append(str);
+                    }
+                    huifu();
+                }
+            )
+        }
+        function huifu(){
+            $(".commentPeople").click(function(){
+                pusername=$(this).text();
+                uexWindow.evaluateScript("audioDetails",0,"huifu1('"+pusername+"')");
+                pid=$(this).attr("userId");
+            });
+        }
+        function sendComment(msg){
+            msg=msg;
+            var user_id=window.localStorage.getItem('login_userid');
+            pid=pid;
+            if(!msg){
+                uexWindow.alert('温馨提示',"内容不能为空",'确定');
+            }
+            else{
+                var postdata={"msg":msg,"user_id":user_id,"pid":pid,"vid":cid};
+                url1=weburl+"cam_dealComment.php";
+                appcan.request.ajax({
+                    url:url1,
+                    type:'POST',
+                    data:postdata,
+                    dataType:'json',
+                    success:function(data){
+                        if(data.res == 1){
+                            uexWindow.evaluateScript("audioDetails",0,"clear()");
+                            console.log(data);
+                            msg=data.content;
+                            userimg=imgUrl+data.useravatar;
+                            username=data.username;
+                            pusername=data.pusername;
+                            time=data.time;
+                            if(pid){
+                                 var str='<li class="ub">'+
+                                   '<img src="'+userimg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                        '<p><span class="commentPeople" userId="'+user_id+'">'+username+'</span>回复<span class="commentPeople" userId="'+pid+'">'+pusername+'</span></p>'+
+                                        '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        msg+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                            }
+                            else{
+                                var str='<li class="ub">'+
+                                   '<img src="'+userimg+'"/>'+
+                                   '<div class="ub-f1">'+
+                                        '<div>'+
+                                        '<p><span class="commentPeople" userId="'+user_id+'">'+username+
+                                        '<p id="commentTime">'+time+'</p>'+
+                                        '</div>'+
+                                       '<div id="commentContent">'+
+                                        msg+        
+                                       '</div>'+
+                                   '</div>'+
+                               '</li>';
+                            }
+                            $("#commentNum").text(parseInt($("#commentNum").text()) +1);
+                            $("#DetailComment ul").prepend(str);       
+                        }
+                    },error:function(xhr,erroType,error,msg){
+                        uexWindow.alert('提示','网络出是错，请稍后再试','确定');
+                    }
+                });
+                
+            }
+        }
+        function openVideo(){
+            var w=parseInt($("#video-wrapper").width());
+            var h=parseInt($("#video-wrapper").height());
+            var y=parseInt($("#myHeight").height());
+            var param = {
+                src:address,
+                startTime:0,
+                autoStart:false,
+                forceFullScreen:false,
+                showCloseButton:true,
+                showScaleButton:true,
+                width:w,
+                height:h,
+                x:0,
+                y:0, 
+                scrollWithWeb:true,
+            }
+            uexVideo.openPlayer(JSON.stringify(param));
+       }
+       function closeVideo(){
+           uexVideo.closePlayer();
+       }
+        // var myPlayer = videojs('my-video');
+        //   videojs("my-video").ready(function(){
+        //       var myPlayer = this;
+        //       myPlayer.play();
+        // });
+       
+       /*
+        function loadVideo(){
+            var video=document.getElementsByTagName("video")[0];
+            var bofang=document.getElementsByClassName("bofang")[0];
+               $(".bofang").click(function(){
+                  // uexWindow.open("zhibo","0",address,"2","","","0");
+                   if(video.paused){
+                        video.play();
+                        $(".bofang img").attr('src','css/images/zanting.png');
+                        $(".bofang1").css("display","none");
+                   }
+                   else{
+                       video.pause();
+                       $(".bofang img").attr('src','css/images/bofang1.png');
+                   }
+                   
+               });
+                $(".bofang1").click(function(){
+                  // uexWindow.open("zhibo","0",address,"2","","","0");
+                   if(video.paused){
+                        video.play();
+                        $(".bofang1").css("display","none");
+                        $(".bofang").css("display","block");
+                         $(".bofang img").attr('src','css/images/zanting.png');
+                   }                
+               });
+               video.onplay=function(){
+                   $(".loading").css("display",'block');
+               }
+               video.ontimeupdate=function(){
+                   $(".loading").css("display",'none');
+               }
+               $('.fullScreen').click(function(){
+                  uexWindow.setOrientation(2);
+                  if (video.requestFullScreen) {
+                      video.requestFullScreen();
+                    } else if (video.mozRequestFullScreen) {
+                      video.mozRequestFullScreen();
+                    } else if (video.webkitRequestFullscreen) {
+                      video.webkitRequestFullScreen();
+                    }
+               });
+        }
+        */
+    </script>
+    
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/smart-2.9.min.js"></script>
+    </head>
+    <body class="um-vp ub ub-ver c-f7">
+        <div class="ub ub-ver ub-pc umar-bb ub-ac accont_rate">
+            <div id="avatar" class="tx2 umar-bb" style="background:url(css/images/default_nick.png) center center no-repeat; -webkit-background-size:100% 100%; background-size:100% 100%;"></div>
+            <div class="ulev1 t-wh fwb pt" id="uname"></div>
+            <div class="ulev0 t-wh pt fwb">评价&nbsp;<span id="rnum">0</span></div>
+        </div> 
+        
+        <div class="ub ub-f1 ub-pc ub-ac uhide" id="noresult">
+            <div class="ub ub-pc ub-ac ub-ver">
+                <div class="logo-notuan"></div>
+                <div class="ulev-1 t-gra6 pt2">暂无此信息</div>
+            </div>
+        </div>
+		<div class="ub-f1" id="ratediv"></div>
+        <input type="hidden" id="page" name="page" value="1" />
+    </body>
+    <script id="infotemplate" type="text/x-jsmart-tmpl">
+        {section name=m loop=$coms}
+            <div class="ub ub-ver ubb b-gra2 c-wh umar-bb uinn6">
+                    <div class="ub ub-ac uinn18 ulev-3n t-gra6 ubb b-gra2" onclick="goseller({$coms[m].sid})">
+                        <div class="ub logo-rate"></div>
+                        <div class="ub-f1">{$coms[m].sname}</div>
+                        <div class="rarr"></div>
+                    </div>
+                    <div class="pt2 ulev-3n ub">
+                        <div class="ub-f1">
+                            <div class="ub rateinlst">
+                                <div class="ub starred" style="width:{$coms[m].percent}"></div>
+                            </div>
+                        </div>
+                        <div class="t-gra">{$coms[m].date}</div>
+                    </div>
+                    <div class="ub ub-f1 pt2 ulev-3n bkw" style="line-height:1.5em;">{$coms[m].comment}</div>
+                    {if $coms[m].reply_time}
+                       <div class="" id="reply_info">
+                           <div class="t-gra ulev-3n umar-t">{$coms[m].reply_time}</div>
+                           <div class="t-gra3 cd0">
+                              <div class="topdirection uabs-ebt1"></div>
+                              <div class="uinn ulev-2 umar-a umar-tn">{$coms[m].reply_content}</div>
+                           </div>
+                       </div>
+                    {/if}
+                </div>
+        {/section}
+    </script>
+    <script>
+	zy_init();
+	var imgarr=[];
+	window.uexOnload = function(type){
+           if (!type) {
+                   uexWindow.onBounceStateChange=function(t,s){
+                    if(t==1){
+                        if(s==0){
+                            getmorelist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("1");
+                        }
+                    }
+                    if(t==0){
+                        if(s==0){
+                            refreshlist();
+                        }else if(s==2){
+                            uexWindow.resetBounceView("0");
+                        }
+                    }
+                }
+                
+                uexWindow.setBounce("1");
+                uexWindow.showBounceView("0","#FFF","0");
+                uexWindow.showBounceView("1","#FFF","0");
+                
+                uexWindow.notifyBounceEvent("1","1");
+                uexWindow.notifyBounceEvent("0","1");
+                str='{"loadingText":"刷新中"}';
+                uexWindow.setBounceParams('0',str);
+                str='{"loadingText":"加载中","pullToReloadText":"拖动加载更多","releaseToReloadText":"释放显示更多"}';
+                uexWindow.setBounceParams('1', str);
+    			loadratelist();		
+           }
+    }
+	function refreshlist(){
+        $("#page").val(1);
+        $("#ratediv").html("");
+        getmorelist();  
+    }
+    function getmorelist(){
+        loadratelist(); 
+    }
+//     
+    // var ratstr='<div class="ub ub-ver ubb b-gra2 c-wh umar-bb uinn6">'+
+                    // '<div class="ub ub-ac uinn18 ulev-3n t-gra6 ubb b-gra2" onclick="goseller(${sid})">'+
+                        // '<div class="ub logo-rate"></div>'+
+                        // '<div class="ub-f1">${sname}</div>'+
+                        // '<div class="rarr"></div>'+
+                    // '</div>'+
+                    // '<div class="pt2 ulev-3n"><div class="ub rateinlst"><div class="ub starred" style="width:${perbest}"></div></div></div>'+
+                    // '<div class="ub ub-f1 pt2 ulev-3n bkw" style="line-height:1.5em;">${content}</div>'+
+                    // '<div class="t-gra ulev-3n pt2">${date}</div>'+
+                    // '<div class="imgs_club imgs_club_${rid}">${pictures}</div>'+
+                // '</div>';
+    
+	function loadratelist(){
+		uexWindow.toast(1,5,"加载中",0);
+		page=parseInt($("#page").val());
+		url=weburl+"ratelist_alls.php?page="+page+"&rnd="+Math.random();
+		$zy.getJSON(
+			url,
+			function(data){
+			    uexWindow.closeToast();
+			    $("#avatar").css("background-image","url("+data.avatar+")");
+                $("#uname").html(data.uname);
+                $("#rnum").html(data.count);
+				rateno=data.rateno;
+				if(rateno>0){
+					$("#page").val(page+1);
+                    var tpl = new jSmart($("#infotemplate").html());
+                    var res = tpl.fetch(data);
+					//var html=zy_tmpl(ratstr,data.ratedata,zy_tmpl_count(data.ratedata));
+					$("#ratediv").append(res);
+				}else{
+				    if(page==1){
+				        $("#noresult").removeClass("uhide");
+				    }else{
+				        uexWindow.toast(0,5,"已经是最后记录了",2000);
+				    }
+				}
+			}
+		);
+	}
+	function seeimg(rid,i){
+			$(".imgs_club_"+rid+" div").each(function(index){
+				imgarr[index]=$(this).attr("src");
+			});
+			uexImageBrowser.open(imgarr,i, '1');
+	}
+	function goseller(sid){     //进入店铺
+            uexWindow.open('seller_header','0','seller_header.html?sid='+sid,'2','','','0',0);
+        }	
+</script>
+</html>

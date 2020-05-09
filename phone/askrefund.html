@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        
+    </head>
+    <body class="um-vp ub ub-ver c-f7" ontouchstart>
+        <div class="ub ub-ver">       
+            <div class="ub ub-ac ub-pc c-yellow uinn b-yellow ulev-3n ubb t-org4">退款成功后,购买获得的积分将被扣除</div>
+            <div class="ub ub-ver umar-tn">
+                <div class="ulev1n uinn">订单内容:</div>
+                <div class="uinn c-wh ubt ubb b-gra2 ulev0" id="orderinfo"></div>
+            </div>
+            <div class="ub ub-ver umar-tn">
+                <div class="ulev1n uinn">退还内容:</div>
+                <div class="uinn c-wh ubt ubb b-gra2 ulev0">现金：<span class="t-org4" id="money"></span></div>
+            </div>
+            <div class="ub ub-ver umar-tn">
+                <div class="ulev1n uinn">现金退还方式:</div>
+                <div class="ub uinn c-wh ubt ubb b-gra2 ulev0">
+                     <div class="ub-f1">退至账户余额</div>                       
+                    <input name="rmethod" id="rmethod" type="radio" value="yue" checked="checked">
+                </div>
+            </div>
+            <div class="ub ub-ver umar-tn">
+                <div class="ulev1n uinn">退款原因:<span class="ulev-3n t-gra">（必填）</span></div>
+                <div class="uinn c-wh ubt ubb b-gra2 ulev1n">
+                    <input class="ubn0 ulev0 ub-fh lh t-gra" name="remark" value="" placeholder="填写您退款的原因" />
+                </div>
+            </div>
+            <div class="ub umar-tn umar-bb uinn3" onclick="go_refund();">
+                <div class="ub ub-f1 ub-pc t-wh ulev1n c-ora uinn bra0">申请退款</div>
+            </div>
+        </div>
+    </body>
+    <script>
+        zy_init();
+        var oid;
+        window.uexOnload = function(type){
+			var params = zy_parse();
+	    	oid = params.oid;
+            if (!type) {
+                uexWindow.setBounce("0");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+                getrtitle(oid); 
+            }	
+			
+        }
+        var tmpstr='<div class="ub uinn18 ulev0">'+
+                    '<div class="ub-f1">券码:&nbsp;${quan_no}</div>'+
+                    '<div class="t-green umar-r">${state}</div>'+
+                '</div>';
+        function getrtitle(oid){
+            url=weburl+'getrtitle.php?oid='+oid;
+            $zy.getJSON(
+                url,
+                function(data){
+                    if(data.express=='N'){
+                        var s=zy_tmpl(tmpstr,data.quan,zy_tmpl_count(data.quan));
+                        $("#orderinfo").html(s);
+                    }else{
+                        $("#orderinfo").html(data.subject);
+                    }
+                    $("#money").html(data.money+'元');
+                    
+                }
+            );
+        }
+        function go_refund(){
+            var remark=$.trim($("input[name='remark']").val());
+            if(remark==''){
+                uexWindow.toast(0,5,"退款原因必须填写",3000);
+                $("input[name='remark']").focus();
+            }else{
+                uexWindow.toast(1,5,"正在操作",0);
+                var jdata =[{"key":"oid","type":"0","value":oid},{"key":"remark","type":"0","value":remark}];
+                url=weburl+"refund.php";
+                $zy.getJSON(
+                    url,
+                    function(data){
+                        uexWindow.closeToast();
+                        if(data.res==1){
+                            uexWindow.toast(0,5,"申请成功",3000);
+                            uexWindow.open('refundview_shell',0,'refundview_shell.html?oid='+oid,2,'','',0);
+                            //跳转到退款详情
+                        }else{
+                            uexWindow.toast(0,5,data.error,3000);
+                        }
+                    },
+                    'json',
+                    function(){
+                        uexWindow.alert('温馨提示',"网络有问题，操作失败！",'确定');
+                        uexWindow.closeToast();
+                    },
+                    'POST',
+                    jdata
+                );
+            }
+        }
+    </script>
+</html>

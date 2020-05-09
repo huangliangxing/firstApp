@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+    </head>
+    <body class="um-vp" ontouchstart>
+    	<div class="up ub ub-ver" tabindex="0">
+	        <div class="ub c-green t-wh h-pd uhh" id="header">
+	        	<div class="ub ub-ac ub-pc" style="margin-top: 0.5em;" ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+	                <div class="ub goback ub-ac"></div>
+	            </div>
+	            <div class="ub ub-f1 ub-ac ub-pc ulev1n" style="margin-top: 0.5em;">全部秒杀</div>
+	            <div class="ub ub-ac ub-pc" style="margin-top: 0.5em;" onClick="uexWindow.open('search','0','search.html','2','','','0');">
+	                <div class="h-sear1"></div>
+	            </div>
+	        </div>
+			<div class="c-wh" id="popmenu">
+				<div id="pop" class="uh ub upoph">
+					<div class="ub ub-f1 ub-ac upop_pl" onclick="openpop('pop');">
+						<div class="cate_liststyle"></div>
+						<div class="ub ub-f1 ulev0 ub-ac" id="catename_m">全部分类</div>
+						<div class="arrd"></div>
+					</div>
+					<div class="ub ub-f1 ub-ac cate_spl" onclick="openpop('area');">
+						 <div class="pin"></div>
+						<div class="ub ub-f1 ulev0 ub-ac" id="areaname_m">全城</div>
+						<div class="arrd"></div>
+					</div>
+					<div class="ub ub-f1 ub-ac upop_pl" onclick="openpop('sort');">
+						<div class="sort"></div>
+						<div class="ub ub-f1 ulev0 ub-ac" id="ordername_m">智能排序</div>
+						<div class="arrd"></div>
+					</div>
+				</div>
+			</div>
+			<div id="content" class="ub-f1"></div>
+		</div>
+    </body>
+    <script>
+        zy_init();
+        window.uexOnload = function(type){
+            if (!type) {
+				loadindexcontent();
+            }			
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight);
+			}			
+        }
+		function openpop(n){
+			var titHeight = $$("header").offsetHeight+$$("popmenu").offsetHeight;
+            uexWindow.openPopover(n, "0", n+".html?s=miaosha", "", 0,titHeight, "", "", "", "4");
+		}
+		function clospop(){
+			var popArr = new Array("pop","area","sort","clubsubmenu");
+			for(i=0;i<popArr.length;i++){
+				uexWindow.closePopover(popArr[i]);	
+			}
+		}
+		function loadindexcontent(){		
+			zy_con("content", "index_miaosha.html", 0,$$("header").offsetHeight+$$("popmenu").offsetHeight);			
+			window.onorientationchange=window.onresize=function(){
+				zy_resize("content",0,$$("header").offsetHeight+$$("popmenu").offsetHeight);
+			}
+		}
+		function changeindextopname(a,b){
+			$("#"+a).html(b);
+		}
+    </script>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/ui-bazhuatuan.css"/>
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/iscroll.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+        <script src="js/all.js"></script>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+      <div class="ub ub-f1 ub-pc ub-ac" id="noorder">
+            <div class="ub ub-pc ub-ac ub-ver" style="margin-top: 5em;">
+                <div class="logo-noorder"></div>
+                <div class="ulev0 pt2">您还没有相关订单</div>
+                <div class="ulev-1 pt2 t-gra">去下单试试吧</div>
+                <div class="ulev-3 t-green uba uinn25 bra0 mt" onclick="goindex()">随便逛逛</div>
+            </div>
+        </div>
+        <div class="ub ub-ver ub-f1 umar-bb" id="orderdiv"></div>
+        <input type="hidden" name="order_page" id="order_page" value="1" />
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            var myRengou=window.localStorage.getItem("myRengou");
+            page=1;
+            myRengou=JSON.parse(myRengou);
+            if(myRengou.length>0){
+                $("#noorder").addClass("uhide");
+            }
+            var o_ids='';
+            for(var i=0;i<myRengou.length;i++){
+                if(i>0)o_ids+=','+myRengou[i];
+                else o_ids+=myRengou[i];
+            }
+            showGoods(o_ids);
+        });
+       var temstr='<div class="ub ub-ver c-wh umar-t" id="order_${oid}">'+
+                        '<div class="ub ulev1n  b-gra2 uinn18" onclick="order_check(${oid})">'+
+                            '<div class="ub-f1">${sname}</div>'+
+                            '<div class="t-green ulev-3n pt3">${state}</div>'+
+                        '</div>'+
+                        '<div class="ub b-gra2 uinn" onclick="order_check(${oid})">'+
+                            '<div class="umar-r t-img" style="width:30%;background:url(${thumb}) center center no-repeat #fff; -webkit-background-size:100% 100%; background-size:100% 100%;"></div>'+
+                            '<div class="ub ub-f1 ub-ver">'+
+                                '<div class="t-gra ub-f1 ulev-3">${subject}</div>'+
+                                '<div class="ub t-gra umar-t ulev-3n">总价：&yen;${price}&nbsp;|&nbsp;数量：${num}</div>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="ub ulev0 ubb b-gra2 uinn18 ${ahide}">'+
+                            '<div class="ub ub-f1 umar-l ulev-1 t-gra pt2">${dateline}</div>'+
+                            /*'<div class="ub umar-r ulev-3 t-org4 uba uinn25 bra0 ${hide}" onclick="${dclick}">${dlabel}</div>'+*/
+                            '<div class="ub umar-r ulev-3 t-org4 uba uinn25 bra0" onclick="${pclick}">${plabel}</div>'+
+                        '</div>'+
+                    '</div>';    
+        function showGoods(o_ids){
+            userid=window.localStorage.getItem("login_userid");
+            url=weburl+"rengou.php?id="+o_ids+"&userid="+userid+'&page='+page;
+            $zy.getJSON(
+                url,
+                function(data){
+                    offset=parseInt($("#order_page").val());
+                    tuanno=data.tuanno;
+                    uexWindow.closeToast();
+                    var html;
+                    if(tuanno>0){
+                        $("#order_page").val(offset+1);
+                        html=zy_tmpl(temstr,data.tuandata,zy_tmpl_count(data.tuandata));
+                        $("#orderdiv").append(html);
+                    }else{
+                        if(offset==1){
+                            $("#noorder").removeClass("uhide");
+                        }else{
+                            uexWindow.toast(0,5,"已经是最后记录了",3000);
+                        }
+                    }
+                    
+                    $(".t-img").height($(".t-img").eq(0).width()*12/16);
+                    
+                }
+            );
+       }
+      function order_check(oid){      //订单详情
+            uexWindow.open('quan_shell',0,'quan_shell.html?oid='+oid,2,'','',0);
+        }
+     function goindex(){         //返回首页
+            uexWindow.evaluateScript('rengou','0','loadindex()');
+            uexWindow.close(-1);
+        }
+    </script>
+</html>

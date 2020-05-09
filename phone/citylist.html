@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+      <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+		<script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub ub-ver" ontouchstart></body>
+	   <div class="ub uinn">
+			<div class="ub ub-f1 ub-f7 ub-ver ulev-33" id="list">
+			</div>
+	   </div>
+<script>
+	zy_init();
+	var url=weburl+'city.php';
+	var str='<div class="ubtb ub uinn18"  onclick="changeCity(\'${ename}\',\'${name}\')">'+
+			'<div class="ub ub-f1 ub-ver">'+	
+				'<div class="ub ub-ae ub-f1">'+
+				    '<a name="${letter}"></a>'+
+					'<div class="uc-m8 t-org2 tx-r uinn mlr" ontouchstart="zy_touch()">${name}</div>'+
+					
+		          '</div>'+
+			'</div>'+
+		'</div>';
+	window.uexOnload = function(type){
+            if (!type) {
+                uexWindow.setBounce("0");
+				loadtuanlist();		
+            }
+    }
+	function changeCity(ename,name){
+	    window.localStorage.setItem('nowCity',name);
+            window.localStorage.setItem('nowCity',name);
+            url=weburl+'city.php?ename='+ename;
+            $zy.getJSON(
+                url,
+                function(data){ 
+                    uexWindow.evaluateScript("city",0,"uexWindow.close('')");
+                    uexWindow.evaluateScript("root","0","loadindex()");
+                    uexWindow.close('-1');
+                    uexWindow.closeToast();
+                }
+            );
+        }
+	function loadtuanlist(){
+		uexWindow.toast(1,5,"加载中",0);
+		$zy.getJSON(
+			url,
+			function(data){
+				tuanno=data.tuanno;
+				var html;
+				if(tuanno>0){
+					html=zy_tmpl(str,data.tuandata,zy_tmpl_count(data.tuandata));
+				}else{
+					html='<div class="up ub ub-ac ub-pc">暂无城市</div>';
+				}
+				$("#list").append(html);
+				uexWindow.closeToast();
+			}
+		);
+	}
+	
+</script>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/ui-bazhuatuan.css"/>
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <style type="text/css">
+            .header{box-sizing: border-box;}
+            .shipin{border:1px solid #ccc;border-radius: 1.5em;width:8em;height:1.6em;line-height: 1.6em;
+            text-align:center;margin:0 auto;}
+            .shipin span{display: inline-block;height:100%;padding: 0 0.5em;}
+            .shipin span:nth-child(1){border-right:1px solid #ccc;color: #2C5C36}
+            .search img{width: 1.2em;height:1.2em}
+            .search{height:1.6em;line-height:1.6em}
+        </style>
+
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div class="ub header" id="header" style="padding-top:1.2em;text-align: center;line-height: 3em;">
+                <div style="width:90%;" class="ub">
+                    <div class="shipin">
+                        <span class="radio">直播</span>
+                        <span class="video">视频</span>
+                    </div>
+                </div>
+                <div style="width: 10%" class="ub search">
+                    <img src="css/images/search2.png"/>
+                </div>
+            </div>
+            <!--header结束-->
+         </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            isIPhoneX()
+            var isVideo=false;
+            appcan.button(".radio", "ani-act", function() {
+               $(".radio").css("color","#2C5C36");
+               $(".video").css("color","#000");
+               isVideo=false;
+                appcan.window.evaluatePopoverScript("","content","openRadio()"); 
+           });
+           appcan.button(".video","ani-act",function(){
+               $(".video").css("color","#2C5C36");
+               $(".radio").css("color","#000");
+               isVideo=true;
+               appcan.window.evaluatePopoverScript("","content","openVideo()");
+           });
+           $(".search").click(function(){
+            if(isVideo){
+                 uexWindow.open('search_cam','0','search_cam.html?s=ungood','2','','','0');
+            }
+            else{
+                uexWindow.open('search_video','0','search_video.html?s=ungood','2','','','0');
+            }
+
+        });
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        });
+
+        function isIPhoneX(fn){
+              var u = navigator.userAgent;
+              var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+              // alert(isIOS)
+              // // iPhone X、iPhone XS
+              var isIPhoneX = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 375 && window.screen.height === 812;
+              console.log(isIPhoneX)
+      
+              // iPhone XS Max
+              var isIPhoneXSMax = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 3 && window.screen.width === 414 && window.screen.height === 896;
+              console.log(isIPhoneXSMax)
+              // iPhone XR
+              var isIPhoneXR = /iphone/gi.test(window.navigator.userAgent) && window.devicePixelRatio && window.devicePixelRatio === 2 && window.screen.width === 414 && window.screen.height === 896-88;
+              console.log(isIPhoneXR)
+              
+              if (isIOS) {        
+                    // alert(window.screen.height)
+                  if (window.screen.height >=812){
+                  // if (isIPhoneX || isIPhoneXSMax || isIPhoneXR){
+                      //是iphoneX
+                      //alert('是iphoneX')
+                     $("#header").css({'height':'5em','padding-top':'3em'});
+      //            
+                  }else{
+                      $("#header").css({'height':'4em','padding-top':'2em'});
+                    // // alert('不是iphoneX')
+                  }
+              }else{
+                  $("#header").css({'height':'3em','padding-top':'1em'})
+                // alert('不是ios')
+              }
+          }
+    </script>
+</html>

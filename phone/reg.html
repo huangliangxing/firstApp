@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/ui-bazhuatuan.css">
+		<link rel="stylesheet" type="text/css" href="css/login.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <style type="text/css">
+            .fanhui{width: 100%;}
+            .goback{position: absolute;left: 1em;top:1em;}
+        </style>
+    </head>
+ 	<body class="um-vp ub c-f7" ontouchstart>
+    	<div class="ub ub-ver ub-ac" id="login">
+    	    <div class="fanhui"  ontouchstart="zy_touch()" onclick="uexWindow.close('-1');">
+                    <div class="ub goback" style="position: relative;z-index: 2"></div>
+            </div>
+    	     <div class="touxiang">
+                   <img src="css/images/logo2.png"/>
+            </div>
+            <div id="nlogg">
+                <div class="umar1 uinn  b-gra2">
+                   <div class="ub ulev0 uinn8 b-gra2 lh ">
+                         <div class="ub ub-f1 number">
+                                 <input type="number" name="mobile" class="" id="mobile" placeholder="请输入手机号" value="" size="11"/>
+                                 <input type="submit" id="codebtn" class="" onclick="sendcode()" value="获取验证码" style="font-size: 0.8em"/>
+                          </div>
+                    </div>
+                    <div class="ub ulev0 uinn8 lh b-gra2">
+                          <div class="ub ub-f1 yanzhengma">
+                               <input type="text" name="vercode" class="ubn0 ulev0 ub-fh lh t-gra" id="vercode" placeholder="请输入验证码" value="" />
+                           </div>   
+                    </div>
+                    <!--
+                    <div class="ub ulev0 uinn8 lh b-gra2">
+                          <div class="ub ub-f1 myPassword">
+                               <input type="password" name="vercode" class="ubn0 ulev0 ub-fh lh t-gra" id="vercode" placeholder="请输入密码" value="" />
+                           </div>   
+                        </div>
+                    <div class="ub ulev0 uinn8 lh b-gra2">
+                          <div class="ub ub-f1 myPassword1">
+                               <input type="password" name="vercode" class="ubn0 ulev0 ub-fh lh t-gra" id="vercode" placeholder="请确认密码" value="" />
+                           </div>   
+                        </div>
+                    </div>
+                -->
+                    <div class="btn" ontouchstart="zy_touch()" onclick="reg()">立即注册</div>
+                   <div class="register" ontouchstart="zy_touch()" onclick="login()">已有账号？立即登录</div>
+              </div>
+            </div>
+       </div>
+    </body>
+	
+     <script>
+        zy_init();
+		var miao=60;
+        window.uexOnload = function(type){
+            if (!type) {
+                uexWindow.setBounce("0");
+                uexWindow.showBounceView("0", "#FFF", "0");
+                uexWindow.showBounceView("1", "#FFF", "0");
+            }
+        }
+		 function sendcode(){
+            var mobile = $.trim($('#mobile').val());
+            url=weburl+"sms.php?mobile="+mobile+"&rnd="+Math.random();
+            if (mobile == '') {
+                 uexWindow.alert('温馨提示','手机号不能为空','确定');
+                $('#mobile').focus();
+            } else {
+                checkbtn();
+                $zy.getJSON(
+                    url,
+                    function(data){
+                        if(data.smsok == 1){
+                            uexWindow.toast(0,5,"成功发送",3000);
+                        }else{
+                            uexWindow.toast(0,5,data.error,3000);
+                        }
+                    }
+                )
+                
+            }
+        }
+        function reg(){
+            tel=$.trim($("#mobile").val());
+            vercode=$.trim($("#vercode").val());
+            url = weburl + "signmb.php?tel="+tel+"&vercode="+vercode;
+            if(tel=="" || vercode==""){
+                uexWindow.toast(0,5,"手机号,验证码一个都不能少喔！",2000);
+            }else{
+                uexWindow.toast(1,5,"正在注册",0);
+                $zy.getJSON(
+                    url,
+                    function(data){
+                        uexWindow.closeToast();
+                        if(data.regok==1){//注册成功
+                            window.localStorage.setItem('iwhtuanlogin',1);
+                            window.localStorage.setItem('login_userid',data.userid);
+                            uexWindow.evaluateScript('login','0','uexWindow.close("")');
+                            returnurl=window.localStorage.getItem("returnurl");
+                            if(returnurl=="myorders"){
+                                uexWindow.evaluateScript('root','0','loadmyorders()');
+                            }else{
+                                //uexWindow.evaluateScript('root','0','loadmycontent()');
+                                uexWindow.open('myac_shell','0','myac_shell.html','2','','','0');
+                            }
+                            
+                            uexWindow.close(-1);    
+                        }else if(data.regok==2){
+                            uexWindow.toast(0,5,"手机号码不正确",3000);
+                        }else if(data.regok==3){
+                            uexWindow.toast(0,5,"该手机已注册过",3000);
+                        }else if(data.regok==5){
+                            uexWindow.toast(0,5,"手机号和验证码不匹配",3000);
+                        }else if(data.regok==6){
+                            uexWindow.toast(0,5,"注册失败，稍后请重新提交申请",3000);
+                        }
+                    }
+                );
+            }
+        }
+        function trim(str) {
+            return str.replace(/^\s*(.*?)[\s\n]*$/g, '$1')
+        }
+        function checkbtn(){
+            $("#codebtn").removeClass("obutton");
+            $("#codebtn").addClass("gbutton");
+            $("#codebtn").attr("disabled","disabled");
+            miao--;
+            text=(miao)+"秒重新发送";
+            $("#codebtn").val(text);
+            if(miao<=0){
+                $("#codebtn").removeClass("gbutton");
+                $("#codebtn").addClass("obutton");
+                $("#codebtn").val('获取验证码');
+                $("#codebtn").removeAttr("disabled");
+            }else{
+                setTimeout("checkbtn()",1000);
+            }
+        }
+         function login(){
+            uexWindow.open('login','0','login.html','1','','','0');
+        }
+        document.addEventListener('DOMContentLoaded',function(){
+           var Login=document.getElementById("login");
+           var Body=document.getElementsByTagName("body")[0];
+           Login.style.height=(window.outerHeight||window.innerHeight)+'px';
+           Login.style.minHeight=(window.outerHeight||window.innerHeight)+'px';
+           Body.style.minHeight=(window.outerHeight||window.innerHeight)+'px';
+           
+        });
+    </script>
+</html>

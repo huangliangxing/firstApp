@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-bazhuatuan.css">
+        <link rel="stylesheet" type="text/css" href="css/revise.css"/>
+        <script src="js/jquery-1.6.4.min.js"></script>
+        <script src="js/zy_control.js"></script>
+        <script src="js/zy_click.js"></script>
+        <script src="js/zy_json.js"></script>
+        <script src="js/zy_tmpl.js"></script>
+    </head>
+    <body class="um-vp ub c-f7 ub-ver">
+    <div>
+        <div id="allGoods">    
+        </div>
+        <div class="ub ulev0 c-wh uinn  ubb b-gra2 lh" style="padding-left: 1em;">
+            <div class="t-gra6 umar-r">手机号:</div>
+            <input class="ubn ub ub-f1 uc-a1" type="hidden"  id="dizhiid" />
+            <input value="" type="number" size="20"  placeholder="填写你的手机号码" class="ub-f1 ubn0 lh ulev1n" id="mobile" />
+            
+        </div>
+        <!--地址开始-->
+        <div class="ulev0 c-wh umar-bb1" id="daijinquandiv" style="display: block;">
+            <div class="ub uinn ubb b-gra2 lh" style="padding-left: 1em">
+                <div class="t-gra6 umar-r">收件人:</div>
+                <input name="addresslist" type="hidden" id="addresslist" value="0" />
+                <input value="" type="text" placeholder="请填写收件人姓名" class="ubn0 ub-f1 lh ulev1n" id="realname" />
+            </div>
+            <div class="ub uinn ubb b-gra2 lh" style="padding-left: 1em">
+                <div class="t-gra6 umar-r">收货地址:</div>
+                <input value="" type="text" placeholder="请填写详细地址" class="ubn0 ub-f1 lh ulev1n" id="address" />  
+            </div>
+        </div>
+        <ul class="shoppingCart" style="display:none">
+       </ul>
+       <div class="allName" style="display:none">
+       </div>
+       <div class='expressinfo' style="margin:3em">
+       </div>
+    </div>
+    </body>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.js"></script>
+    <script>
+        zy_init();
+        var myUrl="http://www.tastingbutler.com/static/";
+        var tid=0;
+        var oid=0;
+        var exparray;
+        var objs;
+        var objs1= new Object();
+        var partner=[];
+        var partner1=[];
+        var temper=[];
+        var title=[];
+        var express=[];
+        var price=[];
+        var myNum=0;
+        /*总价格*/
+        var allPrice=0;
+        /*快递价格*/
+        var myPrice=0;
+        var myUrl="http://www.tastingbutler.com/static/";
+        var url4=weburl+'buy.php';
+        var isPartner=0;
+        var remark_grade=1;
+        window.uexOnload = function(type){
+            uexWindow.toast(1,5,"加载中",0);
+            remark_price();  
+            getUser(); 
+            function getUser(){
+                $zy.getJSON(
+                    weburl+'settings.php',
+                    function(data){
+                       // alert(data);
+                        $("#mobile").val(data.mobile);
+                        $("#realname").val(data.realname);
+                        $("#address").val(data.address);
+                    }
+                );
+            }
+            /*       
+           if(window.localStorage.getItem("goods")){
+               var goods=window.localStorage.getItem("goods");
+               goods=JSON.parse(goods);
+               objs=goods;
+               for(var i=0;i<objs.length;i++){
+                    tid=objs[i].id;
+                    num=objs[i].num;
+                    showData(tid,num);
+                 }
+           }
+           */
+            user_id=window.localStorage.getItem("login_userid");
+            $zy.getJSON(
+                weburl+"getCartList.php?user_id="+user_id,
+                function(data){
+                   if(data.length){
+                       objs=data;
+                   }
+                    for(var i=0;i<data.length;i++){
+                         tid=data[i].team_id;
+                         num=data[i].team_num;
+                         addToShoppingCart(tid,num);
+                         showData(tid,num);
+                         uexWindow.toast(1,5,"加载中",0);
+                     }
+                }
+            );
+        }
+        function addToShoppingCart(id,num) {//在界面渲染的时候已经把商品信息参数整合到自己的函数中了
+             var isSave=false;
+             var goods=localStorage.getItem("goods");
+             goods=JSON.parse(goods);
+             if(goods!=null && goods!="undefined"){
+                 var objs=goods;
+                 /*
+                 for(var i=0;i<objs.length;i++){
+                     if(objs[i].id==id){
+                         objs[i].num+=1;
+                         isSave=true;
+                         break;
+                     }
+                 }
+                 */
+                 if(!isSave){
+                     objs[objs.length]={id:id,num:num}
+                 }
+             }
+             else{
+                  var goods=[{id:id,num:num}];
+              }
+            goods=JSON.stringify(goods);
+            window.localStorage.setItem("goods",goods);  
+         }
+        function aaa(){
+           // alert('partner1已经加载完毕啦');
+            for(var j=0;j<objs.length;j++){
+                     tid=objs[j].id;
+                     num=objs[j].num;
+                     getExpress(tid,num);
+                   }
+        }
+        function showData(tid,num){
+            //gettuandetail
+            //gettuandetailmore
+            var url="http://www.tastingbutler.com/m/molie/buy.php?tid="+tid;
+            $zy.getJSON(
+                url,
+                function(data){
+                  tongjiprice(data.info.team_price,num);
+                  //uexWindow.closeToast();
+                  partner.push(data.info.partner_id);           
+                  if(partner.length==objs.length){
+                      //alert("partner======"+partner.length);
+                      partner1=distinctArray(partner);
+                      isPartner=1;
+                      if(isPartner==1){
+                          aaa();
+                      }
+                      //alert("partner1=="+partner1);
+                       $.each(partner1,function(i,item){
+                          $("#allGoods").append(
+                            '<ul class="'+partner1[i]+'">'+
+                                 '<div class="partnerTitle">'+"我的订单"+'<p>'+
+                           '</ul>'+
+                            '<div class="kuaidi expinfo" style="padding-left:0">'+
+                                '<p>配送方式:</p>'+
+                            '</div>'+  
+                            '<div id="beizhu1" class="ub">'+
+                                '<div id="">'+
+                                     '备注:'+
+                                '</div>'+
+                                '<div id="" class="ub-f1">'+
+                                    '<input name="" placeholder="留言给商家" class="remark"></input>'+
+                                '</div>'+
+                            '</div>'
+                          );
+                      });
+                  }
+                  //alert("partener1=="+partner1.length+"===");
+                      var temp='<li class="ub" partner_id="'+data.info.partner_id+'">'+
+                      '<img src="'+myUrl+data.info.image+'" id="image"/>'+
+                      '<div id="" class="ub-f1">'+
+                          '<p id="title">'+data.info.title+'</p>'+
+                          '<div id="" class="ub">'+
+                               '<p class="ub-f1">&yen<span class="price">'+data.info.team_price+'</span>元/斤</p>'+
+                               '<p>X<span id="num">'+num+'<span></p>'+
+                              '</div>'+
+                          '</div>'+
+                      '</li>';
+                      temper.push(temp);
+                      $(".shoppingCart").append(temp);
+                      if($(".shoppingCart li").length==objs.length){
+                            panduan();
+                          //getExpress(tid);   
+                       }
+                    }
+            );
+        }
+        $("#postorderbtn").click(function(){
+             gotopay();
+         });
+        function getExpressinfo(j,sid){
+            if(myNum<partner1.length){
+                var url1="http://www.tastingbutler.com/m/molie/buyCart.php?sid="+sid;
+                $zy.getJSON(
+                    url1,
+                    function(data){             
+                         $.each(data.express,function(i,item){
+                                  $(".kuaidi:eq("+j+")").append(
+                                       '<p><span class="ub-f1">'+item.name+'</span><input name="kuaidi'+j+'" type="radio" onclick ="dianji()" expid="'+item.id+'" value="'+item.price+'"/>&yen;'+item.price+'</p>'    
+                                  );
+                                  var kuaidi="kuaidi"+j;
+                                  $(".kuaidi input[name="+kuaidi+"]:eq(0)").prop("checked",true);
+                                  //alert(value); 
+                           }); 
+                           dianji();
+                        } 
+                );
+                myNum++;
+            }
+        }
+        function dianji(){
+            myPrice=0;
+            for(var i=0;i<$("input:checked").length;i++){
+                myPrice=parseInt($("input:checked:eq("+i+")").val())+parseInt(myPrice);
+            }
+            all();
+        }
+        function getExpress(tid){
+            var url1="http://www.tastingbutler.com/m/molie/buy.php?tid="+tid;
+            $zy.getJSON(
+                url1,
+                function(data){
+                    uexWindow.closeToast();
+                    var title1="<p partner_id='"+data.info.partner_id+"'>"+data.info.partner_title+"</p>";
+                    title.push(title1);
+                    $(".allName").append(title1);
+                    //alert("title=="+title.length+"objs=="+objs.length);
+                    if(title.length==objs.length){
+                        //alert("oldTitle"+title);
+                        title=distinctArray(title);
+                       // alert("newTitle"+title);
+                        panduan2();  
+                    }                    
+                }
+                
+            )
+        }
+        function tongjiprice(price,num){//统计总价
+            //商品价格
+            var a=parseFloat(price);
+            var b=parseInt(num);
+            allPrice=(a*1000*b)/1000+parseFloat(allPrice);
+            all();
+        }
+        var all1=0;
+        function all(price){
+           all1=parseFloat(myPrice)+parseFloat(allPrice);
+           //$("#allPrice").text(all1);
+           //浮动窗口调用主窗口的方法
+           uexWindow.evaluateScript("cartOrder",0,"getPrice('"+all1+"')");
+           window.localStorage.setItem("allPrice",allPrice);
+        }
+        /*把商品对应商家*/
+        function panduan(){ 
+            for(var i=0;i<partner1.length;i++){
+                for(var j=0;j<$(".shoppingCart li").length;j++){
+                    if($("ul:eq("+i+")").attr("class")==$(".shoppingCart li:eq("+j+")").attr("partner_id")){
+                       $("ul:eq("+i+")").append(temper[j]);
+                    }
+                }
+            }
+        }
+        /*把商家名对应商家*/
+        function panduan2(){
+            //alert("partner1.length=="+partner1.length);
+            for(var i=0;i<partner1.length;i++){
+                //alert(i+"==="+partner1[i]);
+                getExpressinfo(i,partner1[i]);
+                for(var j=0;j<$(".allName p").length;j++){
+                    if($("ul:eq("+i+")").attr("class")==$(".allName p:eq("+j+")").attr("partner_id")){
+                       $("ul:eq("+i+") .partnerTitle").html(title[j]);
+                    }
+                }
+            }
+            
+        }
+        var payagain=function(){
+            gotopay();
+        }
+        /*进行数组去重*/
+        function distinctArray(arr){
+            var obj={},temp=[];
+            for(var i=0;i<arr.length;i++){
+                if(!obj[arr[i]]){
+                    temp.push(arr[i]);
+                    obj[arr[i]] =true;
+                }
+            }
+           return temp;
+        }
+        
+        function gotopay(){
+            
+            user_id=window.localStorage.getItem('login_userid');
+            var sinfo=new Array();
+            for(var i in partner1){
+                var s=new Object();
+                s.sid=partner1[i];
+                name='kuaidi'+i;
+                s.expressid=$("input[name='"+name+"']:checked").attr("expid");
+                s.remark=$(".remark:eq("+i+")").val();
+                var jsonText = JSON.stringify(s);
+                sinfo[i]=JSON.parse(jsonText);
+            }
+            //将商家和快递对应起来,
+            sinfo=JSON.stringify(sinfo);
+            //goodobj=JSON.stringify(goodobj);
+            //objs=sessionStorage.good;
+            objs=window.localStorage.getItem("goods");
+             console.log(objs+"====");  
+            mobile=$.trim($("#mobile").val());
+            realname=$.trim($("#realname").val());
+            address=$.trim($("#address").val());
+            if(mobile==""){
+                uexWindow.toast(0,5,"请输入手机号码",2000);
+                return false;
+            }
+            if (realname == "" || address == "") {
+                    uexWindow.toast(0, 5, "请输入收货人姓名和地址", 2000);
+                    return false;   
+            }
+            user_id=window.localStorage.getItem('login_userid');
+           
+            uexWindow.toast(1,5,"提交中...",0);
+            $("#postorderbtn").unbind("click");
+            appcan.request.ajax({
+                url:weburl+'cartBuy.php',
+                type:"POST",
+                data:{
+                    goodobj:objs,
+                    sinfo:sinfo,
+                    mobile:mobile,
+                    realname:realname,
+                    address:address,
+                    user_id:user_id,
+                    remark_grade:remark_grade
+                },
+                dataType:'json',
+                success:function(data){
+                    uexWindow.closeToast();
+                    if(data.res==1){
+                        window.localStorage.removeItem("goods");
+                        uexWindow.evaluateScript('cartOrder',0,"uexWindow.close('-1');");
+                        uexWindow.open('pay','0','pay.html?oid='+data.order_id,'2','','','0');
+                    }
+                },
+                error:function(e){
+                    alert('网络连接失败');
+                }
+            });
+        }
+      function remark_price(){
+        var userid=window.localStorage.getItem("login_userid");
+        $zy.getJSON(
+            weburl+"remark_grade.php?userid="+userid,
+            function(data){
+                remark_grade=data.relate_data;
+                if(remark_grade<1 && remark_grade>0){
+                    remark_name=data.name;
+                    uexWindow.evaluateScript("cartOrder",0,"getPrice1('"+remark_grade+"')");
+                }
+            }
+        ); 
+    }
+    </script>
+</html>
